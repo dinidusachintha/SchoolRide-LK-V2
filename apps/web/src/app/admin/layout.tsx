@@ -46,7 +46,7 @@ const adminNavItems: NavItem[] = [
     href: '/admin/verifications',
     icon: FileCheck,
     badge: 'KYC',
-    badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+    badgeColor: 'bg-[#EAF6ED] text-[#094718] border-[#BCE6C9]',
   },
   {
     name: 'User Management',
@@ -63,7 +63,7 @@ const adminNavItems: NavItem[] = [
     href: '/admin/complaints',
     icon: AlertTriangle,
     badge: 'Active',
-    badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+    badgeColor: 'bg-amber-50 text-amber-800 border-amber-200',
   },
   {
     name: 'Security Audit Logs',
@@ -108,18 +108,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const isActive = (href: string) => pathname === href;
 
   return (
-    <div className="min-h-screen flex bg-[#051A10] text-slate-100 selection:bg-emerald-400 selection:text-emerald-950">
+    <div className="min-h-screen flex bg-[#FAFDF9] text-[#0B2C22] selection:bg-emerald-200 selection:text-emerald-950">
       
       {/* ======================================================== */}
-      {/* 1. DESKTOP DARK GREEN SIDEBAR                           */}
+      {/* 1. DESKTOP SIDEBAR (WHITE CARDS + GREEN FONTS)           */}
       {/* ======================================================== */}
-      <aside className="hidden lg:flex w-72 flex-col justify-between border-r border-[#12422A] bg-[#072417] p-5 shrink-0 select-none">
+      <aside className="hidden lg:flex w-72 flex-col justify-between border-r border-emerald-100/80 bg-white p-5 shrink-0 select-none shadow-[2px_0_12px_rgba(0,0,0,0.02)]">
         <div className="space-y-6">
           
           {/* Logo & Root Tag */}
-          <div className="space-y-3 pb-4 border-b border-[#12422A]">
+          <div className="space-y-3 pb-4 border-b border-emerald-100/80">
             <Link href="/" className="inline-block group">
-              <div className="p-2.5 rounded-2xl bg-white/95 backdrop-blur shadow-md hover:scale-102 transition-transform">
+              <div className="p-2 rounded-2xl bg-[#FAFDF9] border border-emerald-100 hover:border-emerald-300 transition-all">
                 <Image
                   src="/logo.png"
                   alt="SchoolRide LK"
@@ -132,11 +132,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Link>
             
             <div className="flex items-center justify-between px-1">
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#4ADE80] flex items-center gap-1.5">
-                <span className="flex h-2 w-2 rounded-full bg-[#4ADE80] animate-pulse" />
+              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#16A34A] flex items-center gap-1.5">
+                <span className="flex h-2 w-2 rounded-full bg-[#16A34A] animate-pulse" />
                 Root Authority
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#0D3823] text-emerald-300 border border-[#1A5C39]">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#EAF6ED] text-[#094718] border border-[#BCE6C9]">
                 Admin Console
               </span>
             </div>
@@ -144,7 +144,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
           {/* Navigation Links */}
           <nav className="space-y-1.5">
-            <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#688E79]">
+            <div className="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-[#4E6258]">
               Operations &amp; Security
             </div>
             {adminNavItems.map((item) => {
@@ -156,21 +156,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   href={item.href}
                   className={`flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-semibold transition-all group ${
                     active
-                      ? 'bg-[#0E3E27] text-white shadow-sm border border-[#22C55E]/40 font-bold'
-                      : 'text-[#96B7A5] hover:bg-[#0B3320] hover:text-white'
+                      ? 'bg-[#094718] text-white shadow-sm font-bold'
+                      : 'text-[#4E6258] hover:bg-[#EAF6ED] hover:text-[#094718]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <Icon
                       className={`h-4 w-4 transition-colors ${
-                        active ? 'text-[#4ADE80]' : 'text-[#688E79] group-hover:text-[#4ADE80]'
+                        active ? 'text-white' : 'text-[#709080] group-hover:text-[#094718]'
                       }`}
                     />
                     <span>{item.name}</span>
                   </div>
                   {item.badge && (
                     <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${item.badgeColor}`}
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                        active ? 'bg-white/20 text-white border-white/30' : item.badgeColor
+                      }`}
                     >
                       {item.badge}
                     </span>
@@ -181,35 +183,35 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </nav>
 
           {/* Quick Shortcuts */}
-          <div className="p-3.5 rounded-2xl bg-[#092B1C] border border-[#144D30] space-y-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-[#4ADE80] block">
+          <div className="p-3.5 rounded-2xl bg-[#F4FAF5] border border-emerald-100 space-y-2">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#094718] block">
               Island-Wide Coverage
             </span>
-            <p className="text-[11px] text-[#8DAE9C] leading-snug">
+            <p className="text-[11px] text-[#4E6258] leading-snug">
               Monitoring verified school van operations across Western, Central &amp; Southern provinces.
             </p>
-            <div className="pt-1 flex items-center gap-2 text-[10px] font-semibold text-[#86EFAC]">
-              <Radio className="h-3.5 w-3.5 text-[#4ADE80] animate-pulse" />
+            <div className="pt-1 flex items-center gap-2 text-[10px] font-semibold text-[#094718]">
+              <Radio className="h-3.5 w-3.5 text-[#16A34A] animate-pulse" />
               <span>Real-time GPS Active</span>
             </div>
           </div>
         </div>
 
         {/* Sidebar Footer: System Status & User Profile */}
-        <div className="space-y-4 pt-4 border-t border-[#12422A]">
+        <div className="space-y-4 pt-4 border-t border-emerald-100/80">
           <div className="flex items-center gap-2.5 px-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#166534] to-[#0D3823] text-[#86EFAC] font-bold text-xs border border-[#22C55E]/40 shadow-sm">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#EAF6ED] text-[#094718] font-bold text-xs border border-[#CDE9D3] shadow-sm">
               {user?.fullName?.slice(0, 2).toUpperCase() || 'AD'}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-xs font-bold text-white truncate">{user?.fullName || 'Root Admin'}</div>
-              <div className="text-[10px] text-[#4ADE80] truncate font-medium">superadmin@schoolride.lk</div>
+              <div className="text-xs font-bold text-[#0B2C22] truncate">{user?.fullName || 'Root Admin'}</div>
+              <div className="text-[10px] text-[#16A34A] truncate font-medium">superadmin@schoolride.lk</div>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <Link href="/" className="flex-1">
-              <button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#0B3320] hover:bg-[#0E3E27] text-[11px] font-semibold text-emerald-200 border border-[#165A37] transition-colors cursor-pointer">
+              <button className="w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#FAFDF9] hover:bg-[#EAF6ED] text-[11px] font-semibold text-[#094718] border border-emerald-200 transition-colors cursor-pointer">
                 <span>Public Site</span>
                 <ExternalLink className="h-3 w-3" />
               </button>
@@ -217,7 +219,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <button
               onClick={() => logout()}
               title="Logout"
-              className="p-2 rounded-xl bg-[#1A1A10] hover:bg-rose-950/60 text-slate-300 hover:text-rose-300 border border-slate-700/60 hover:border-rose-700/60 transition-colors cursor-pointer"
+              className="p-2 rounded-xl bg-slate-50 hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200 hover:border-rose-200 transition-colors cursor-pointer"
             >
               <LogOut className="h-4 w-4" />
             </button>
@@ -226,17 +228,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* ======================================================== */}
-      {/* 2. MAIN CONTENT AREA WITH DARK GREEN TOPBAR              */}
+      {/* 2. MAIN CONTENT AREA WITH WHITE TOPBAR                   */}
       {/* ======================================================== */}
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         
         {/* Topbar */}
-        <header className="sticky top-0 z-30 flex h-16 items-center justify-between px-4 sm:px-8 border-b border-[#12422A] bg-[#072417]/95 backdrop-blur-md">
+        <header className="sticky top-0 z-30 flex h-16 items-center justify-between px-4 sm:px-8 border-b border-emerald-100/80 bg-white/95 backdrop-blur-md">
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-3 lg:hidden">
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl bg-[#0B3320] text-emerald-300 border border-[#165A37]"
+              className="p-2 rounded-xl bg-[#EAF6ED] text-[#094718] border border-[#CDE9D3]"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
@@ -245,17 +247,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               alt="SchoolRide LK"
               width={130}
               height={26}
-              className="h-6 w-auto object-contain bg-white/90 p-1 rounded-lg"
+              className="h-6 w-auto object-contain"
             />
           </div>
 
           {/* Breadcrumb / Title */}
-          <div className="hidden lg:flex items-center gap-2 text-xs font-semibold text-[#8DAE9C]">
-            <Link href="/admin/dashboard" className="hover:text-white transition-colors">
+          <div className="hidden lg:flex items-center gap-2 text-xs font-semibold text-[#4E6258]">
+            <Link href="/admin/dashboard" className="hover:text-[#094718] transition-colors">
               SchoolRide LK Admin
             </Link>
-            <ChevronRight className="h-3.5 w-3.5 text-[#4ADE80]" />
-            <span className="text-white font-bold capitalize">
+            <ChevronRight className="h-3.5 w-3.5 text-[#16A34A]" />
+            <span className="text-[#0B2C22] font-bold capitalize">
               {pathname.replace('/admin/', '').replace('-', ' ') || 'Dashboard'}
             </span>
           </div>
@@ -263,23 +265,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Right Header Status Widgets */}
           <div className="flex items-center gap-4">
             {/* Live Sri Lanka Time */}
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#092B1C] border border-[#144D30] text-xs font-mono text-[#86EFAC]">
-              <Clock className="h-3.5 w-3.5 text-[#4ADE80]" />
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EAF6ED] border border-[#CDE9D3] text-xs font-mono text-[#094718] font-bold">
+              <Clock className="h-3.5 w-3.5 text-[#16A34A]" />
               <span>{currentTime || '08:30:00 AM'} SLST</span>
             </div>
 
             {/* Mock API indicator */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#0B3522] border border-[#1B643E] text-[11px] font-bold text-white shadow-sm">
-              <span className="flex h-2 w-2 rounded-full bg-[#4ADE80] animate-pulse" />
-              <span className="text-[#86EFAC]">API :4000</span>
-              <span className="text-emerald-400/60 font-mono text-[10px]">CONNECTED</span>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EBF7EE] border border-[#BCE6C9] text-[11px] font-bold text-[#094718] shadow-sm">
+              <span className="flex h-2 w-2 rounded-full bg-[#16A34A] animate-pulse" />
+              <span>API :4000</span>
+              <span className="text-[#16A34A] font-mono text-[10px]">CONNECTED</span>
             </div>
 
             <Link href="/" className="hidden md:inline-flex">
               <Button
                 variant="outline"
                 size="sm"
-                className="bg-[#0B3320] text-emerald-200 border-[#1A5C39] hover:bg-[#0E3E27] hover:text-white text-xs"
+                className="bg-white text-[#094718] border-emerald-200 hover:bg-[#EAF6ED] hover:text-[#073713] text-xs font-bold"
               >
                 View Public Site <ExternalLink className="h-3 w-3 ml-1.5" />
               </Button>
@@ -289,7 +291,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden p-4 bg-[#072417] border-b border-[#12422A] space-y-2">
+          <div className="lg:hidden p-4 bg-white border-b border-emerald-100 space-y-2">
             {adminNavItems.map((item) => {
               const active = isActive(item.href);
               const Icon = item.icon;
@@ -300,12 +302,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   onClick={() => setMobileMenuOpen(false)}
                   className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold ${
                     active
-                      ? 'bg-[#0E3E27] text-white border border-[#22C55E]/40 font-bold'
-                      : 'text-[#96B7A5] hover:bg-[#0B3320] hover:text-white'
+                      ? 'bg-[#094718] text-white font-bold'
+                      : 'text-[#4E6258] hover:bg-[#EAF6ED] hover:text-[#094718]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Icon className="h-4 w-4 text-[#4ADE80]" />
+                    <Icon className="h-4 w-4" />
                     <span>{item.name}</span>
                   </div>
                   {item.badge && (
@@ -319,8 +321,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         )}
 
-        {/* Page Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-[#051A10]">
+        {/* Page Content: White cards with green fonts on light canvas */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-[#FAFDF9]">
           {children}
         </main>
       </div>

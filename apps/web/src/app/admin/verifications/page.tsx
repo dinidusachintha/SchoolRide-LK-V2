@@ -100,8 +100,8 @@ export default function AdminVerificationsPage() {
   if (isLoading || authLoading) {
     return (
       <div className="space-y-6 w-full">
-        <Skeleton className="h-8 w-64 bg-[#092B1C]" />
-        <Skeleton className="h-96 w-full rounded-2xl bg-[#092B1C]" />
+        <Skeleton className="h-8 w-64 bg-emerald-950/[0.05]" />
+        <Skeleton className="h-96 w-full rounded-2xl bg-white border border-emerald-100" />
       </div>
     );
   }
@@ -109,154 +109,114 @@ export default function AdminVerificationsPage() {
   return (
     <div className="space-y-8 w-full text-left">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#12422A] pb-5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-100 pb-5">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Link href="/admin/dashboard" className="text-[#8DAE9C] hover:text-[#4ADE80] transition-colors mr-1">
+            <Link href="/admin/dashboard" className="text-[#4E6258] hover:text-[#094718] transition-colors mr-1">
               <ArrowLeft className="h-5 w-5" />
             </Link>
-            <h1 className="text-2xl font-black text-white tracking-tight">
-              Driver Verification <span className="text-[#4ADE80]">Inspection Queue</span>
+            <h1 className="text-2xl font-black text-[#0B2C22] tracking-tight">
+              Driver Verification <span className="text-[#16A34A]">Inspection Queue</span>
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-[#8DAE9C]">
+          <p className="text-xs sm:text-sm text-[#4E6258]">
             Strict child safety compliance: inspect identity documents, police clearance, and vehicle roadworthiness before granting live status.
           </p>
         </div>
 
-        <span className="px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-wider shrink-0">
+        <span className="px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold uppercase tracking-wider shrink-0 shadow-sm">
           {queue.length} Pending Applications
         </span>
       </div>
 
-      {/* Queue List */}
+      {/* Queue List: Pure White Cards with Green Typography */}
       {queue.length === 0 ? (
-        <div className="p-12 rounded-2xl bg-[#092B1C] border border-[#144D30] text-center space-y-3">
-          <div className="h-12 w-12 rounded-full bg-[#0E3E27] text-[#4ADE80] flex items-center justify-center mx-auto border border-[#165A37]">
+        <div className="p-12 rounded-2xl bg-white border border-emerald-950/[0.08] text-center space-y-3 shadow-sm">
+          <div className="h-12 w-12 rounded-full bg-[#EAF6ED] text-[#094718] flex items-center justify-center mx-auto border border-[#CDE9D3]">
             <CheckCircle2 className="h-6 w-6" />
           </div>
-          <h3 className="text-lg font-bold text-white">Verification Queue is Clear</h3>
-          <p className="text-xs text-[#8DAE9C] max-w-md mx-auto">
+          <h3 className="text-lg font-bold text-[#0B2C22]">Verification Queue is Clear</h3>
+          <p className="text-xs text-[#4E6258] max-w-md mx-auto">
             There are currently no driver applications awaiting administrative review. Outstanding work!
           </p>
         </div>
       ) : (
         <div className="space-y-6">
           {queue.map((driver) => (
-            <div key={driver.id} className="p-6 rounded-2xl bg-[#092B1C] border border-[#144D30] space-y-5 shadow-sm">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#12422A] pb-4">
+            <div key={driver.id} className="p-6 rounded-2xl bg-white border border-emerald-950/[0.08] space-y-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:border-emerald-300 transition-all">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-100 pb-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#0E3E27] text-[#4ADE80] border border-[#165A37] shrink-0">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#EAF6ED] text-[#094718] border border-[#CDE9D3] shrink-0">
                     <User className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white">
+                    <h3 className="text-lg font-bold text-[#0B2C22]">
                       {driver.user?.fullName}
                     </h3>
-                    <p className="text-xs text-[#8DAE9C]">
-                      Email: <span className="text-white">{driver.user?.email}</span> • Phone: <strong className="text-[#4ADE80]">{driver.user?.phone}</strong> • Region:{' '}
-                      <span className="text-white">{driver.user?.district} ({driver.user?.city})</span>
+                    <p className="text-xs text-[#4E6258]">
+                      Email: <span className="text-[#0B2C22] font-semibold">{driver.user?.email}</span> • Phone: <strong className="text-[#094718]">{driver.user?.phone}</strong> • Region:{' ' }
+                      <span className="text-[#0B2C22] font-semibold">{driver.user?.district} ({driver.user?.city})</span>
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2.5">
-                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/10 border border-amber-500/30 text-amber-300">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 border border-amber-200 text-amber-800">
                     {driver.verificationStatus}
                   </span>
-                  <span className="text-[11px] text-[#86EFAC] font-mono">
+                  <span className="text-[11px] text-[#16A34A] font-mono font-bold">
                     Applied: {formatSriLankanDateTime(driver.createdAt)}
                   </span>
                 </div>
               </div>
 
               {/* Bio & Details */}
-              <div className="p-3.5 rounded-xl bg-[#072417] border border-[#12422A] text-xs text-[#8DAE9C] leading-relaxed">
-                <strong className="text-white">Service Bio:</strong> {driver.bio || 'No description provided.'}
-                <div className="mt-1.5 flex flex-wrap items-center gap-4 text-[11px] text-white">
-                  <span>Driving Experience: <strong className="text-[#4ADE80]">{driver.experienceYears || 0} years</strong></span>
-                  <span>NIC: <strong className="text-[#86EFAC] font-mono">{driver.nicNumber || 'N/A'}</strong></span>
-                  <span>License No: <strong className="text-[#86EFAC] font-mono">{driver.licenseNumber || 'N/A'}</strong></span>
+              <div className="p-4 rounded-xl bg-[#FAFDF9] border border-emerald-100 text-xs text-[#4E6258] leading-relaxed">
+                <strong className="text-[#0B2C22]">Service Bio:</strong> {driver.bio || 'No description provided.'}
+                <div className="mt-2 flex flex-wrap items-center gap-4 text-[11px] text-[#0B2C22]">
+                  <span>Driving Experience: <strong className="text-[#094718] font-bold">{driver.experienceYears || 0} years</strong></span>
+                  <span>NIC: <strong className="text-[#094718] font-mono font-bold">{driver.nicNumber || 'N/A'}</strong></span>
+                  <span>License No: <strong className="text-[#094718] font-mono font-bold">{driver.licenseNumber || 'N/A'}</strong></span>
                 </div>
               </div>
 
-              {/* Submitted Documents Checklist */}
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#86EFAC] mb-2.5">
-                  Uploaded Verification Documents ({driver.documents?.length || 0})
-                </h4>
-                {driver.documents?.length === 0 ? (
-                  <p className="text-xs text-amber-400 italic">No documents uploaded yet.</p>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5">
-                    {driver.documents.map((doc: any) => (
-                      <div
-                        key={doc.id}
-                        className="p-3 rounded-xl border border-[#165A37] bg-[#072417] flex items-center justify-between gap-2 text-xs"
-                      >
-                        <div>
-                          <p className="font-bold text-white capitalize">{doc.documentType.replace(/_/g, ' ')}</p>
-                          <p className="text-[11px] text-[#8DAE9C] font-mono truncate max-w-[150px]">
-                            {doc.fileName}
-                          </p>
+              {/* Registered Vehicles */}
+              {driver.vehicles && driver.vehicles.length > 0 && (
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-[#0B2C22] uppercase tracking-wider block">
+                    Registered Vehicle Information:
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {driver.vehicles.map((v: any) => (
+                      <div key={v.id} className="p-4 rounded-xl bg-[#F4FAF5] border border-emerald-100 flex items-center justify-between">
+                        <div className="space-y-0.5">
+                          <span className="text-sm font-bold text-[#0B2C22] block">{v.model} ({v.type})</span>
+                          <span className="text-xs text-[#4E6258] font-mono block">Plate: {v.licensePlate}</span>
+                          <span className="text-[11px] text-[#16A34A] font-bold">Capacity: {v.capacity} Seats {v.isAirConditioned ? '• AC' : ''}</span>
                         </div>
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold text-[#4ADE80] bg-[#0E3E27] border border-[#22C55E]/30">
-                          Submitted
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EAF6ED] text-[#094718] border border-[#CDE9D3]">
+                          {v.color || 'Yellow Commuter'}
                         </span>
                       </div>
                     ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
-              {/* Registered Vehicles */}
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-wider text-[#86EFAC] mb-2.5">
-                  Associated Fleet Vehicles ({driver.vehicles?.length || 0})
-                </h4>
-                {driver.vehicles?.length === 0 ? (
-                  <p className="text-xs text-[#8DAE9C] italic">No vehicles registered.</p>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {driver.vehicles.map((v: any) => (
-                      <div
-                        key={v.id}
-                        className="p-3.5 rounded-xl border border-[#165A37] bg-[#072417] space-y-1 text-xs"
-                      >
-                        <div className="flex items-center justify-between">
-                          <strong className="text-white">
-                            {v.make} {v.model} ({v.year})
-                          </strong>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-[#0B3320] text-[#4ADE80] border border-[#165A37]">
-                            {v.licensePlate}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-[#8DAE9C]">
-                          Capacity: <span className="text-white font-semibold">{v.capacity} Children</span> • {v.isAirConditioned ? 'A/C Equipped' : 'Non A/C'}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Approval Action Bar */}
-              <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#12422A]">
+              {/* Verification Actions */}
+              <div className="flex items-center justify-end gap-3 pt-2 border-t border-emerald-100">
                 <button
-                  type="button"
                   onClick={() => setRejectingDriverId(driver.id)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-rose-300 hover:text-white bg-rose-950/40 hover:bg-rose-900 border border-rose-500/30 transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-xl bg-white hover:bg-rose-50 text-rose-700 font-bold text-xs border border-rose-200 transition-colors cursor-pointer"
                 >
-                  <XCircle className="h-3.5 w-3.5" />
-                  <span>Reject Application</span>
+                  Reject with Feedback
                 </button>
                 <button
-                  type="button"
                   onClick={() => handleApprove(driver.id)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#166534] hover:bg-[#15803d] border border-[#22C55E]/40 shadow-sm transition-colors cursor-pointer flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl bg-[#094718] hover:bg-[#073713] text-white font-bold text-xs shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
-                  <CheckCircle2 className="h-3.5 w-3.5 text-[#86EFAC]" />
-                  <span>Approve &amp; Grant Authority</span>
+                  <CheckCircle2 className="h-4 w-4 text-[#86EFAC]" />
+                  <span>Verify &amp; Authorize Operating Status</span>
                 </button>
               </div>
             </div>
@@ -264,33 +224,39 @@ export default function AdminVerificationsPage() {
         </div>
       )}
 
-      {/* Reject Reason Dialog */}
-      <Dialog open={!!rejectingDriverId} onOpenChange={(open) => !open && setRejectingDriverId(null)}>
-        <DialogContent className="max-w-md bg-[#072417] border border-[#12422A] text-white">
+      {/* Reject Modal */}
+      <Dialog open={!!rejectingDriverId} onOpenChange={() => setRejectingDriverId(null)}>
+        <DialogContent className="sm:max-w-md bg-white border border-emerald-100 text-[#0B2C22]">
           <DialogHeader>
-            <DialogTitle className="text-white">Reject Driver Application</DialogTitle>
+            <DialogTitle className="text-lg font-bold text-[#0B2C22]">
+              Reject Driver Verification
+            </DialogTitle>
           </DialogHeader>
-
-          <form onSubmit={handleReject} className="space-y-4 py-2">
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#86EFAC] mb-1.5">
-                Rejection Reason &amp; Required Corrections *
-              </label>
-              <Textarea
-                rows={4}
-                placeholder="e.g. Driving license image is unreadable. Please provide a clear scan showing expiration date and heavy vehicle endorsement."
-                value={rejectReason}
-                onChange={(e) => setRejectReason(e.target.value)}
-                className="bg-[#051A10] border-[#165A37] text-white placeholder:text-slate-500"
-                required
-              />
-            </div>
-
-            <DialogFooter className="gap-2">
-              <Button type="button" variant="outline" onClick={() => setRejectingDriverId(null)} className="border-[#165A37] text-slate-300 hover:bg-[#0B3320]">
+          <form onSubmit={handleReject} className="space-y-4 pt-2">
+            <p className="text-xs text-[#4E6258]">
+              Please state why the credentials failed compliance (e.g., blurred NIC, expired revenue license, unverified commercial heavy license).
+            </p>
+            <Textarea
+              placeholder="e.g. Please upload a clear photo of your 2026 Provincial Revenue License."
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              className="bg-[#FAFDF9] border-emerald-200 text-[#0B2C22] text-xs min-h-[100px]"
+              required
+            />
+            <DialogFooter className="gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setRejectingDriverId(null)}
+                className="bg-white text-[#4E6258] border-slate-200"
+              >
                 Cancel
               </Button>
-              <Button type="submit" variant="destructive" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs"
+              >
                 {isSubmitting ? 'Rejecting...' : 'Confirm Rejection'}
               </Button>
             </DialogFooter>

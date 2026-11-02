@@ -48,114 +48,103 @@ export default function AdminAuditLogsPage() {
     if (user) {
       loadLogs(page);
     }
-  }, [user, authLoading, router, page, loadLogs]);
-
-  if (isLoading && logs.length === 0) {
-    return (
-      <div className="space-y-6 w-full">
-        <Skeleton className="h-8 w-64 bg-[#092B1C]" />
-        <Skeleton className="h-96 w-full rounded-2xl bg-[#092B1C]" />
-      </div>
-    );
-  }
-
-  const totalPages = Math.ceil(totalCount / 25) || 1;
+  }, [user, authLoading, router, loadLogs, page]);
 
   return (
     <div className="space-y-8 w-full text-left">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#12422A] pb-5">
+      {/* Top Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-100 pb-5">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Link href="/admin/dashboard" className="text-[#8DAE9C] hover:text-[#4ADE80] transition-colors mr-1">
+            <Link href="/admin/dashboard" className="text-[#4E6258] hover:text-[#094718] transition-colors mr-1">
               <ArrowLeft className="h-5 w-5" />
             </Link>
-            <h1 className="text-2xl font-black text-white tracking-tight">
-              Security &amp; Administrative <span className="text-[#4ADE80]">Audit Logs</span>
+            <h1 className="text-2xl font-black text-[#0B2C22] tracking-tight">
+              Security &amp; Compliance <span className="text-[#16A34A]">Audit Trail</span>
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-[#8DAE9C]">
-            Immutable system audit records of authentications, credential validations, status changes, and administrative actions.
+          <p className="text-xs sm:text-sm text-[#4E6258]">
+            Immutable chronological logging of administrative actions, role modifications, and KYC decisions.
           </p>
         </div>
 
-        <span className="px-3 py-1.5 rounded-full bg-[#092B1C] border border-[#144D30] font-mono text-xs text-[#86EFAC] shrink-0">
-          {totalCount} Total Events
+        <span className="px-3.5 py-1.5 rounded-full bg-[#EAF6ED] border border-[#BCE6C9] text-[#094718] text-xs font-bold shrink-0">
+          {totalCount} Total System Events
         </span>
       </div>
 
-      {/* Audit Log Table in Dark Green Terminal Style */}
-      <div className="rounded-2xl overflow-hidden border border-[#144D30] bg-[#092B1C] shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs font-mono">
-            <thead className="bg-[#072417] text-[#86EFAC] uppercase font-bold border-b border-[#12422A]">
-              <tr>
-                <th className="py-3.5 px-4">Timestamp (SLST)</th>
-                <th className="py-3.5 px-4">Action</th>
-                <th className="py-3.5 px-4">Actor</th>
-                <th className="py-3.5 px-4">Resource</th>
-                <th className="py-3.5 px-4">Details</th>
-                <th className="py-3.5 px-4">IP Address</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#12422A]">
-              {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-[#0B3320] transition-colors">
-                  <td className="py-3 px-4 text-[#8DAE9C] whitespace-nowrap">
-                    {formatSriLankanDateTime(log.createdAt)}
-                  </td>
-
-                  <td className="py-3 px-4">
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-[#0E3E27] text-[#4ADE80] border border-[#22C55E]/30 whitespace-nowrap">
-                      {log.action}
-                    </span>
-                  </td>
-
-                  <td className="py-3 px-4 text-white">
-                    {log.user ? (
-                      <span title={log.user.email}>{log.user.fullName}</span>
-                    ) : (
-                      <span className="text-[#8DAE9C]">SYSTEM</span>
-                    )}
-                  </td>
-
-                  <td className="py-3 px-4 text-[#86EFAC]">
-                    {log.entityType ? `${log.entityType}:${log.entityId?.slice(0, 8)}` : '—'}
-                  </td>
-
-                  <td className="py-3 px-4 text-slate-300 max-w-xs truncate" title={JSON.stringify(log.details || {})}>
-                    {log.details ? JSON.stringify(log.details) : '—'}
-                  </td>
-
-                  <td className="py-3 px-4 text-[#8DAE9C]">
-                    {log.ipAddress || '127.0.0.1'}
-                  </td>
+      {/* Audit Log Table: White Card with Green Headers */}
+      <div className="rounded-2xl bg-white border border-emerald-950/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden">
+        {isLoading ? (
+          <div className="p-8 space-y-4">
+            <Skeleton className="h-6 w-full bg-emerald-950/[0.05]" />
+            <Skeleton className="h-6 w-full bg-emerald-950/[0.05]" />
+            <Skeleton className="h-6 w-full bg-emerald-950/[0.05]" />
+          </div>
+        ) : logs.length === 0 ? (
+          <div className="p-12 text-center text-xs text-[#4E6258]">
+            No audit log entries recorded in database.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F4FAF5] text-[#094718] border-b border-emerald-100 font-bold uppercase tracking-wider text-[11px]">
+                <tr>
+                  <th className="py-3.5 px-4">Timestamp (SLST)</th>
+                  <th className="py-3.5 px-4">Action</th>
+                  <th className="py-3.5 px-4">Entity Type</th>
+                  <th className="py-3.5 px-4">Entity ID</th>
+                  <th className="py-3.5 px-4">Metadata</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-emerald-100/60">
+                {logs.map((log) => (
+                  <tr key={log.id} className="hover:bg-[#FAFDF9] transition-colors">
+                    <td className="py-3.5 px-4 font-mono text-[11px] text-[#16A34A] font-semibold">
+                      {formatSriLankanDateTime(log.createdAt)}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#EAF6ED] text-[#094718] border border-[#BCE6C9]">
+                        {log.action}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 font-bold text-[#0B2C22]">
+                      {log.entityType}
+                    </td>
+                    <td className="py-3.5 px-4 font-mono text-xs text-[#4E6258]">
+                      {log.entityId}
+                    </td>
+                    <td className="py-3.5 px-4 text-[#4E6258]">
+                      {log.metadata ? (
+                        <pre className="font-mono text-[10px] text-[#094718] bg-[#F4FAF5] p-1.5 rounded-lg border border-emerald-100 overflow-x-auto max-w-xs">
+                          {JSON.stringify(log.metadata)}
+                        </pre>
+                      ) : (
+                        <span className="text-slate-400">—</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         {/* Pagination Bar */}
-        <div className="p-4 bg-[#072417] border-t border-[#12422A] flex items-center justify-between text-xs text-[#8DAE9C]">
-          <span>
-            Page <strong className="text-white">{page}</strong> of <strong className="text-white">{totalPages}</strong>
-          </span>
-
+        <div className="p-4 bg-[#FAFDF9] border-t border-emerald-100 flex items-center justify-between text-xs text-[#4E6258]">
+          <span>Page {page} of {Math.ceil(totalCount / 25) || 1}</span>
           <div className="flex items-center gap-2">
             <button
-              type="button"
+              onClick={() => setPage((p) => Math.max(p - 1, 1))}
               disabled={page <= 1}
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="p-1.5 rounded-lg border border-[#165A37] text-white disabled:opacity-30 hover:bg-[#0B3320]"
+              className="p-1.5 rounded-lg border border-emerald-200 bg-white text-[#0B2C22] hover:bg-emerald-50 disabled:opacity-40 cursor-pointer"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
-              type="button"
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              className="p-1.5 rounded-lg border border-[#165A37] text-white disabled:opacity-30 hover:bg-[#0B3320]"
+              onClick={() => setPage((p) => p + 1)}
+              disabled={page * 25 >= totalCount}
+              className="p-1.5 rounded-lg border border-emerald-200 bg-white text-[#0B2C22] hover:bg-emerald-50 disabled:opacity-40 cursor-pointer"
             >
               <ChevronRight className="h-4 w-4" />
             </button>

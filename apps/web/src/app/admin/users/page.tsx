@@ -66,226 +66,233 @@ export default function AdminUsersPage() {
     }
   }, [user, authLoading, router, loadUsers]);
 
-  const handleUpdateStatus = async (targetUser: any, status: AccountStatus, reason?: string) => {
+  const handleToggleSuspend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!suspendingUser) return;
+
+    setIsSubmitting(true);
     try {
-      await api.patch(`/admin/users/${targetUser.id}/status`, {
-        status,
-        reason,
-      });
-      toast.success(`User account status updated to ${status}`);
+      if (suspendingUser.status === AccountStatus.SUSPENDED) {
+        await api.patch(`/admin/users/${suspendingUser.id}/reactivate`, {});
+        toast.success(`Account for ${suspendingUser.fullName} reactivated.`);
+      } else {
+        await api.patch(`/admin/users/${suspendingUser.id}/suspend`, {
+          reason: suspendReason.trim() || 'Administrative security suspension',
+        });
+        toast.warning(`Account for ${suspendingUser.fullName} suspended.`);
+      }
       setSuspendingUser(null);
       setSuspendReason('');
       loadUsers();
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update user status.');
+      toast.error(err.message || 'Failed to update account status.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (isLoading && users.length === 0) {
-    return (
-      <div className="space-y-6 w-full">
-        <Skeleton className="h-8 w-64 bg-[#092B1C]" />
-        <Skeleton className="h-96 w-full rounded-2xl bg-[#092B1C]" />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-8 w-full text-left">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#12422A] pb-5">
+      {/* Top Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-100 pb-5">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Link href="/admin/dashboard" className="text-[#8DAE9C] hover:text-[#4ADE80] transition-colors mr-1">
+            <Link href="/admin/dashboard" className="text-[#4E6258] hover:text-[#094718] transition-colors mr-1">
               <ArrowLeft className="h-5 w-5" />
             </Link>
-            <h1 className="text-2xl font-black text-white tracking-tight">
-              Platform User <span className="text-[#4ADE80]">Directory &amp; Moderation</span>
+            <h1 className="text-2xl font-black text-[#0B2C22] tracking-tight">
+              User Identity <span className="text-[#16A34A]">&amp; Access Control</span>
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-[#8DAE9C]">
-            Search, inspect, and manage accounts for registered parents, van drivers, and administrative staff.
+          <p className="text-xs sm:text-sm text-[#4E6258]">
+            Manage platform users, inspect role assignments, and enforce safety suspensions.
           </p>
         </div>
 
-        <span className="px-3 py-1.5 rounded-full bg-[#092B1C] border border-[#144D30] text-xs font-mono text-[#86EFAC] shrink-0">
-          {users.length} Records Found
+        <span className="px-3.5 py-1.5 rounded-full bg-[#EAF6ED] border border-[#BCE6C9] text-[#094718] text-xs font-bold shrink-0">
+          {users.length} Users Listed
         </span>
       </div>
 
-      {/* Filter and Search Bar in Dark Green */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+      {/* Filter Toolbar: White Card */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-white border border-emerald-950/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.03)] grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
         <div className="sm:col-span-2 relative">
-          <Search className="absolute left-3 top-3 h-4 w-4 text-[#8DAE9C]" />
           <input
             type="text"
-            placeholder="Search by name, email, or phone number..."
-            className="w-full h-10 pl-9 pr-3 rounded-xl border border-[#165A37] bg-[#072417] text-white text-xs placeholder:text-slate-500 focus:outline-none focus:border-[#4ADE80]"
+            placeholder="Search by full name, email, phone or district..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs text-[#0B2C22] placeholder:text-[#709080] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
           />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-[#709080]" />
         </div>
 
         <div>
           <select
-            className="w-full h-10 px-3 rounded-xl border border-[#165A37] bg-[#072417] text-white text-xs focus:outline-none focus:border-[#4ADE80]"
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
+            className="w-full px-3 py-2.5 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs font-semibold text-[#0B2C22] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
           >
             <option value="">All Roles</option>
             <option value={UserRole.PARENT}>Parents</option>
-            <option value={UserRole.DRIVER}>Van Operators</option>
+            <option value={UserRole.DRIVER}>Drivers</option>
             <option value={UserRole.ADMIN}>Administrators</option>
           </select>
         </div>
 
         <div>
           <select
-            className="w-full h-10 px-3 rounded-xl border border-[#165A37] bg-[#072417] text-white text-xs focus:outline-none focus:border-[#4ADE80]"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
+            className="w-full px-3 py-2.5 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs font-semibold text-[#0B2C22] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
           >
             <option value="">All Statuses</option>
             <option value={AccountStatus.ACTIVE}>Active</option>
+            <option value={AccountStatus.PENDING_VERIFICATION}>Pending Verification</option>
             <option value={AccountStatus.SUSPENDED}>Suspended</option>
-            <option value={AccountStatus.PENDING_VERIFICATION}>Pending</option>
           </select>
         </div>
       </div>
 
-      {/* Users Table in Dark Green with Light Green Font Highlights */}
-      <div className="rounded-2xl overflow-hidden border border-[#144D30] bg-[#092B1C] shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-[#072417] text-[#86EFAC] uppercase font-bold border-b border-[#12422A]">
-              <tr>
-                <th className="py-3.5 px-4">User</th>
-                <th className="py-3.5 px-4">Role</th>
-                <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4">District / City</th>
-                <th className="py-3.5 px-4">Joined</th>
-                <th className="py-3.5 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[#12422A]">
-              {users.map((u) => {
-                const isActive = u.status === AccountStatus.ACTIVE;
-                const isSuspended = u.status === AccountStatus.SUSPENDED;
-
-                return (
-                  <tr key={u.id} className="hover:bg-[#0B3320] transition-colors">
+      {/* Users Table: White Card with Green Headers */}
+      <div className="rounded-2xl bg-white border border-emerald-950/[0.08] shadow-sm overflow-hidden">
+        {isLoading ? (
+          <div className="p-8 space-y-4">
+            <Skeleton className="h-6 w-full bg-emerald-950/[0.05]" />
+            <Skeleton className="h-6 w-full bg-emerald-950/[0.05]" />
+            <Skeleton className="h-6 w-full bg-emerald-950/[0.05]" />
+          </div>
+        ) : users.length === 0 ? (
+          <div className="p-12 text-center text-xs text-[#4E6258]">
+            No users found matching current filters.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F4FAF5] text-[#094718] border-b border-emerald-100 font-bold uppercase tracking-wider text-[11px]">
+                <tr>
+                  <th className="py-3.5 px-4">User</th>
+                  <th className="py-3.5 px-4">Contact</th>
+                  <th className="py-3.5 px-4">Role</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4">Location</th>
+                  <th className="py-3.5 px-4">Registered</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-emerald-100/60">
+                {users.map((u) => (
+                  <tr key={u.id} className="hover:bg-[#FAFDF9] transition-colors">
                     <td className="py-3.5 px-4">
-                      <p className="font-bold text-white text-sm">{u.fullName}</p>
-                      <p className="text-[11px] text-[#86EFAC] font-mono">{u.email}</p>
-                      {u.phone && <p className="text-[10px] text-[#8DAE9C]">{u.phone}</p>}
+                      <div className="font-bold text-[#0B2C22]">{u.fullName}</div>
+                      <div className="text-[11px] text-[#4E6258]">{u.email}</div>
                     </td>
-
+                    <td className="py-3.5 px-4 font-mono text-[#0B2C22]">
+                      {u.phone}
+                    </td>
                     <td className="py-3.5 px-4">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                          u.role === UserRole.ADMIN
-                            ? 'bg-rose-500/10 text-rose-300 border-rose-500/30'
-                            : u.role === UserRole.DRIVER
-                            ? 'bg-amber-500/10 text-amber-300 border-amber-500/30'
-                            : 'bg-[#0E3E27] text-[#4ADE80] border-[#22C55E]/30'
-                        }`}
-                      >
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#EAF6ED] text-[#094718] border border-[#BCE6C9]">
                         {u.role}
                       </span>
                     </td>
-
                     <td className="py-3.5 px-4">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
-                          isActive
-                            ? 'bg-[#0E3E27] text-[#4ADE80] border-[#22C55E]/30'
-                            : isSuspended
-                            ? 'bg-rose-500/10 text-rose-300 border-rose-500/30'
-                            : 'bg-amber-500/10 text-amber-300 border-amber-500/30'
+                        className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                          u.status === AccountStatus.ACTIVE
+                            ? 'bg-[#EBF7EE] text-[#16A34A] border-[#BCE6C9]'
+                            : u.status === AccountStatus.SUSPENDED
+                            ? 'bg-rose-50 text-rose-700 border-rose-200'
+                            : 'bg-amber-50 text-amber-700 border-amber-200'
                         }`}
                       >
                         {u.status}
                       </span>
                     </td>
-
-                    <td className="py-3.5 px-4 text-[#8DAE9C]">
-                      {u.district || 'Colombo'}{u.city ? `, ${u.city}` : ''}
+                    <td className="py-3.5 px-4 text-[#4E6258]">
+                      {u.district} ({u.city})
                     </td>
-
-                    <td className="py-3.5 px-4 text-[#8DAE9C] font-mono text-[11px]">
+                    <td className="py-3.5 px-4 text-[#4E6258] font-mono text-[11px]">
                       {formatSriLankanDateTime(u.createdAt)}
                     </td>
-
                     <td className="py-3.5 px-4 text-right">
                       {u.role !== UserRole.ADMIN && (
-                        isActive ? (
-                          <button
-                            type="button"
-                            onClick={() => setSuspendingUser(u)}
-                            className="px-3 py-1 rounded-lg text-[11px] font-bold text-rose-300 hover:text-white bg-rose-950/40 hover:bg-rose-900 border border-rose-500/30 transition-colors cursor-pointer inline-flex items-center gap-1"
-                          >
-                            <UserX className="h-3 w-3" /> Suspend
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => handleUpdateStatus(u, AccountStatus.ACTIVE)}
-                            className="px-3 py-1 rounded-lg text-[11px] font-bold text-[#4ADE80] hover:text-white bg-[#0E3E27] hover:bg-[#15803d] border border-[#22C55E]/30 transition-colors cursor-pointer inline-flex items-center gap-1"
-                          >
-                            <UserCheck className="h-3 w-3" /> Activate
-                          </button>
-                        )
+                        <button
+                          onClick={() => {
+                            setSuspendingUser(u);
+                            setSuspendReason('');
+                          }}
+                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
+                            u.status === AccountStatus.SUSPENDED
+                              ? 'bg-[#EAF6ED] text-[#094718] border-[#CDE9D3] hover:bg-[#D8EFE0]'
+                              : 'bg-white text-rose-700 border-rose-200 hover:bg-rose-50'
+                          }`}
+                        >
+                          {u.status === AccountStatus.SUSPENDED ? 'Reactivate' : 'Suspend'}
+                        </button>
                       )}
                     </td>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
-      {/* Suspend Reason Dialog */}
-      <Dialog open={!!suspendingUser} onOpenChange={(open) => !open && setSuspendingUser(null)}>
-        <DialogContent className="max-w-md bg-[#072417] border border-[#12422A] text-white">
+      {/* Suspend / Reactivate Dialog */}
+      <Dialog open={!!suspendingUser} onOpenChange={() => setSuspendingUser(null)}>
+        <DialogContent className="sm:max-w-md bg-white border border-emerald-100 text-[#0B2C22]">
           <DialogHeader>
-            <DialogTitle className="text-white">Suspend User Account</DialogTitle>
+            <DialogTitle className="text-base font-bold text-[#0B2C22]">
+              {suspendingUser?.status === AccountStatus.SUSPENDED
+                ? `Reactivate Account: ${suspendingUser?.fullName}`
+                : `Suspend Account: ${suspendingUser?.fullName}`}
+            </DialogTitle>
           </DialogHeader>
-
-          <div className="space-y-4 py-2">
-            <p className="text-xs text-[#8DAE9C]">
-              You are suspending <strong className="text-white">{suspendingUser?.fullName}</strong>. They will be immediately blocked from signing in or accepting rides.
-            </p>
-
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#86EFAC] mb-1.5">
-                Audit Suspension Reason *
-              </label>
-              <Textarea
-                rows={3}
-                placeholder="e.g. Repeated safety complaints from parents regarding schedule punctuality and vehicle inspection expiry."
-                value={suspendReason}
-                onChange={(e) => setSuspendReason(e.target.value)}
-                className="bg-[#051A10] border-[#165A37] text-white placeholder:text-slate-500"
-              />
-            </div>
-
+          <form onSubmit={handleToggleSuspend} className="space-y-4 pt-2">
+            {suspendingUser?.status === AccountStatus.SUSPENDED ? (
+              <p className="text-xs text-[#4E6258]">
+                Reactivating will restore login access and allow this user to book rides or operate vans normally.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-xs text-[#4E6258]">
+                  Suspension immediately revokes active session access and driver operating status.
+                </p>
+                <Textarea
+                  placeholder="Reason for suspension (e.g., policy violation, complaint investigation)"
+                  value={suspendReason}
+                  onChange={(e) => setSuspendReason(e.target.value)}
+                  className="bg-[#FAFDF9] border-emerald-200 text-[#0B2C22] text-xs min-h-[90px]"
+                />
+              </div>
+            )}
             <DialogFooter className="gap-2">
-              <Button type="button" variant="outline" onClick={() => setSuspendingUser(null)} className="border-[#165A37] text-slate-300 hover:bg-[#0B3320]">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setSuspendingUser(null)}
+                className="bg-white text-[#4E6258] border-slate-200"
+              >
                 Cancel
               </Button>
               <Button
-                type="button"
-                variant="destructive"
+                type="submit"
                 disabled={isSubmitting}
-                onClick={() => handleUpdateStatus(suspendingUser, AccountStatus.SUSPENDED, suspendReason)}
+                className={
+                  suspendingUser?.status === AccountStatus.SUSPENDED
+                    ? 'bg-[#094718] hover:bg-[#073713] text-white font-bold text-xs'
+                    : 'bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs'
+                }
               >
-                {isSubmitting ? 'Suspending...' : 'Confirm Suspension'}
+                {isSubmitting
+                  ? 'Saving...'
+                  : suspendingUser?.status === AccountStatus.SUSPENDED
+                  ? 'Confirm Reactivation'
+                  : 'Confirm Suspension'}
               </Button>
             </DialogFooter>
-          </div>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

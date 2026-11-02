@@ -60,11 +60,12 @@ export default function AdminComplaintsPage() {
     }
   }, [user, authLoading, router, loadComplaints]);
 
-  const handleResolve = async (e: React.FormEvent) => {
+  const handleResolveSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!resolvingComplaint) return;
+
     if (!resolutionNotes.trim()) {
-      toast.error('Please enter resolution notes describing the moderation outcome.');
+      toast.error('Please provide resolution investigation notes.');
       return;
     }
 
@@ -74,7 +75,7 @@ export default function AdminComplaintsPage() {
         status: resolutionStatus,
         resolutionNotes: resolutionNotes.trim(),
       });
-      toast.success('Incident ticket resolved and parties notified.');
+      toast.success('Incident complaint marked as resolved.');
       setResolvingComplaint(null);
       setResolutionNotes('');
       loadComplaints();
@@ -85,134 +86,122 @@ export default function AdminComplaintsPage() {
     }
   };
 
-  if (isLoading || authLoading) {
-    return (
-      <div className="space-y-6 w-full">
-        <Skeleton className="h-8 w-64 bg-[#092B1C]" />
-        <Skeleton className="h-96 w-full rounded-2xl bg-[#092B1C]" />
-      </div>
-    );
-  }
-
   const filtered = complaints.filter((c) => {
-    if (statusFilter === 'OPEN') return c.status === 'OPEN' || c.status === 'UNDER_INVESTIGATION';
-    if (statusFilter === 'RESOLVED') return c.status === 'RESOLVED' || c.status === 'DISMISSED';
-    return true;
+    if (statusFilter === 'ALL') return true;
+    if (statusFilter === 'OPEN') {
+      return c.status === ComplaintStatus.SUBMITTED || c.status === ComplaintStatus.UNDER_REVIEW;
+    }
+    return c.status === ComplaintStatus.RESOLVED || c.status === ComplaintStatus.DISMISSED;
   });
 
   return (
     <div className="space-y-8 w-full text-left">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#12422A] pb-5">
+      {/* Top Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-100 pb-5">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Link href="/admin/dashboard" className="text-[#8DAE9C] hover:text-[#4ADE80] transition-colors mr-1">
+            <Link href="/admin/dashboard" className="text-[#4E6258] hover:text-[#094718] transition-colors mr-1">
               <ArrowLeft className="h-5 w-5" />
             </Link>
-            <h1 className="text-2xl font-black text-white tracking-tight">
-              Safety Complaints <span className="text-amber-400">&amp; Moderation Center</span>
+            <h1 className="text-2xl font-black text-[#0B2C22] tracking-tight">
+              Safety Complaints <span className="text-[#16A34A]">&amp; Incident Desk</span>
             </h1>
           </div>
-          <p className="text-xs sm:text-sm text-[#8DAE9C]">
-            Investigate safety reports, driving infractions, route deviations, and enforce platform accountability.
+          <p className="text-xs sm:text-sm text-[#4E6258]">
+            Investigate safety reports, route disputes, punctuality flags, and enforce accountability.
           </p>
         </div>
 
-        {/* Status Filter Pills */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-[#072417] border border-[#165A37]">
-          {(['OPEN', 'RESOLVED', 'ALL'] as const).map((s) => (
+        {/* Filter Pills: White Background */}
+        <div className="flex items-center gap-2 p-1 rounded-xl bg-white border border-emerald-100 shadow-sm">
+          {(['OPEN', 'RESOLVED', 'ALL'] as const).map((tab) => (
             <button
-              key={s}
-              type="button"
-              onClick={() => setStatusFilter(s)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                statusFilter === s
-                  ? 'bg-[#166534] text-white shadow-sm border border-[#22C55E]/40'
-                  : 'text-[#8DAE9C] hover:text-white'
+              key={tab}
+              onClick={() => setStatusFilter(tab)}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                statusFilter === tab
+                  ? 'bg-[#094718] text-white shadow-sm'
+                  : 'text-[#4E6258] hover:text-[#094718] hover:bg-[#EAF6ED]'
               }`}
             >
-              {s === 'OPEN' ? 'Active / Open' : s === 'RESOLVED' ? 'Resolved' : 'All Tickets'}
+              {tab === 'OPEN' ? 'Open Inquiries' : tab === 'RESOLVED' ? 'Resolved' : 'All Logged'}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Complaints List */}
-      {filtered.length === 0 ? (
-        <div className="p-12 rounded-2xl bg-[#092B1C] border border-[#144D30] text-center space-y-3">
-          <div className="h-12 w-12 rounded-full bg-[#0E3E27] text-[#4ADE80] flex items-center justify-center mx-auto border border-[#165A37]">
-            <CheckCircle2 className="h-6 w-6" />
-          </div>
-          <h3 className="text-lg font-bold text-white">No Complaints in this Queue</h3>
-          <p className="text-xs text-[#8DAE9C] max-w-md mx-auto">
-            All safety incident tickets have been addressed or no complaints match the current filter.
-          </p>
+      {/* Complaints List: White Cards with Green Highlights */}
+      {isLoading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-40 rounded-2xl bg-white border border-emerald-100" />
+          <Skeleton className="h-40 rounded-2xl bg-white border border-emerald-100" />
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="p-12 text-center text-xs text-[#4E6258] bg-white rounded-2xl border border-emerald-950/[0.08] shadow-sm">
+          No complaints matching the selected filter.
         </div>
       ) : (
         <div className="space-y-4">
           {filtered.map((c) => (
-            <div key={c.id} className="p-6 rounded-2xl bg-[#092B1C] border border-[#144D30] space-y-4 shadow-sm">
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-[#12422A] pb-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 border border-amber-500/30 text-amber-300">
-                      {c.category?.replace(/_/g, ' ') || 'Safety Concern'}
-                    </span>
-                    <span className="text-[11px] text-[#86EFAC] font-mono">
-                      Ticket #{c.id?.slice(0, 8)}
-                    </span>
+            <div
+              key={c.id}
+              className="p-6 rounded-2xl bg-white border border-emerald-950/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.03)] space-y-4 hover:border-emerald-300 transition-all"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-emerald-100 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-700 border border-amber-200">
+                    <ShieldAlert className="h-4 w-4" />
                   </div>
-                  <h3 className="text-base font-bold text-white">{c.title || 'Reported Incident'}</h3>
-                  <p className="text-xs text-[#8DAE9C]">
-                    Filed by: <strong className="text-white">{c.parent?.user?.fullName || 'Parent'}</strong> ({c.parent?.user?.phone || 'Private'}) • Against Driver:{' '}
-                    <strong className="text-[#4ADE80]">{c.driver?.user?.fullName || 'Driver'}</strong>
-                  </p>
+                  <div>
+                    <h3 className="text-sm font-bold text-[#0B2C22]">{c.subject}</h3>
+                    <p className="text-[11px] text-[#4E6258]">
+                      Filed by: <strong className="text-[#0B2C22]">{c.complainant?.fullName}</strong> ({c.complainant?.email}) • Category: <span className="font-bold text-[#094718]">{c.category}</span>
+                    </p>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2">
                   <span
-                    className={`px-2.5 py-1 rounded-full text-xs font-bold border ${
-                      c.status === 'RESOLVED'
-                        ? 'bg-[#0E3E27] text-[#4ADE80] border-[#22C55E]/40'
-                        : c.status === 'DISMISSED'
-                        ? 'bg-slate-800 text-slate-300 border-slate-700'
-                        : 'bg-amber-500/15 text-amber-300 border-amber-500/30'
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${
+                      c.status === ComplaintStatus.RESOLVED
+                        ? 'bg-[#EBF7EE] text-[#16A34A] border-[#BCE6C9]'
+                        : c.status === ComplaintStatus.DISMISSED
+                        ? 'bg-slate-100 text-slate-600 border-slate-200'
+                        : 'bg-amber-50 text-amber-800 border-amber-200'
                     }`}
                   >
                     {c.status}
                   </span>
-                  <span className="text-[11px] text-[#8DAE9C] font-mono">
+                  <span className="text-[11px] text-[#16A34A] font-mono font-bold">
                     {formatSriLankanDateTime(c.createdAt)}
                   </span>
                 </div>
               </div>
 
-              {/* Description */}
-              <div className="p-3.5 rounded-xl bg-[#072417] border border-[#12422A] text-xs text-white leading-relaxed">
+              {/* Description Body */}
+              <div className="p-4 rounded-xl bg-[#FAFDF9] border border-emerald-100 text-xs text-[#0B2C22] leading-relaxed">
                 {c.description}
               </div>
 
-              {/* Resolution Notes if any */}
+              {/* Resolution Notes if Resolved */}
               {c.resolutionNotes && (
-                <div className="p-3.5 rounded-xl bg-[#0B3522] border border-[#165A37] text-xs text-[#86EFAC] leading-relaxed">
-                  <strong className="text-white block mb-0.5">Administrative Resolution:</strong>
-                  {c.resolutionNotes}
+                <div className="p-3.5 rounded-xl bg-[#EAF6ED] border border-[#BCE6C9] text-xs text-[#094718]">
+                  <strong>Administrative Resolution:</strong> {c.resolutionNotes}
                 </div>
               )}
 
-              {/* Moderation Actions */}
-              {(c.status === 'OPEN' || c.status === 'UNDER_INVESTIGATION') && (
-                <div className="flex items-center justify-end gap-3 pt-2">
+              {/* Action Buttons */}
+              {c.status !== ComplaintStatus.RESOLVED && c.status !== ComplaintStatus.DISMISSED && (
+                <div className="flex justify-end pt-2 border-t border-emerald-100">
                   <button
-                    type="button"
                     onClick={() => {
                       setResolvingComplaint(c);
+                      setResolutionNotes('');
                       setResolutionStatus(ComplaintStatus.RESOLVED);
                     }}
-                    className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#166534] hover:bg-[#15803d] border border-[#22C55E]/40 shadow-sm transition-colors cursor-pointer flex items-center gap-1.5"
+                    className="px-4 py-2 rounded-xl bg-[#094718] hover:bg-[#073713] text-white font-bold text-xs shadow-sm transition-colors cursor-pointer"
                   >
-                    <CheckCircle2 className="h-3.5 w-3.5 text-[#86EFAC]" />
-                    <span>Resolve &amp; Close Ticket</span>
+                    Investigate &amp; Resolve
                   </button>
                 </div>
               )}
@@ -222,47 +211,50 @@ export default function AdminComplaintsPage() {
       )}
 
       {/* Resolution Dialog */}
-      <Dialog open={!!resolvingComplaint} onOpenChange={(open) => !open && setResolvingComplaint(null)}>
-        <DialogContent className="max-w-md bg-[#072417] border border-[#12422A] text-white">
+      <Dialog open={!!resolvingComplaint} onOpenChange={() => setResolvingComplaint(null)}>
+        <DialogContent className="sm:max-w-md bg-white border border-emerald-100 text-[#0B2C22]">
           <DialogHeader>
-            <DialogTitle className="text-white">Resolve Incident Ticket</DialogTitle>
+            <DialogTitle className="text-base font-bold text-[#0B2C22]">
+              Resolve Safety Complaint #{resolvingComplaint?.id.slice(0, 8)}
+            </DialogTitle>
           </DialogHeader>
-
-          <form onSubmit={handleResolve} className="space-y-4 py-2">
+          <form onSubmit={handleResolveSubmit} className="space-y-4 pt-2">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#86EFAC] mb-1.5">
-                Resolution Decision *
-              </label>
+              <label className="block text-xs font-bold text-[#0B2C22] mb-1">Resolution Outcome</label>
               <select
-                className="w-full h-10 px-3 rounded-xl border border-[#165A37] bg-[#051A10] text-white text-xs focus:outline-none"
                 value={resolutionStatus}
                 onChange={(e) => setResolutionStatus(e.target.value as ComplaintStatus)}
+                className="w-full px-3 py-2 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs font-semibold text-[#0B2C22]"
               >
-                <option value={ComplaintStatus.RESOLVED}>Resolved (Issue addressed with driver)</option>
+                <option value={ComplaintStatus.RESOLVED}>Resolved (Corrective action enforced)</option>
                 <option value={ComplaintStatus.DISMISSED}>Dismissed (Unsubstantiated claim)</option>
               </select>
             </div>
-
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-[#86EFAC] mb-1.5">
-                Official Resolution Notes *
-              </label>
+              <label className="block text-xs font-bold text-[#0B2C22] mb-1">Investigation Notes &amp; Findings</label>
               <Textarea
-                rows={4}
-                placeholder="Detail the steps taken (e.g. Driver warned regarding morning departure punctuality; verified updated schedule with parent)."
+                placeholder="Document contact with driver/parent and final administrative decision..."
                 value={resolutionNotes}
                 onChange={(e) => setResolutionNotes(e.target.value)}
-                className="bg-[#051A10] border-[#165A37] text-white placeholder:text-slate-500"
+                className="bg-[#FAFDF9] border-emerald-200 text-[#0B2C22] text-xs min-h-[100px]"
                 required
               />
             </div>
-
-            <DialogFooter className="gap-2">
-              <Button type="button" variant="outline" onClick={() => setResolvingComplaint(null)} className="border-[#165A37] text-slate-300 hover:bg-[#0B3320]">
+            <DialogFooter className="gap-2 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setResolvingComplaint(null)}
+                className="bg-white text-[#4E6258] border-slate-200"
+              >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isSubmitting} className="bg-[#166534] hover:bg-[#15803d] text-white">
-                {isSubmitting ? 'Recording...' : 'Confirm Resolution'}
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-[#094718] hover:bg-[#073713] text-white font-bold text-xs"
+              >
+                {isSubmitting ? 'Saving...' : 'Submit Resolution'}
               </Button>
             </DialogFooter>
           </form>
