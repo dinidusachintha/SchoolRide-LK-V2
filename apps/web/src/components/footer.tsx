@@ -1,19 +1,31 @@
+'use client';
+
 import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Bus, Shield, Phone, Mail, MapPin } from 'lucide-react';
 
 export function Footer() {
+  const pathname = usePathname();
+
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
   return (
     <footer className="border-t border-border bg-card/50 text-foreground/80 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Column 1: Platform Info */}
           <div className="space-y-4 md:col-span-1">
-            <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-subtle">
-                <Bus className="h-5 w-5" />
-              </div>
-              <span className="font-bold text-lg text-foreground">SchoolRide LK</span>
-            </div>
+            <Link href="/" className="inline-block group">
+              <Image
+                src="/logo.png"
+                alt="SchoolRide LK"
+                width={160}
+                height={32}
+                className="h-8 w-auto object-contain"
+              />
+            </Link>
             <p className="text-xs text-muted-foreground leading-relaxed">
               Sri Lanka's dedicated school transport network connecting verified van drivers with families across Western, Central, Southern, and all 25 administrative districts.
             </p>

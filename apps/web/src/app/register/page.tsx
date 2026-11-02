@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api-client';
 import { useAuth } from '@/lib/auth-context';
@@ -89,12 +90,23 @@ function RegisterContent() {
   return (
     <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-muted/20">
       <div className="w-full max-w-lg space-y-6">
-        <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-subtle mb-1">
-            <Bus className="h-6 w-6" />
-          </div>
-          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Create SchoolRide LK Account</h1>
-          <p className="text-xs text-muted-foreground">Join Sri Lanka's verified school transportation platform</p>
+        <div className="text-center space-y-3">
+          <Link href="/" className="inline-block hover:scale-105 transition-transform mb-2">
+            <Image
+              src="/logo.png"
+              alt="SchoolRide LK"
+              width={200}
+              height={40}
+              priority
+              className="h-10 w-auto object-contain mx-auto"
+            />
+          </Link>
+          <h1 className="text-2xl sm:text-3xl font-black text-[#0B2C22] dark:text-white tracking-tight">
+            Create <span className="text-[#8CB02C]">SchoolRide LK</span> Account
+          </h1>
+          <p className="text-xs sm:text-sm text-[#4E6258] dark:text-slate-300">
+            Join Sri Lanka's dedicated network of verified school van operators &amp; families
+          </p>
         </div>
 
         {/* Role Selector Tabs */}

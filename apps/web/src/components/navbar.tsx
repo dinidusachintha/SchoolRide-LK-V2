@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from './ui/button';
@@ -17,106 +18,96 @@ export function Navbar() {
 
   const isActive = (path: string) => pathname === path;
 
+  if (pathname.startsWith('/admin')) {
+    return null;
+  }
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/80 bg-card/80 backdrop-blur-md transition-all">
-      <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-100/60 dark:border-slate-800 bg-white dark:bg-slate-900 backdrop-blur-md transition-all">
+      <div className="w-full max-w-[1600px] mx-auto flex h-16 items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16">
         {/* Brand Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-subtle group-hover:scale-105 transition-transform duration-150">
-            <Bus className="h-5 w-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold tracking-tight text-base sm:text-lg text-foreground">
-                SchoolRide
-              </span>
-              <span className="text-[11px] font-bold px-1.5 py-0.2 rounded bg-accent/20 text-accent-ceylon border border-accent/30 uppercase tracking-wider">
-                LK
-              </span>
-            </div>
-            <p className="text-[10px] text-muted-foreground hidden sm:block -mt-0.5">
-              Verified Sri Lankan School Transport
-            </p>
+        <Link href="/" className="flex items-center group">
+          <div className="relative flex items-center group-hover:scale-105 transition-transform duration-150">
+            <Image
+              src="/logo.png"
+              alt="SchoolRide LK"
+              width={180}
+              height={36}
+              priority
+              className="h-9 sm:h-10 w-auto object-contain"
+            />
           </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
+        <nav className="hidden lg:flex items-center gap-7 text-sm font-semibold text-slate-700 dark:text-slate-200">
           <Link
-            href="/drivers"
-            className={`px-3 py-1.5 rounded-lg transition-colors ${
-              isActive('/drivers')
-                ? 'text-primary font-semibold bg-primary/10'
-                : 'text-foreground/80 hover:text-foreground hover:bg-muted/50'
+            href="/"
+            className={`transition-colors hover:text-[#094718] dark:hover:text-emerald-400 ${
+              pathname === '/' ? 'text-[#094718] dark:text-emerald-400 font-bold' : ''
             }`}
           >
-            Find Van Drivers
+            Home
+          </Link>
+          <Link
+            href="/#how-it-works"
+            className="transition-colors hover:text-[#094718] dark:hover:text-emerald-400"
+          >
+            How it Works
+          </Link>
+          <Link
+            href="/#routes"
+            className="transition-colors hover:text-[#094718] dark:hover:text-emerald-400"
+          >
+            Routes
+          </Link>
+          <Link
+            href="/safety"
+            className={`transition-colors hover:text-[#094718] dark:hover:text-emerald-400 ${
+              pathname === '/safety' ? 'text-[#094718] dark:text-emerald-400 font-bold' : ''
+            }`}
+          >
+            Safety
+          </Link>
+          <Link
+            href="/#about"
+            className="transition-colors hover:text-[#094718] dark:hover:text-emerald-400"
+          >
+            About
+          </Link>
+          <Link
+            href="/#contact"
+            className="transition-colors hover:text-[#094718] dark:hover:text-emerald-400"
+          >
+            Contact
           </Link>
 
           {user?.role === 'PARENT' && (
-            <>
-              <Link
-                href="/parent/dashboard"
-                className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  pathname.startsWith('/parent')
-                    ? 'text-primary font-semibold bg-primary/10'
-                    : 'text-foreground/80 hover:text-foreground hover:bg-muted/50'
-                }`}
-              >
-                Parent Dashboard
-              </Link>
-              <Link
-                href="/parent/rides/live"
-                className="px-3 py-1.5 rounded-lg text-emerald-600 dark:text-emerald-400 font-semibold hover:bg-emerald-500/10 transition-colors flex items-center gap-1.5"
-              >
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-                Live Tracking
-              </Link>
-            </>
+            <Link
+              href="/parent/dashboard"
+              className="px-3 py-1 rounded-full bg-emerald-50 text-[#094718] dark:bg-emerald-950/60 dark:text-emerald-300 font-bold text-xs border border-emerald-200/60 hover:bg-emerald-100 transition-colors"
+            >
+              Parent Portal
+            </Link>
           )}
 
           {user?.role === 'DRIVER' && (
-            <>
-              <Link
-                href="/driver/dashboard"
-                className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  pathname.startsWith('/driver/dashboard')
-                    ? 'text-primary font-semibold bg-primary/10'
-                    : 'text-foreground/80 hover:text-foreground hover:bg-muted/50'
-                }`}
-              >
-                Driver Portal
-              </Link>
-              <Link
-                href="/driver/console"
-                className="px-3 py-1.5 rounded-lg text-primary font-semibold bg-primary/10 hover:bg-primary/20 transition-colors flex items-center gap-1.5"
-              >
-                <Bus className="h-4 w-4" />
-                Ride Console
-              </Link>
-            </>
+            <Link
+              href="/driver/dashboard"
+              className="px-3 py-1 rounded-full bg-emerald-50 text-[#094718] dark:bg-emerald-950/60 dark:text-emerald-300 font-bold text-xs border border-emerald-200/60 hover:bg-emerald-100 transition-colors"
+            >
+              Driver Console
+            </Link>
           )}
 
           {user?.role === 'ADMIN' && (
             <Link
               href="/admin/dashboard"
-              className={`px-3 py-1.5 rounded-lg transition-colors ${
-                pathname.startsWith('/admin')
-                  ? 'text-primary font-semibold bg-primary/10'
-                  : 'text-foreground/80 hover:text-foreground hover:bg-muted/50'
-              }`}
+              className="px-3 py-1 rounded-full bg-primary/10 text-primary font-bold text-xs border border-primary/20 hover:bg-primary/20 transition-colors"
             >
-              Admin Oversight
+              Admin
             </Link>
           )}
-
-          <Link
-            href="/safety"
-            className="px-3 py-1.5 rounded-lg text-foreground/80 hover:text-foreground hover:bg-muted/50 transition-colors flex items-center gap-1"
-          >
-            <Shield className="h-4 w-4 text-primary" />
-            Safety & Trust
-          </Link>
         </nav>
 
         {/* Right Action Icons & Profile */}
@@ -307,16 +298,16 @@ export function Navbar() {
               </div>
             </>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <Link href="/login">
-                <Button variant="ghost" size="sm">
+                <button className="px-5 py-2 text-sm font-bold text-slate-800 dark:text-slate-100 border border-slate-700/80 rounded-full hover:bg-slate-100/60 dark:hover:bg-slate-800 transition-all duration-150 cursor-pointer">
                   Sign In
-                </Button>
+                </button>
               </Link>
-              <Link href="/register">
-                <Button variant="primary" size="sm">
-                  Register
-                </Button>
+              <Link href="/drivers">
+                <button className="px-5 py-2 text-sm font-bold text-white bg-[#094718] hover:bg-[#073612] rounded-full shadow-sm hover:shadow transition-all duration-150 flex items-center gap-1.5 cursor-pointer">
+                  Book a Ride
+                </button>
               </Link>
             </div>
           )}

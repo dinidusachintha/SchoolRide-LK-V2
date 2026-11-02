@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { Button } from '@/components/ui/button';
@@ -62,12 +63,23 @@ export default function LoginPage() {
   return (
     <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 bg-muted/20">
       <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-subtle mb-1">
-            <Bus className="h-6 w-6" />
-          </div>
-          <h1 className="text-2xl font-extrabold text-foreground tracking-tight">Sign in to SchoolRide LK</h1>
-          <p className="text-xs text-muted-foreground">Access your verified school transportation dashboard</p>
+        <div className="text-center space-y-3">
+          <Link href="/" className="inline-block hover:scale-105 transition-transform mb-2">
+            <Image
+              src="/logo.png"
+              alt="SchoolRide LK"
+              width={200}
+              height={40}
+              priority
+              className="h-10 w-auto object-contain mx-auto"
+            />
+          </Link>
+          <h1 className="text-2xl sm:text-3xl font-black text-[#0B2C22] dark:text-white tracking-tight">
+            Sign In to <span className="text-[#8CB02C]">SchoolRide LK</span>
+          </h1>
+          <p className="text-xs sm:text-sm text-[#4E6258] dark:text-slate-300">
+            Access your verified school transportation portal &amp; real-time tracking
+          </p>
         </div>
 
         {/* 1-Click Demo Profile Switcher for Testing */}

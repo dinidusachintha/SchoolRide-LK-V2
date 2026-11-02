@@ -7,7 +7,6 @@ import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   ShieldCheck,
@@ -22,6 +21,8 @@ import {
   Clock,
   CheckCircle2,
   Lock,
+  Sparkles,
+  TrendingUp,
 } from 'lucide-react';
 import { formatSriLankanDateTime } from '@schoolride/shared';
 
@@ -57,13 +58,13 @@ export default function AdminDashboardPage() {
 
   if (isLoading || authLoading) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 w-full">
-        <Skeleton className="h-10 w-64" />
+      <div className="space-y-6 w-full">
+        <Skeleton className="h-10 w-64 bg-[#092B1C]" />
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-6">
-          <Skeleton className="h-32 rounded-2xl" />
-          <Skeleton className="h-32 rounded-2xl" />
-          <Skeleton className="h-32 rounded-2xl" />
-          <Skeleton className="h-32 rounded-2xl" />
+          <Skeleton className="h-32 rounded-2xl bg-[#092B1C]" />
+          <Skeleton className="h-32 rounded-2xl bg-[#092B1C]" />
+          <Skeleton className="h-32 rounded-2xl bg-[#092B1C]" />
+          <Skeleton className="h-32 rounded-2xl bg-[#092B1C]" />
         </div>
       </div>
     );
@@ -73,180 +74,186 @@ export default function AdminDashboardPage() {
   const logs = overview?.recentAuditLogs || [];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 w-full text-left">
+    <div className="space-y-8 w-full text-left">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#12422A] pb-6">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-              Administrative Control Center
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              Administrative <span className="text-[#4ADE80]">Control Center</span>
             </h1>
-            <Badge variant="outline" className="border-primary/30 text-primary text-xs font-bold uppercase">
+            <span className="px-2.5 py-1 rounded-full bg-[#0D3823] border border-[#22C55E]/40 text-[#4ADE80] text-[11px] font-extrabold uppercase tracking-wider">
               Root Authority
-            </Badge>
+            </span>
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            Real-time platform oversight, safety verification queues, school references, and audit logs.
+          <p className="text-xs sm:text-sm text-[#8DAE9C] mt-1.5">
+            Real-time platform oversight, driver safety verification queues, school registry, and audit trails.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-3">
           <Link href="/admin/verifications">
-            <Button variant="primary" size="sm" className="shadow-subtle">
-              <FileCheck className="h-4 w-4 mr-1.5" /> Verification Queue ({m.pendingVerifications || 0})
-            </Button>
+            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#166534] hover:bg-[#15803d] text-white font-bold text-xs shadow-md border border-[#22C55E]/40 transition-colors cursor-pointer">
+              <FileCheck className="h-4 w-4 text-[#86EFAC]" />
+              <span>Verification Queue ({m.pendingVerifications || 0})</span>
+            </button>
           </Link>
           <Link href="/admin/complaints">
-            <Button variant="outline" size="sm" className="text-amber-600 border-amber-200">
-              <AlertTriangle className="h-4 w-4 mr-1.5" /> Moderation ({m.openComplaints || 0})
-            </Button>
+            <button className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#092B1C] hover:bg-[#0E3E27] text-amber-300 font-bold text-xs border border-amber-500/30 transition-colors cursor-pointer">
+              <AlertTriangle className="h-4 w-4 text-amber-400" />
+              <span>Safety Alerts ({m.openComplaints || 0})</span>
+            </button>
           </Link>
         </div>
       </div>
 
-      {/* Primary KPI Grid */}
+      {/* Primary KPI Grid in Dark Green with Light Green Font Highlights */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Registered Users */}
-        <Card className="p-5 flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+        <div className="p-5 rounded-2xl bg-[#092B1C] border border-[#144D30] hover:border-[#22C55E]/40 transition-all flex items-center gap-4 shadow-sm">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#0E3E27] text-[#4ADE80] border border-[#165A37] shrink-0">
             <Users className="h-6 w-6" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Users</p>
-            <h3 className="text-2xl font-extrabold text-foreground">{m.totalUsers || 0}</h3>
-            <p className="text-[11px] text-muted-foreground mt-0.5">
-              {m.totalParents || 0} Parents • {m.totalDrivers || 0} Drivers
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[#86EFAC]">Total Users</p>
+            <h3 className="text-2xl font-black text-white">{m.totalUsers || 0}</h3>
+            <p className="text-[11px] text-[#8DAE9C] mt-0.5">
+              <span className="text-[#4ADE80] font-semibold">{m.totalParents || 0}</span> Parents • <span className="text-[#4ADE80] font-semibold">{m.totalDrivers || 0}</span> Drivers
             </p>
           </div>
-        </Card>
+        </div>
 
         {/* Pending Verifications */}
-        <Link href="/admin/verifications" className="block">
-          <Card className="p-5 flex items-center gap-4 hover:border-amber-500/50 transition-colors cursor-pointer">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 shrink-0">
+        <Link href="/admin/verifications" className="block group">
+          <div className="p-5 rounded-2xl bg-[#092B1C] border border-[#144D30] group-hover:border-amber-400/60 transition-all flex items-center gap-4 shadow-sm cursor-pointer">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/30 shrink-0">
               <FileCheck className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Pending Verifications</p>
-              <h3 className="text-2xl font-extrabold text-foreground">{m.pendingVerifications || 0}</h3>
-              <p className="text-[11px] text-amber-600 font-medium mt-0.5">
-                {m.verifiedDrivers || 0} Verified Drivers
+              <p className="text-[11px] font-bold uppercase tracking-wider text-amber-300">Pending Review</p>
+              <h3 className="text-2xl font-black text-white">{m.pendingVerifications || 0}</h3>
+              <p className="text-[11px] text-[#8DAE9C] mt-0.5">
+                <span className="text-[#4ADE80] font-semibold">{m.verifiedDrivers || 0}</span> Verified Drivers Active
               </p>
             </div>
-          </Card>
+          </div>
         </Link>
 
         {/* Active Rides */}
-        <Card className="p-5 flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 shrink-0">
+        <div className="p-5 rounded-2xl bg-[#092B1C] border border-[#144D30] hover:border-[#22C55E]/40 transition-all flex items-center gap-4 shadow-sm">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#0E3E27] text-[#4ADE80] border border-[#165A37] shrink-0">
             <Radio className="h-6 w-6 animate-pulse" />
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Active Telemetry Rides</p>
-            <h3 className="text-2xl font-extrabold text-foreground">{m.activeRides || 0}</h3>
-            <p className="text-[11px] text-emerald-600 font-medium mt-0.5">
-              Live in transit right now
+            <p className="text-[11px] font-bold uppercase tracking-wider text-[#86EFAC]">Active Trips</p>
+            <h3 className="text-2xl font-black text-white">{m.activeRides || 0}</h3>
+            <p className="text-[11px] text-[#4ADE80] font-medium mt-0.5 flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#4ADE80] animate-ping" />
+              Live in transit now
             </p>
           </div>
-        </Card>
+        </div>
 
         {/* Open Safety Complaints */}
-        <Link href="/admin/complaints" className="block">
-          <Card className="p-5 flex items-center gap-4 hover:border-destructive/50 transition-colors cursor-pointer">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-destructive/10 text-destructive shrink-0">
+        <Link href="/admin/complaints" className="block group">
+          <div className="p-5 rounded-2xl bg-[#092B1C] border border-[#144D30] group-hover:border-rose-400/60 transition-all flex items-center gap-4 shadow-sm cursor-pointer">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/30 shrink-0">
               <AlertTriangle className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Open Concerns</p>
-              <h3 className="text-2xl font-extrabold text-foreground">{m.openComplaints || 0}</h3>
-              <p className="text-[11px] text-muted-foreground mt-0.5">Requires administrative review</p>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-rose-300">Safety Concerns</p>
+              <h3 className="text-2xl font-black text-white">{m.openComplaints || 0}</h3>
+              <p className="text-[11px] text-[#8DAE9C] mt-0.5">Priority resolution required</p>
             </div>
-          </Card>
+          </div>
         </Link>
       </div>
 
-      {/* Quick Navigation Hub */}
+      {/* Quick Navigation Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Link href="/admin/verifications" className="block">
-          <Card className="p-5 space-y-2 hover:border-primary/50 transition-colors h-full">
+        <Link href="/admin/verifications" className="block group">
+          <div className="p-5 rounded-2xl bg-[#092B1C] border border-[#144D30] group-hover:border-[#22C55E]/60 transition-all space-y-3 h-full cursor-pointer">
             <div className="flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0E3E27] text-[#4ADE80] border border-[#165A37]">
                 <FileCheck className="h-5 w-5" />
               </div>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              <ArrowRight className="h-4 w-4 text-[#8DAE9C] group-hover:text-[#4ADE80] group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-sm font-bold text-foreground">Driver Verifications</h3>
-            <p className="text-xs text-muted-foreground">
-              Review driving licenses, NICs, vehicle inspection documents, and approve operating permissions.
+            <h3 className="text-sm font-bold text-white group-hover:text-[#4ADE80] transition-colors">Driver KYC &amp; Verification</h3>
+            <p className="text-xs text-[#8DAE9C] leading-relaxed">
+              Review commercial driving licenses, NIC documents, vehicle revenue licenses, and approve driver onboarding.
             </p>
-          </Card>
+          </div>
         </Link>
 
-        <Link href="/admin/users" className="block">
-          <Card className="p-5 space-y-2 hover:border-primary/50 transition-colors h-full">
+        <Link href="/admin/schools" className="block group">
+          <div className="p-5 rounded-2xl bg-[#092B1C] border border-[#144D30] group-hover:border-[#22C55E]/60 transition-all space-y-3 h-full cursor-pointer">
             <div className="flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-600">
-                <Users className="h-5 w-5" />
-              </div>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            </div>
-            <h3 className="text-sm font-bold text-foreground">User Management</h3>
-            <p className="text-xs text-muted-foreground">
-              Inspect parent and driver accounts, enforce suspensions, and manage authorization levels.
-            </p>
-          </Card>
-        </Link>
-
-        <Link href="/admin/schools" className="block">
-          <Card className="p-5 space-y-2 hover:border-primary/50 transition-colors h-full">
-            <div className="flex items-center justify-between">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0E3E27] text-[#4ADE80] border border-[#165A37]">
                 <School className="h-5 w-5" />
               </div>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
+              <ArrowRight className="h-4 w-4 text-[#8DAE9C] group-hover:text-[#4ADE80] group-hover:translate-x-1 transition-all" />
             </div>
-            <h3 className="text-sm font-bold text-foreground">Schools Directory</h3>
-            <p className="text-xs text-muted-foreground">
-              Maintain official reference coordinates for government, private, and international schools across Sri Lanka.
+            <h3 className="text-sm font-bold text-white group-hover:text-[#4ADE80] transition-colors">Schools &amp; Route Hub</h3>
+            <p className="text-xs text-[#8DAE9C] leading-relaxed">
+              Manage Sri Lankan national &amp; provincial schools, GPS dropoff coordinates, and registered van route coverage.
             </p>
-          </Card>
+          </div>
+        </Link>
+
+        <Link href="/admin/complaints" className="block group">
+          <div className="p-5 rounded-2xl bg-[#092B1C] border border-[#144D30] group-hover:border-[#22C55E]/60 transition-all space-y-3 h-full cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0E3E27] text-amber-400 border border-[#165A37]">
+                <AlertTriangle className="h-5 w-5" />
+              </div>
+              <ArrowRight className="h-4 w-4 text-[#8DAE9C] group-hover:text-[#4ADE80] group-hover:translate-x-1 transition-all" />
+            </div>
+            <h3 className="text-sm font-bold text-white group-hover:text-[#4ADE80] transition-colors">Safety Complaints &amp; Disputes</h3>
+            <p className="text-xs text-[#8DAE9C] leading-relaxed">
+              Audit reported incidents from parents and operators with swift resolution workflows and driver suspensions.
+            </p>
+          </div>
         </Link>
       </div>
 
-      {/* Recent Security & Administrative Audit Logs */}
-      <Card className="p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-border pb-3">
-          <div className="flex items-center gap-2">
-            <History className="h-4 w-4 text-primary" />
-            <h3 className="text-base font-bold text-foreground">Recent Administrative Audit Logs</h3>
+      {/* Recent Security Audit Trail */}
+      <div className="rounded-2xl bg-[#092B1C] border border-[#144D30] overflow-hidden shadow-sm space-y-0">
+        <div className="p-5 border-b border-[#12422A] flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <History className="h-4 w-4 text-[#4ADE80]" />
+            <h3 className="text-sm font-bold text-white">Recent Administrative Audit Logs</h3>
           </div>
-          <Link href="/admin/audit-logs" className="text-xs font-semibold text-primary hover:underline">
-            View Complete Audit Log
+          <Link href="/admin/audit-logs">
+            <span className="text-xs font-semibold text-[#4ADE80] hover:underline flex items-center gap-1">
+              View All Logs <ArrowRight className="h-3 w-3" />
+            </span>
           </Link>
         </div>
 
-        {logs.length === 0 ? (
-          <p className="text-xs text-muted-foreground py-6 text-center">No recent audit events recorded.</p>
-        ) : (
-          <div className="divide-y divide-border/60">
-            {logs.map((log: any) => (
-              <div key={log.id} className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
-                <div>
-                  <span className="font-mono font-bold text-primary mr-2">[{log.action}]</span>
-                  <span className="text-foreground">{log.details || log.resourceType}</span>
-                  <span className="text-muted-foreground ml-2">
-                    by <strong>{log.actorUser?.fullName || 'System'}</strong> ({log.actorUser?.role || 'SYSTEM'})
-                  </span>
+        <div className="divide-y divide-[#12422A]">
+          {logs.length === 0 ? (
+            <div className="p-8 text-center text-xs text-[#8DAE9C]">
+              No audit log entries recorded yet.
+            </div>
+          ) : (
+            logs.slice(0, 5).map((log: any) => (
+              <div key={log.id} className="p-4 hover:bg-[#0B3320] transition-colors flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="h-2 w-2 rounded-full bg-[#4ADE80]" />
+                  <div>
+                    <span className="text-xs font-bold text-white mr-2">{log.action}</span>
+                    <span className="text-xs text-[#8DAE9C] font-mono">{log.entityType} ({log.entityId})</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3 text-muted-foreground font-mono text-[11px] shrink-0">
-                  {log.ipAddress && <span>IP: {log.ipAddress}</span>}
-                  <span>{formatSriLankanDateTime(log.createdAt)}</span>
+                <div className="flex items-center gap-3 text-right">
+                  <span className="text-[11px] text-[#86EFAC] font-mono">{formatSriLankanDateTime(log.createdAt)}</span>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </Card>
+            ))
+          )}
+        </div>
+      </div>
     </div>
   );
 }

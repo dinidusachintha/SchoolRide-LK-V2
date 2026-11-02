@@ -69,18 +69,18 @@ export default function DriversDirectoryPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 w-full">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/80 pb-6">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
-              Verified School Van Drivers
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-emerald-100/60 dark:border-slate-800 pb-6">
+        <div className="space-y-1">
+          <div className="flex flex-wrap items-center gap-2.5 mb-1">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-[#0B2C22] dark:text-white tracking-tight">
+              Verified <span className="text-[#8CB02C]">School Van Drivers</span>
             </h1>
-            <Badge variant="success">
-              <ShieldCheck className="h-3.5 w-3.5 mr-1" /> Verified Only
-            </Badge>
+            <span className="px-3 py-1 rounded-full bg-[#EBF7EE] text-[#0B4626] border border-[#BCE6C9] text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 shadow-sm">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#16A34A]" /> Verified Only
+            </span>
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Search licensed, background-checked school transport operators across Sri Lanka
+          <p className="text-xs sm:text-sm text-[#4E6258] dark:text-slate-300">
+            Search licensed, background-checked school transport operators across Colombo, Kandy, Gampaha, Galle &amp; all Sri Lankan districts.
           </p>
         </div>
 
@@ -203,15 +203,15 @@ export default function DriversDirectoryPage() {
             const primaryArea = driver.serviceAreas[0];
 
             return (
-              <Card
+              <div
                 key={driver.id}
-                className="overflow-hidden hover:border-primary/40 hover:shadow-floating transition-all flex flex-col justify-between"
+                className="overflow-hidden rounded-[24px] border border-emerald-950/[0.08] dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-emerald-300/80 hover:shadow-[0_12px_28px_rgba(9,71,24,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
               >
                 <div className="p-6 space-y-4">
                   {/* Driver Header */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary font-bold text-base border border-primary/20 shrink-0">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EAF6ED] text-[#094718] font-black text-base border border-[#CDE9D3] shrink-0 shadow-sm">
                         {driver.fullName
                           .split(' ')
                           .map((n: string) => n[0])
@@ -285,7 +285,7 @@ export default function DriversDirectoryPage() {
                 </div>
 
                 {/* Footer with Price and View Button */}
-                <div className="px-6 py-4 border-t border-border/60 bg-muted/10 flex items-center justify-between">
+                <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-[#FAFDF9] dark:bg-slate-900/60 flex items-center justify-between">
                   <div>
                     <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">
                       Starting Monthly Fee
@@ -299,12 +299,13 @@ export default function DriversDirectoryPage() {
                   </div>
 
                   <Link href={`/drivers/${driver.id}`}>
-                    <Button variant="primary" size="sm" className="shadow-subtle">
-                      View Profile <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                    </Button>
+                    <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#094718] hover:bg-[#073713] text-white font-bold text-xs shadow-sm transition-all cursor-pointer">
+                      <span>View Profile</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
                   </Link>
                 </div>
-              </Card>
+              </div>
             );
           })}
         </div>

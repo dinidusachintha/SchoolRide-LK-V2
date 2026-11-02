@@ -9,6 +9,8 @@
   ],
   "scripts": {
     "dev": "pnpm --filter @schoolride/api dev & pnpm --filter @schoolride/web dev",
+    "mock:api": "tsx mock-api/server.ts",
+    "dev:mock": "tsx mock-api/server.ts & pnpm --filter @schoolride/web dev",
     "build": "pnpm --filter @schoolride/shared build && pnpm --filter @schoolride/api build && pnpm --filter @schoolride/web build",
     "test": "pnpm --filter @schoolride/shared test && pnpm --filter @schoolride/api test",
     "lint": "pnpm -r lint",
