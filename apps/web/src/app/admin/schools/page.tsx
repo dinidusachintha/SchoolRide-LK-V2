@@ -175,8 +175,8 @@ export default function AdminSchoolsPage() {
           >
             <option value="">All Districts ({SRI_LANKAN_DISTRICTS.length})</option>
             {SRI_LANKAN_DISTRICTS.map((d) => (
-              <option key={d} value={d}>
-                {d}
+              <option key={d.id} value={d.name}>
+                {d.name}
               </option>
             ))}
           </select>
@@ -268,8 +268,8 @@ export default function AdminSchoolsPage() {
                   className="w-full px-3 py-2 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs font-semibold text-[#0B2C22]"
                 >
                   {SRI_LANKAN_DISTRICTS.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
+                    <option key={d.id} value={d.name}>
+                      {d.name}
                     </option>
                   ))}
                 </select>

@@ -89,7 +89,7 @@ export default function AdminComplaintsPage() {
   const filtered = complaints.filter((c) => {
     if (statusFilter === 'ALL') return true;
     if (statusFilter === 'OPEN') {
-      return c.status === ComplaintStatus.SUBMITTED || c.status === ComplaintStatus.UNDER_REVIEW;
+      return c.status === ComplaintStatus.OPEN || c.status === ComplaintStatus.UNDER_REVIEW;
     }
     return c.status === ComplaintStatus.RESOLVED || c.status === ComplaintStatus.DISMISSED;
   });
