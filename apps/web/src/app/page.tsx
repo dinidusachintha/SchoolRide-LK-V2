@@ -322,7 +322,7 @@ export default function HomePage() {
       {/* ======================================================== */}
       {/* 1. HERO SECTION (FULL FITTING TO NAVBAR CORNERS & SCREEN)*/}
       {/* ======================================================== */}
-      <section className="relative overflow-hidden w-full bg-[#FAFDF9] dark:bg-slate-950 flex flex-col justify-between pt-0 pb-6 sm:pb-8 lg:pb-10 min-h-[calc(100vh-4rem)]">
+      <section className="relative overflow-hidden w-full bg-[#FAFDF9] dark:bg-slate-950 flex flex-col justify-between pt-0 pb-6 sm:pb-8 lg:pb-10 min-h-[calc(100vh-72px)]">
         
         {/* Soft Background Leaves at Screen Edges */}
         <div className="absolute top-1/2 -translate-y-1/2 left-0 w-10 sm:w-14 h-24 sm:h-28 pointer-events-none opacity-85 animate-float-slow -z-0">
@@ -350,7 +350,7 @@ export default function HomePage() {
           variants={visualVariants}
           initial="hidden"
           animate="visible"
-          className="hidden lg:block absolute top-0 right-0 w-[56%] xl:w-[54%] 2xl:w-[51%] h-[calc(100%-130px)] max-h-[620px] pointer-events-none z-0"
+          className="hidden lg:block absolute top-0 right-0 w-[55%] xl:w-[53%] 2xl:w-[50%] h-[calc(100%-80px)] pointer-events-none z-0"
         >
           <div className="relative w-full h-full">
             <Image
@@ -471,13 +471,14 @@ export default function HomePage() {
             {/* Mobile / Tablet In-flow artwork (< lg) */}
             <motion.div
               variants={visualVariants}
-              className="lg:hidden relative w-full h-[280px] sm:h-[360px] md:h-[420px] mt-2"
+              className="lg:hidden relative w-full aspect-[1228/798] max-w-[600px] mx-auto mt-4"
             >
               <Image
                 src="/images/vango-hero-right-2x.png"
                 alt="SchoolRide LK school ride yellow van with children in uniform"
                 fill
                 priority
+                sizes="(max-width: 1024px) 100vw, 600px"
                 className="object-contain object-center"
               />
             </motion.div>

@@ -23,24 +23,24 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-100/60 dark:border-slate-800 bg-white dark:bg-slate-900 backdrop-blur-md transition-all">
-      <div className="w-full max-w-[1600px] mx-auto flex h-16 items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16">
+    <header className="sticky top-0 z-40 w-full border-b border-emerald-950/[0.04] dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-all shadow-[0_1px_8px_rgba(0,0,0,0.02)]">
+      <div className="w-full max-w-[1600px] mx-auto flex h-[72px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center group">
-          <div className="relative flex items-center group-hover:scale-105 transition-transform duration-150">
+          <div className="relative flex items-center transition-transform duration-150 group-hover:scale-102">
             <Image
               src="/logo.png"
               alt="SchoolRide LK"
-              width={180}
-              height={36}
+              width={220}
+              height={40}
               priority
-              className="h-9 sm:h-10 w-auto object-contain"
+              className="h-10 sm:h-11 md:h-12 w-auto object-contain"
             />
           </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-7 text-sm font-semibold text-slate-700 dark:text-slate-200">
+        <nav className="hidden lg:flex items-center gap-8 text-[15px] font-semibold text-slate-700 dark:text-slate-200">
           <Link
             href="/"
             className={`transition-colors hover:text-[#094718] dark:hover:text-emerald-400 ${
@@ -298,14 +298,14 @@ export function Navbar() {
               </div>
             </>
           ) : (
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3">
               <Link href="/login">
-                <button className="px-5 py-2 text-sm font-bold text-slate-800 dark:text-slate-100 border border-slate-700/80 rounded-full hover:bg-slate-100/60 dark:hover:bg-slate-800 transition-all duration-150 cursor-pointer">
+                <button className="px-6 py-2.5 text-sm font-bold text-[#152720] dark:text-slate-100 border-2 border-[#152720]/80 dark:border-slate-300 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 cursor-pointer">
                   Sign In
                 </button>
               </Link>
               <Link href="/drivers">
-                <button className="px-5 py-2 text-sm font-bold text-white bg-[#094718] hover:bg-[#073612] rounded-full shadow-sm hover:shadow transition-all duration-150 flex items-center gap-1.5 cursor-pointer">
+                <button className="px-6 py-2.5 text-sm font-bold text-white bg-[#094718] hover:bg-[#073713] rounded-full shadow-sm hover:shadow-md transition-all duration-150 flex items-center gap-1.5 cursor-pointer">
                   Book a Ride
                 </button>
               </Link>
