@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { SchoolCardSkeleton } from '@/components/ui/skeleton';
+import { HowItWorksSlideshow } from '@/components/how-it-works-slideshow';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
   ShieldCheck,
@@ -103,10 +104,12 @@ export default function HomePage() {
   const [schoolSearchQuery, setSchoolSearchQuery] = React.useState('');
   const [isFiltering, setIsFiltering] = React.useState(false);
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(0);
+  const [isSchoolsDropdownOpen, setIsSchoolsDropdownOpen] = React.useState(false);
 
   const handleDistrictFilter = (district: string) => {
     setIsFiltering(true);
     setSelectedDistrict(district);
+    setIsSchoolsDropdownOpen(false);
     setTimeout(() => setIsFiltering(false), 240);
   };
 
@@ -209,6 +212,39 @@ export default function HomePage() {
       popularRoutes: ['Dehiwala → Wellawatte → Colombo 04', 'Nugegoda → Kirulapone → Colombo 04', 'Piliyandala → Bambalapitiya'],
       monthlyRate: 'LKR 7,800 - 10,000',
     },
+    {
+      id: 7,
+      name: "Bishop's College",
+      district: 'Colombo',
+      location: 'Colombo 03 (Boyd Place)',
+      vansCount: 16,
+      students: 260,
+      badge: 'Private Girls',
+      popularRoutes: ['Moratuwa → Wellawatte → Colombo 03', 'Kotte → Rajagiriya → Colombo 03', 'Kelaniya → Colombo 03'],
+      monthlyRate: 'LKR 8,200 - 10,800',
+    },
+    {
+      id: 8,
+      name: 'Kingswood College',
+      district: 'Kandy',
+      location: 'Kandy (Peradeniya Road)',
+      vansCount: 14,
+      students: 210,
+      badge: 'Premier Boys',
+      popularRoutes: ['Galaha → Peradeniya → Kingswood', 'Pilimathalawa → Kandy', 'Katugastota → Kingswood'],
+      monthlyRate: 'LKR 6,200 - 8,200',
+    },
+    {
+      id: 9,
+      name: 'Nalanda College',
+      district: 'Colombo',
+      location: 'Colombo 10 (Maradana)',
+      vansCount: 20,
+      students: 310,
+      badge: 'Premier Boys',
+      popularRoutes: ['Nittambuwa → Kadawatha → Colombo 10', 'Malabe → Battaramulla → Maradana', 'Pannipitiya → Maharagama → Colombo 10'],
+      monthlyRate: 'LKR 7,500 - 9,600',
+    },
   ];
 
   const filteredSchools = schoolsData.filter((sch) => {
@@ -217,6 +253,9 @@ export default function HomePage() {
                           sch.location.toLowerCase().includes(schoolSearchQuery.toLowerCase());
     return matchesDistrict && matchesSearch;
   });
+
+  const visibleSchools = filteredSchools.slice(0, 3);
+  const dropdownSchools = filteredSchools.slice(3);
 
   const featuredDrivers = [
     {
@@ -320,12 +359,12 @@ export default function HomePage() {
     <div className="flex flex-col w-full bg-[#FAFDF9] dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-x-hidden selection:bg-emerald-200 selection:text-emerald-950">
       
       {/* ======================================================== */}
-      {/* 1. HERO SECTION (FULL FITTING TO NAVBAR CORNERS & SCREEN)*/}
+      {/* 1. RECREATED HERO SECTION (PREMIUM, BALANCED & RESPONSIVE) */}
       {/* ======================================================== */}
-      <section className="relative overflow-hidden w-full bg-[#FAFDF9] dark:bg-slate-950 flex flex-col justify-between pt-0 pb-6 sm:pb-8 lg:pb-10 min-h-[calc(100vh-72px)]">
+      <section className="relative overflow-hidden w-full bg-gradient-to-b from-[#FAFDF9] via-[#F4FAF5]/70 to-[#FAFDF9] dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 pt-2 sm:pt-4 lg:pt-6 pb-8 sm:pb-12 lg:pb-14 border-b border-emerald-950/[0.04] dark:border-slate-800">
         
-        {/* Soft Background Leaves at Screen Edges */}
-        <div className="absolute top-1/2 -translate-y-1/2 left-0 w-10 sm:w-14 h-24 sm:h-28 pointer-events-none opacity-85 animate-float-slow -z-0">
+        {/* Soft Organic Background Leaf Accents */}
+        <div className="absolute top-1/4 left-0 w-10 sm:w-14 h-24 sm:h-28 pointer-events-none opacity-80 animate-float-slow -z-0">
           <Image
             src="/images/leaf-left-trans.png"
             alt="Foliage decoration"
@@ -335,7 +374,7 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="absolute bottom-2 right-0 w-12 sm:w-16 h-28 sm:h-36 pointer-events-none opacity-90 animate-float-reverse -z-0">
+        <div className="absolute bottom-10 right-0 w-12 sm:w-16 h-28 sm:h-36 pointer-events-none opacity-85 animate-float-reverse -z-0">
           <Image
             src="/images/leaf-right-trans.png"
             alt="Foliage decoration"
@@ -345,56 +384,54 @@ export default function HomePage() {
           />
         </div>
 
-        {/* Desktop Full-Bleed Artwork: Pinned directly to Navbar Corner and Right Edge with ZERO space */}
-        <motion.div
-          variants={visualVariants}
-          initial="hidden"
-          animate="visible"
-          className="hidden lg:block absolute top-0 right-0 w-[55%] xl:w-[53%] 2xl:w-[50%] h-[calc(100%-80px)] pointer-events-none z-0"
-        >
-          <div className="relative w-full h-full">
-            <Image
-              src="/images/vango-hero-right-2x.png"
-              alt="SchoolRide LK school ride yellow van with children in uniform"
-              fill
-              priority
-              sizes="(max-width: 1024px) 100vw, 55vw"
-              className="object-contain object-right-top"
-            />
-          </div>
-        </motion.div>
+        {/* Ambient Subtle Radial Glow */}
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] rounded-full bg-emerald-100/35 dark:bg-emerald-950/20 blur-3xl pointer-events-none -z-0" />
 
-        {/* Main Content & Artwork Row - Full Fitting */}
-        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 flex-1 flex flex-col justify-between z-10 relative">
+        {/* Main Content Container */}
+        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10 space-y-6 sm:space-y-8 lg:space-y-10">
           
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="grid grid-cols-1 lg:grid-cols-12 items-start gap-6 lg:gap-0 pt-3 sm:pt-4 lg:pt-6"
-          >
-            {/* Left Column: Heading, Subtitle, Buttons, Trust Badges */}
-            <div className="lg:col-span-6 xl:col-span-5 space-y-4 sm:space-y-5 lg:space-y-6 text-left py-2">
-              
+          {/* Main 2-Column Hero Showcase */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-8 lg:gap-6 xl:gap-10 pt-2 sm:pt-4">
+            
+            {/* LEFT COLUMN: Narrative, Headline, CTAs, Trust Metrics */}
+            <motion.div
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="lg:col-span-6 xl:col-span-6 space-y-5 sm:space-y-6 text-left"
+            >
               {/* Badge: [ 🛡️ Safe • Reliable • On Time ] */}
               <motion.div variants={badgeVariants} className="inline-block">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EBF7EE] border border-[#BCE6C9] text-xs sm:text-sm font-semibold text-[#0B4626] shadow-sm">
-                  <ShieldCheck className="h-4 w-4 text-[#0B4626]" />
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#EBF7EE] dark:bg-emerald-950/80 border border-[#BCE6C9] dark:border-emerald-800 text-xs sm:text-sm font-bold text-[#0B4626] dark:text-emerald-300 shadow-sm">
+                  <ShieldCheck className="h-4 w-4 text-[#0B4626] dark:text-emerald-400" />
                   <span>Safe • Reliable • On Time</span>
                 </div>
               </motion.div>
 
               {/* Title: Safe & Convenient School Rides for Your Children */}
               <motion.div variants={itemVariants} className="space-y-1">
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] xl:text-[56px] font-extrabold tracking-tight text-[#0B2C22] dark:text-white leading-[1.12]">
+                <h1 className="text-3.5xl sm:text-4xl md:text-5xl lg:text-[46px] xl:text-[54px] 2xl:text-[58px] font-black tracking-tight text-[#0B2C22] dark:text-white leading-[1.12]">
                   Safe &amp; Convenient <br />
                   School Rides for <br />
                   <span className="relative inline-block mt-0.5">
                     Your{' '}
-                    <span className="text-[#8CB02C] relative">
+                    <span className="text-[#8CB02C] relative inline-block">
                       Children
                       {/* Thick yellow/lime highlight curve directly matching reference image */}
-                      <span className="absolute left-0 -bottom-1.5 w-full h-[5px] bg-[#E3D13E] rounded-full" />
+                      <svg
+                        className="absolute -bottom-2.5 left-0 w-full h-3.5 text-[#E3D13E] overflow-visible pointer-events-none"
+                        viewBox="0 0 100 12"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        preserveAspectRatio="none"
+                      >
+                        <path
+                          d="M2 9C28 2 74 2 98 9"
+                          stroke="currentColor"
+                          strokeWidth="5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
                     </span>
                   </span>
                 </h1>
@@ -405,7 +442,7 @@ export default function HomePage() {
                 variants={itemVariants}
                 className="text-xs sm:text-sm md:text-base text-[#4E6258] dark:text-slate-300 max-w-lg leading-relaxed font-normal"
               >
-                A trusted school transportation service with verified drivers, real-time tracking and complete safety care for your child.
+                A trusted school transportation service with verified drivers, real-time tracking, and complete safety care for your child across Sri Lanka.
               </motion.p>
 
               {/* Action Buttons: [ 📅 Book a Ride ] [ ▶ How It Works ] */}
@@ -418,7 +455,7 @@ export default function HomePage() {
                   <motion.button
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.98 }}
-                    className="inline-flex items-center gap-2 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-[#094718] hover:bg-[#073713] text-white font-bold text-xs sm:text-sm md:text-base shadow-sm transition-colors cursor-pointer"
+                    className="inline-flex items-center gap-2.5 px-6 sm:px-7 py-3 sm:py-3.5 rounded-full bg-[#094718] hover:bg-[#073713] text-white font-bold text-xs sm:text-sm md:text-base shadow-md shadow-[#094718]/15 hover:shadow-lg transition-all duration-200 cursor-pointer"
                   >
                     <CalendarDays className="h-4 w-4" />
                     <span>Book a Ride</span>
@@ -430,7 +467,7 @@ export default function HomePage() {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => scrollToSection('how-it-works')}
-                  className="inline-flex items-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white dark:bg-slate-900 border-2 border-[#152720] dark:border-slate-300 text-[#152720] dark:text-white font-bold text-xs sm:text-sm md:text-base hover:bg-slate-50 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-white dark:bg-slate-900 border-2 border-[#152720] dark:border-slate-300 text-[#152720] dark:text-white font-bold text-xs sm:text-sm md:text-base hover:bg-emerald-50/60 dark:hover:bg-slate-800 transition-colors shadow-sm cursor-pointer"
                 >
                   <div className="flex h-4 w-4 items-center justify-center text-[#152720] dark:text-white">
                     <Play className="h-3 w-3 fill-current ml-0.5" />
@@ -442,47 +479,100 @@ export default function HomePage() {
               {/* Trust Indicators: [ 🛡️ Verified Drivers ] [ 📍 Live Tracking ] [ 🔔 Ride Updates ] */}
               <motion.div
                 variants={itemVariants}
-                className="flex flex-wrap items-center gap-4 sm:gap-6 pt-1 text-[#0B2C22] dark:text-slate-200 text-xs sm:text-sm font-semibold"
+                className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2 text-[#0B2C22] dark:text-slate-200 text-xs sm:text-sm font-semibold"
               >
                 <div className="flex items-center gap-2">
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full border border-[#0B2C22]/40 text-[#0B2C22] dark:text-emerald-400">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#EAF6ED] text-[#094718] border border-[#D0EAD6]">
                     <ShieldCheck className="h-3.5 w-3.5" />
                   </div>
                   <span>Verified Drivers</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full border border-[#0B2C22]/40 text-[#0B2C22] dark:text-emerald-400">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#EAF6ED] text-[#094718] border border-[#D0EAD6]">
                     <MapPin className="h-3.5 w-3.5" />
                   </div>
                   <span>Live Tracking</span>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="flex h-5 w-5 items-center justify-center rounded-full border border-[#0B2C22]/40 text-[#0B2C22] dark:text-emerald-400">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#EAF6ED] text-[#094718] border border-[#D0EAD6]">
                     <Bell className="h-3.5 w-3.5" />
                   </div>
                   <span>Ride Updates</span>
                 </div>
               </motion.div>
 
-            </div>
+            </motion.div>
 
-            {/* Mobile / Tablet In-flow artwork (< lg) */}
+            {/* RIGHT COLUMN: Yellow School Van Artwork with Dynamic Floating Badges */}
             <motion.div
               variants={visualVariants}
-              className="lg:hidden relative w-full aspect-[1228/798] max-w-[600px] mx-auto mt-4"
+              initial="hidden"
+              animate="visible"
+              className="lg:col-span-6 xl:col-span-6 relative w-full flex items-center justify-center"
             >
-              <Image
-                src="/images/vango-hero-right-2x.png"
-                alt="SchoolRide LK school ride yellow van with children in uniform"
-                fill
-                priority
-                sizes="(max-width: 1024px) 100vw, 600px"
-                className="object-contain object-center"
-              />
+              <div className="relative w-full aspect-[1228/798] max-w-[620px] lg:max-w-none">
+                
+                {/* School Ride Van Artwork */}
+                <Image
+                  src="/images/vango-hero-right-2x.png"
+                  alt="SchoolRide LK school ride yellow van with children in uniform"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-contain object-center lg:object-right"
+                />
+
+                {/* Floating Micro-Badge 1: Live Telemetry Pulse */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85, y: -10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.45 }}
+                  className="absolute top-2 sm:top-4 left-2 sm:left-4 z-20 flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-emerald-200/90 dark:border-slate-700 shadow-[0_8px_20px_rgba(9,71,24,0.12)]"
+                >
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#16A34A]"></span>
+                  </span>
+                  <span className="text-[11px] sm:text-xs font-bold text-[#0B2C22] dark:text-emerald-300">
+                    Live GPS Active • 38 km/h
+                  </span>
+                </motion.div>
+
+                {/* Floating Micro-Badge 2: 100% Verified Drivers */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85, y: 12 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ delay: 0.65, duration: 0.45 }}
+                  className="absolute bottom-4 sm:bottom-6 left-2 sm:left-6 z-20 flex items-center gap-2.5 px-3.5 sm:px-4 py-2 rounded-2xl bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-emerald-200/90 dark:border-slate-700 shadow-[0_10px_24px_rgba(9,71,24,0.14)]"
+                >
+                  <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#EAF6ED] text-[#094718]">
+                    <ShieldCheck className="h-4 w-4 text-[#16A34A]" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[11px] font-bold text-[#0B2C22] dark:text-white leading-tight">100% Vetted Drivers</p>
+                    <p className="text-[10px] text-[#4E6258] dark:text-slate-400">Police &amp; Vehicle Cleared</p>
+                  </div>
+                </motion.div>
+
+                {/* Floating Micro-Badge 3: Parent Trust Score */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85, x: 10 }}
+                  animate={{ opacity: 1, scale: 1, x: 0 }}
+                  transition={{ delay: 0.8, duration: 0.45 }}
+                  className="absolute bottom-2 sm:bottom-4 right-2 sm:right-6 z-20 hidden sm:flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-emerald-200/90 dark:border-slate-700 shadow-[0_8px_20px_rgba(0,0,0,0.08)]"
+                >
+                  <Star className="h-3.5 w-3.5 fill-[#EAB308] text-[#EAB308]" />
+                  <span className="text-[11px] sm:text-xs font-bold text-[#0B2C22] dark:text-slate-200">
+                    4.98 ★ <span className="text-[#4E6258] dark:text-slate-400 font-normal">(2,400+ Families)</span>
+                  </span>
+                </motion.div>
+
+              </div>
             </motion.div>
-          </motion.div>
+
+          </div>
 
           {/* ======================================================== */}
           {/* BOTTOM 4 FEATURE CARDS (MATCHING REFERENCE EXACTLY)      */}
@@ -491,7 +581,7 @@ export default function HomePage() {
             variants={cardsContainerVariants}
             initial="hidden"
             animate="visible"
-            className="w-full mt-6 sm:mt-8 lg:mt-10 z-20 relative"
+            className="w-full pt-2 sm:pt-4 z-20 relative"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 lg:gap-5 xl:gap-6">
               
@@ -499,20 +589,15 @@ export default function HomePage() {
               <motion.div variants={cardItemVariants}>
                 <Link
                   href="/drivers"
-                  className="group flex items-center gap-4 p-4 sm:p-4.5 lg:p-5 rounded-[22px] bg-white dark:bg-slate-900 border border-emerald-950/[0.07] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_28px_rgba(9,71,24,0.08)] hover:border-emerald-300/80 hover:-translate-y-1 transition-all duration-200 cursor-pointer block h-full"
+                  className="group flex items-center gap-4 p-4 sm:p-4.5 lg:p-5 rounded-[22px] bg-white dark:bg-slate-900 border border-emerald-950/[0.07] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_28px_rgba(9,71,24,0.08)] hover:border-emerald-300 dark:hover:border-emerald-700 hover:-translate-y-1 transition-all duration-200 cursor-pointer block h-full"
                 >
                   <div className="flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-[16px] bg-[#EAF6ED] dark:bg-emerald-950/80 border border-[#D0EAD6] dark:border-emerald-800/60 text-[#094718] dark:text-emerald-400 shrink-0 group-hover:scale-105 group-hover:bg-[#E0F2E4] transition-all duration-200">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                      <rect x="3" y="4" width="18" height="18" rx="3" />
-                      <line x1="16" y1="2" x2="16" y2="6" />
-                      <line x1="8" y1="2" x2="8" y2="6" />
-                      <line x1="3" y1="10" x2="21" y2="10" />
-                      <path d="m9 16 2 2 4-4" />
-                    </svg>
+                    <CalendarDays className="h-6 w-6 stroke-[2.2]" />
                   </div>
-                  <div className="space-y-0.5">
-                    <h4 className="text-[15px] sm:text-base font-bold text-[#0B2C22] dark:text-white group-hover:text-[#094718] transition-colors leading-snug">
-                      Book a Ride
+                  <div className="space-y-0.5 text-left">
+                    <h4 className="text-[15px] sm:text-base font-bold text-[#0B2C22] dark:text-white group-hover:text-[#094718] dark:group-hover:text-emerald-400 transition-colors leading-snug flex items-center gap-1.5">
+                      <span>Book a Ride</span>
+                      <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#094718]" />
                     </h4>
                     <p className="text-xs sm:text-[13px] text-[#4E6258] dark:text-slate-300 leading-relaxed font-normal">
                       Reserve a school ride in a few simple steps.
@@ -525,18 +610,15 @@ export default function HomePage() {
               <motion.div variants={cardItemVariants}>
                 <button
                   onClick={() => scrollToSection('routes')}
-                  className="w-full text-left group flex items-center gap-4 p-4 sm:p-4.5 lg:p-5 rounded-[22px] bg-white dark:bg-slate-900 border border-emerald-950/[0.07] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_28px_rgba(9,71,24,0.08)] hover:border-emerald-300/80 hover:-translate-y-1 transition-all duration-200 cursor-pointer block h-full"
+                  className="w-full text-left group flex items-center gap-4 p-4 sm:p-4.5 lg:p-5 rounded-[22px] bg-white dark:bg-slate-900 border border-emerald-950/[0.07] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_28px_rgba(9,71,24,0.08)] hover:border-emerald-300 dark:hover:border-emerald-700 hover:-translate-y-1 transition-all duration-200 cursor-pointer block h-full"
                 >
                   <div className="flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-[16px] bg-[#EAF6ED] dark:bg-emerald-950/80 border border-[#D0EAD6] dark:border-emerald-800/60 text-[#094718] dark:text-emerald-400 shrink-0 group-hover:scale-105 group-hover:bg-[#E0F2E4] transition-all duration-200">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                      <circle cx="6" cy="19" r="3" />
-                      <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15" />
-                      <circle cx="18" cy="5" r="3" />
-                    </svg>
+                    <Navigation className="h-6 w-6 stroke-[2.2]" />
                   </div>
-                  <div className="space-y-0.5">
-                    <h4 className="text-[15px] sm:text-base font-bold text-[#0B2C22] dark:text-white group-hover:text-[#094718] transition-colors leading-snug">
-                      View Routes
+                  <div className="space-y-0.5 text-left">
+                    <h4 className="text-[15px] sm:text-base font-bold text-[#0B2C22] dark:text-white group-hover:text-[#094718] dark:group-hover:text-emerald-400 transition-colors leading-snug flex items-center gap-1.5">
+                      <span>View Routes</span>
+                      <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#094718]" />
                     </h4>
                     <p className="text-xs sm:text-[13px] text-[#4E6258] dark:text-slate-300 leading-relaxed font-normal">
                       Check available routes and pickup points.
@@ -549,17 +631,15 @@ export default function HomePage() {
               <motion.div variants={cardItemVariants}>
                 <button
                   onClick={() => scrollToSection('safety')}
-                  className="w-full text-left group flex items-center gap-4 p-4 sm:p-4.5 lg:p-5 rounded-[22px] bg-white dark:bg-slate-900 border border-emerald-950/[0.07] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_28px_rgba(9,71,24,0.08)] hover:border-emerald-300/80 hover:-translate-y-1 transition-all duration-200 cursor-pointer block h-full"
+                  className="w-full text-left group flex items-center gap-4 p-4 sm:p-4.5 lg:p-5 rounded-[22px] bg-white dark:bg-slate-900 border border-emerald-950/[0.07] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_28px_rgba(9,71,24,0.08)] hover:border-emerald-300 dark:hover:border-emerald-700 hover:-translate-y-1 transition-all duration-200 cursor-pointer block h-full"
                 >
                   <div className="flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-[16px] bg-[#EAF6ED] dark:bg-emerald-950/80 border border-[#D0EAD6] dark:border-emerald-800/60 text-[#094718] dark:text-emerald-400 shrink-0 group-hover:scale-105 group-hover:bg-[#E0F2E4] transition-all duration-200">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
-                      <path d="m9 12 2 2 4-4" />
-                    </svg>
+                    <ShieldCheck className="h-6 w-6 stroke-[2.2]" />
                   </div>
-                  <div className="space-y-0.5">
-                    <h4 className="text-[15px] sm:text-base font-bold text-[#0B2C22] dark:text-white group-hover:text-[#094718] transition-colors leading-snug">
-                      Child Safety
+                  <div className="space-y-0.5 text-left">
+                    <h4 className="text-[15px] sm:text-base font-bold text-[#0B2C22] dark:text-white group-hover:text-[#094718] dark:group-hover:text-emerald-400 transition-colors leading-snug flex items-center gap-1.5">
+                      <span>Child Safety</span>
+                      <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#094718]" />
                     </h4>
                     <p className="text-xs sm:text-[13px] text-[#4E6258] dark:text-slate-300 leading-relaxed font-normal">
                       Background-checked drivers and safety guidelines.
@@ -572,17 +652,15 @@ export default function HomePage() {
               <motion.div variants={cardItemVariants}>
                 <Link
                   href="/parent/rides/live"
-                  className="group flex items-center gap-4 p-4 sm:p-4.5 lg:p-5 rounded-[22px] bg-white dark:bg-slate-900 border border-emerald-950/[0.07] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04),0_1px_3px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_28px_rgba(9,71,24,0.08)] hover:border-emerald-300/80 hover:-translate-y-1 transition-all duration-200 cursor-pointer block h-full"
+                  className="group flex items-center gap-4 p-4 sm:p-4.5 lg:p-5 rounded-[22px] bg-white dark:bg-slate-900 border border-emerald-950/[0.07] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_28px_rgba(9,71,24,0.08)] hover:border-emerald-300 dark:hover:border-emerald-700 hover:-translate-y-1 transition-all duration-200 cursor-pointer block h-full"
                 >
                   <div className="flex h-13 w-13 sm:h-14 sm:w-14 items-center justify-center rounded-[16px] bg-[#EAF6ED] dark:bg-emerald-950/80 border border-[#D0EAD6] dark:border-emerald-800/60 text-[#094718] dark:text-emerald-400 shrink-0 group-hover:scale-105 group-hover:bg-[#E0F2E4] transition-all duration-200">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                      <rect width="14" height="20" x="5" y="2" rx="2" ry="2" />
-                      <line x1="12" x2="12.01" y1="18" y2="18" />
-                    </svg>
+                    <Clock className="h-6 w-6 stroke-[2.2]" />
                   </div>
-                  <div className="space-y-0.5">
-                    <h4 className="text-[15px] sm:text-base font-bold text-[#0B2C22] dark:text-white group-hover:text-[#094718] transition-colors leading-snug">
-                      Track in Real Time
+                  <div className="space-y-0.5 text-left">
+                    <h4 className="text-[15px] sm:text-base font-bold text-[#0B2C22] dark:text-white group-hover:text-[#094718] dark:group-hover:text-emerald-400 transition-colors leading-snug flex items-center gap-1.5">
+                      <span>Track in Real Time</span>
+                      <ArrowRight className="h-3.5 w-3.5 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-[#094718]" />
                     </h4>
                     <p className="text-xs sm:text-[13px] text-[#4E6258] dark:text-slate-300 leading-relaxed font-normal">
                       Get live ride updates and arrival alerts.
@@ -758,141 +836,7 @@ export default function HomePage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 text-left">
-            {/* Step 1 */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-50px' }}
-              variants={sectionFadeUp}
-              className="p-7 rounded-[26px] border border-emerald-950/[0.08] dark:border-slate-800 bg-[#FAFDF9] dark:bg-slate-850 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 space-y-5 flex flex-col justify-between"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#094718] text-white font-black text-lg shadow-md border border-[#22C55E]/40">
-                    01
-                  </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#16A34A] bg-[#EAF6ED] px-3 py-1 rounded-full border border-[#D0EAD6]">
-                    Search &amp; Filter
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#0B2C22] dark:text-white">
-                  Discover <span className="text-[#8CB02C]">Verified</span> Van Drivers
-                </h3>
-                <p className="text-xs sm:text-sm text-[#4E6258] dark:text-slate-300 leading-relaxed">
-                  Select your child's school and district. View verified NIC identity, commercial driving credentials, vehicle capacity, and genuine reviews from fellow parents.
-                </p>
-
-                {/* Miniature Visual Badge */}
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-emerald-100 dark:border-slate-700 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#094718] dark:text-emerald-400">Royal College Route</span>
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-[10px] font-bold text-emerald-800">14 Verified Vans</span>
-                  </div>
-                  <p className="text-[11px] text-[#4E6258] dark:text-slate-400">Malabe → Battaramulla → Rajagiriya → Colombo 07</p>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-emerald-100/80 dark:border-slate-800 flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#094718] dark:text-emerald-400">
-                  48+ Schools Mapped
-                </span>
-                <Link href="/drivers" className="text-xs font-bold text-[#094718] dark:text-emerald-400 hover:underline inline-flex items-center gap-1">
-                  Browse Directory <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            </motion.div>
-
-            {/* Step 2 */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-50px' }}
-              variants={sectionFadeUp}
-              className="p-7 rounded-[26px] border border-emerald-950/[0.08] dark:border-slate-800 bg-[#FAFDF9] dark:bg-slate-850 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 space-y-5 flex flex-col justify-between"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#094718] text-white font-black text-lg shadow-md border border-[#22C55E]/40">
-                    02
-                  </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#16A34A] bg-[#EAF6ED] px-3 py-1 rounded-full border border-[#D0EAD6]">
-                    Direct Booking
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#0B2C22] dark:text-white">
-                  Confirm <span className="text-[#8CB02C]">Monthly Seat</span> in LKR
-                </h3>
-                <p className="text-xs sm:text-sm text-[#4E6258] dark:text-slate-300 leading-relaxed">
-                  Provide your private pickup and dropoff locations. The driver confirms seat availability, route compatibility, and agreed monthly fees in Sri Lankan Rupees.
-                </p>
-
-                {/* Miniature Visual Badge */}
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-emerald-100 dark:border-slate-700 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#094718] dark:text-emerald-400">Monthly Seat Rate</span>
-                    <span className="font-extrabold text-[#0B2C22] dark:text-white">LKR 8,500 / mo</span>
-                  </div>
-                  <p className="text-[11px] text-[#4E6258] dark:text-slate-400">Zero middleman fee • Direct driver settlement</p>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-emerald-100/80 dark:border-slate-800 flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#094718] dark:text-emerald-400">
-                  Zero Commission Markups
-                </span>
-                <Link href="/drivers" className="text-xs font-bold text-[#094718] dark:text-emerald-400 hover:underline inline-flex items-center gap-1">
-                  Check Rates <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            </motion.div>
-
-            {/* Step 3 */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-50px' }}
-              variants={sectionFadeUp}
-              className="p-7 rounded-[26px] border border-emerald-950/[0.08] dark:border-slate-800 bg-[#FAFDF9] dark:bg-slate-850 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-lg hover:-translate-y-1.5 transition-all duration-300 space-y-5 flex flex-col justify-between"
-            >
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#094718] text-white font-black text-lg shadow-md border border-[#22C55E]/40">
-                    03
-                  </div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#16A34A] bg-[#EAF6ED] px-3 py-1 rounded-full border border-[#D0EAD6]">
-                    Live Telemetry
-                  </span>
-                </div>
-                <h3 className="text-lg sm:text-xl font-bold text-[#0B2C22] dark:text-white">
-                  Track Live Trips <span className="text-[#8CB02C]">Every Morning</span>
-                </h3>
-                <p className="text-xs sm:text-sm text-[#4E6258] dark:text-slate-300 leading-relaxed">
-                  Follow your child's van on an interactive GPS map. Receive automated push updates when your child is picked up and safely inside the school gate.
-                </p>
-
-                {/* Miniature Visual Badge */}
-                <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-emerald-100 dark:border-slate-700 space-y-1.5">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-[#094718] dark:text-emerald-400 flex items-center gap-1.5">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" /> Live Telemetry
-                    </span>
-                    <span className="font-mono text-[10px] font-bold text-[#16A34A]">38 km/h • Safe Speed</span>
-                  </div>
-                  <p className="text-[11px] text-[#4E6258] dark:text-slate-400">Boarded 7:12 AM • ETA School Gate: 8 mins</p>
-                </div>
-              </div>
-
-              <div className="pt-4 border-t border-emerald-100/80 dark:border-slate-800 flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#094718] dark:text-emerald-400">
-                  Sub-second Telemetry
-                </span>
-                <Link href="/parent/rides/live" className="text-xs font-bold text-[#094718] dark:text-emerald-400 hover:underline inline-flex items-center gap-1">
-                  Live Demo <ArrowRight className="h-3.5 w-3.5" />
-                </Link>
-              </div>
-            </motion.div>
-          </div>
+          <HowItWorksSlideshow />
         </div>
       </section>
 
@@ -1234,7 +1178,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* District Filter Pills */}
+            {/* District Filter Pills & Quick Dropdown Button */}
             <div className="flex flex-wrap items-center gap-2">
               {['All', 'Colombo', 'Kandy'].map((district) => (
                 <button
@@ -1249,75 +1193,192 @@ export default function HomePage() {
                   {district === 'All' ? 'All Districts' : district}
                 </button>
               ))}
+
+              {dropdownSchools.length > 0 && (
+                <button
+                  onClick={() => setIsSchoolsDropdownOpen(!isSchoolsDropdownOpen)}
+                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    isSchoolsDropdownOpen
+                      ? 'bg-[#094718] text-white shadow-sm'
+                      : 'bg-white dark:bg-slate-900 text-[#094718] dark:text-emerald-400 border border-emerald-300 dark:border-slate-700 hover:bg-emerald-50'
+                  }`}
+                >
+                  <School className="h-3.5 w-3.5 text-[#16A34A]" />
+                  <span>More Schools ({dropdownSchools.length})</span>
+                  <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isSchoolsDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+              )}
             </div>
           </div>
 
-          {/* School Cards Grid with Progressive Skeleton Transition */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {isFiltering ? (
-              <>
-                <SchoolCardSkeleton />
-                <SchoolCardSkeleton />
-                <SchoolCardSkeleton />
-              </>
-            ) : filteredSchools.length === 0 ? (
-              <div className="col-span-full py-12 text-center text-[#4E6258] dark:text-slate-400">
-                <p className="text-sm font-semibold">No schools found matching your search. Try adjusting your query or district.</p>
+          {/* School Cards Grid (Showing strictly 3 primary cards + dropdown for remaining) */}
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {isFiltering ? (
+                <>
+                  <SchoolCardSkeleton />
+                  <SchoolCardSkeleton />
+                  <SchoolCardSkeleton />
+                </>
+              ) : filteredSchools.length === 0 ? (
+                <div className="col-span-full py-12 text-center text-[#4E6258] dark:text-slate-400">
+                  <p className="text-sm font-semibold">No schools found matching your search. Try adjusting your query or district.</p>
+                </div>
+              ) : (
+                visibleSchools.map((school) => (
+                  <motion.div
+                    key={school.id}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: '-40px' }}
+                    variants={sectionFadeUp}
+                    className="p-6 rounded-[26px] bg-white dark:bg-slate-900 border border-emerald-950/[0.08] dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 space-y-4 flex flex-col justify-between"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#EAF6ED] text-[#094718] border border-[#D0EAD6]">
+                          {school.badge}
+                        </span>
+                        <span className="text-xs font-bold text-[#16A34A] flex items-center gap-1">
+                          <Bus className="h-3.5 w-3.5" /> {school.vansCount} Active Vans
+                        </span>
+                      </div>
+
+                      <h3 className="text-lg font-extrabold text-[#0B2C22] dark:text-white">
+                        {school.name}
+                      </h3>
+                      <p className="text-xs text-[#4E6258] dark:text-slate-400 flex items-center gap-1.5">
+                        <MapPin className="h-3.5 w-3.5 text-[#16A34A]" /> {school.location}
+                      </p>
+
+                      <div className="space-y-1.5 pt-2 border-t border-emerald-100/60 dark:border-slate-800">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-[#4E6258] dark:text-slate-400 block">
+                          Popular Commute Routes:
+                        </span>
+                        {school.popularRoutes.map((route, i) => (
+                          <div key={i} className="text-xs text-[#0B2C22] dark:text-slate-200 flex items-center gap-2">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#16A34A]" />
+                            <span>{route}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-emerald-100/60 dark:border-slate-800 flex items-center justify-between">
+                      <div className="text-left">
+                        <span className="text-[10px] text-[#4E6258] dark:text-slate-400 block font-semibold">Typical Monthly Fee</span>
+                        <span className="text-xs font-bold text-[#094718] dark:text-emerald-400">{school.monthlyRate}</span>
+                      </div>
+                      <Link href="/drivers">
+                        <button className="px-4 py-2 rounded-xl bg-[#094718] text-white text-xs font-bold hover:bg-[#073713] transition-colors cursor-pointer">
+                          View Vans
+                        </button>
+                      </Link>
+                    </div>
+                  </motion.div>
+                ))
+              )}
+            </div>
+
+            {/* Dropdown Toggle Button below the 3 cards */}
+            {!isFiltering && dropdownSchools.length > 0 && (
+              <div className="flex flex-col items-center justify-center pt-2">
+                <button
+                  onClick={() => setIsSchoolsDropdownOpen(!isSchoolsDropdownOpen)}
+                  className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-white dark:bg-slate-900 border-2 border-[#094718] dark:border-emerald-500 text-[#094718] dark:text-emerald-300 font-bold text-xs sm:text-sm hover:bg-emerald-50 dark:hover:bg-slate-800 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer group"
+                  aria-expanded={isSchoolsDropdownOpen}
+                >
+                  <School className="h-4 w-4 text-[#16A34A] group-hover:scale-110 transition-transform" />
+                  <span>
+                    {isSchoolsDropdownOpen
+                      ? `Close Additional Schools (${dropdownSchools.length})`
+                      : `View Other Schools in Dropdown (${dropdownSchools.length} More Campuses)`}
+                  </span>
+                  <ChevronDown
+                    className={`h-4 w-4 transition-transform duration-300 ${
+                      isSchoolsDropdownOpen ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
               </div>
-            ) : (
-              filteredSchools.map((school) => (
-              <motion.div
-                key={school.id}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: '-40px' }}
-                variants={sectionFadeUp}
-                className="p-6 rounded-[26px] bg-white dark:bg-slate-900 border border-emerald-950/[0.08] dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 space-y-4 flex flex-col justify-between"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#EAF6ED] text-[#094718] border border-[#D0EAD6]">
-                      {school.badge}
+            )}
+
+            {/* Expandable Dropdown Section with Smooth Animation */}
+            <AnimatePresence>
+              {isSchoolsDropdownOpen && dropdownSchools.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  className="overflow-hidden pt-2 space-y-4"
+                >
+                  <div className="pt-4 flex items-center justify-between border-t border-emerald-100/60 dark:border-slate-800">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#16A34A] flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#16A34A] animate-pulse" />
+                      Other Mapped Schools ({dropdownSchools.length})
                     </span>
-                    <span className="text-xs font-bold text-[#16A34A] flex items-center gap-1">
-                      <Bus className="h-3.5 w-3.5" /> {school.vansCount} Active Vans
+                    <span className="text-xs text-[#4E6258] dark:text-slate-400 hidden sm:inline">
+                      All schools vetted with active van fleets
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-extrabold text-[#0B2C22] dark:text-white">
-                    {school.name}
-                  </h3>
-                  <p className="text-xs text-[#4E6258] dark:text-slate-400 flex items-center gap-1.5">
-                    <MapPin className="h-3.5 w-3.5 text-[#16A34A]" /> {school.location}
-                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {dropdownSchools.map((school) => (
+                      <motion.div
+                        key={school.id}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="p-6 rounded-[26px] bg-white dark:bg-slate-900 border border-emerald-950/[0.08] dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 space-y-4 flex flex-col justify-between"
+                      >
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-[#EAF6ED] text-[#094718] border border-[#D0EAD6]">
+                              {school.badge}
+                            </span>
+                            <span className="text-xs font-bold text-[#16A34A] flex items-center gap-1">
+                              <Bus className="h-3.5 w-3.5" /> {school.vansCount} Active Vans
+                            </span>
+                          </div>
 
-                  <div className="space-y-1.5 pt-2 border-t border-emerald-100/60 dark:border-slate-800">
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-[#4E6258] dark:text-slate-400 block">
-                      Popular Commute Routes:
-                    </span>
-                    {school.popularRoutes.map((route, i) => (
-                      <div key={i} className="text-xs text-[#0B2C22] dark:text-slate-200 flex items-center gap-2">
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#16A34A]" />
-                        <span>{route}</span>
-                      </div>
+                          <h3 className="text-lg font-extrabold text-[#0B2C22] dark:text-white">
+                            {school.name}
+                          </h3>
+                          <p className="text-xs text-[#4E6258] dark:text-slate-400 flex items-center gap-1.5">
+                            <MapPin className="h-3.5 w-3.5 text-[#16A34A]" /> {school.location}
+                          </p>
+
+                          <div className="space-y-1.5 pt-2 border-t border-emerald-100/60 dark:border-slate-800">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-[#4E6258] dark:text-slate-400 block">
+                              Popular Commute Routes:
+                            </span>
+                            {school.popularRoutes.map((route, i) => (
+                              <div key={i} className="text-xs text-[#0B2C22] dark:text-slate-200 flex items-center gap-2">
+                                <span className="h-1.5 w-1.5 rounded-full bg-[#16A34A]" />
+                                <span>{route}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="pt-4 border-t border-emerald-100/60 dark:border-slate-800 flex items-center justify-between">
+                          <div className="text-left">
+                            <span className="text-[10px] text-[#4E6258] dark:text-slate-400 block font-semibold">Typical Monthly Fee</span>
+                            <span className="text-xs font-bold text-[#094718] dark:text-emerald-400">{school.monthlyRate}</span>
+                          </div>
+                          <Link href="/drivers">
+                            <button className="px-4 py-2 rounded-xl bg-[#094718] text-white text-xs font-bold hover:bg-[#073713] transition-colors cursor-pointer">
+                              View Vans
+                            </button>
+                          </Link>
+                        </div>
+                      </motion.div>
                     ))}
                   </div>
-                </div>
-
-                <div className="pt-4 border-t border-emerald-100/60 dark:border-slate-800 flex items-center justify-between">
-                  <div className="text-left">
-                    <span className="text-[10px] text-[#4E6258] dark:text-slate-400 block font-semibold">Typical Monthly Fee</span>
-                    <span className="text-xs font-bold text-[#094718] dark:text-emerald-400">{school.monthlyRate}</span>
-                  </div>
-                  <Link href="/drivers">
-                    <button className="px-4 py-2 rounded-xl bg-[#094718] text-white text-xs font-bold hover:bg-[#073713] transition-colors cursor-pointer">
-                      View Vans
-                    </button>
-                  </Link>
-                </div>
-              </motion.div>
-            ))
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </section>
