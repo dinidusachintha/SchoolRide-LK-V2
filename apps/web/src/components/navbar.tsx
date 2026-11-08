@@ -23,7 +23,7 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-emerald-950/[0.04] dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md transition-all shadow-[0_1px_8px_rgba(0,0,0,0.02)]">
+    <header className="sticky top-0 z-40 w-full border-b border-emerald-900/80 bg-[#14532D] backdrop-blur-md transition-all shadow-[0_4px_20px_rgba(20,83,45,0.18)]">
       <div className="w-full max-w-[1600px] mx-auto flex h-[72px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center group">
@@ -40,44 +40,44 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-8 text-[15px] font-semibold text-slate-700 dark:text-slate-200">
+        <nav className="hidden lg:flex items-center gap-8 text-[15px] font-semibold text-white/85">
           <Link
             href="/"
-            className={`transition-colors hover:text-[#094718] dark:hover:text-emerald-400 ${
-              pathname === '/' ? 'text-[#094718] dark:text-emerald-400 font-bold' : ''
+            className={`transition-colors hover:text-[#FACC15] ${
+              pathname === '/' ? 'text-[#FACC15] font-bold' : ''
             }`}
           >
             Home
           </Link>
           <Link
             href="/#how-it-works"
-            className="transition-colors hover:text-[#094718] dark:hover:text-emerald-400"
+            className="transition-colors hover:text-[#FACC15]"
           >
             How it Works
           </Link>
           <Link
             href="/#routes"
-            className="transition-colors hover:text-[#094718] dark:hover:text-emerald-400"
+            className="transition-colors hover:text-[#FACC15]"
           >
             Routes
           </Link>
           <Link
             href="/safety"
-            className={`transition-colors hover:text-[#094718] dark:hover:text-emerald-400 ${
-              pathname === '/safety' ? 'text-[#094718] dark:text-emerald-400 font-bold' : ''
+            className={`transition-colors hover:text-[#FACC15] ${
+              pathname === '/safety' ? 'text-[#FACC15] font-bold' : ''
             }`}
           >
             Safety
           </Link>
           <Link
             href="/#about"
-            className="transition-colors hover:text-[#094718] dark:hover:text-emerald-400"
+            className="transition-colors hover:text-[#FACC15]"
           >
             About
           </Link>
           <Link
             href="/#contact"
-            className="transition-colors hover:text-[#094718] dark:hover:text-emerald-400"
+            className="transition-colors hover:text-[#FACC15]"
           >
             Contact
           </Link>
@@ -300,12 +300,12 @@ export function Navbar() {
           ) : (
             <div className="flex items-center gap-3">
               <Link href="/login">
-                <button className="px-6 py-2.5 text-sm font-bold text-[#152720] dark:text-slate-100 border-2 border-[#152720]/80 dark:border-slate-300 rounded-full hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-150 cursor-pointer">
+                <button className="px-5 sm:px-6 py-2.5 text-sm font-bold text-white border-2 border-white/60 hover:border-white rounded-full hover:bg-white/10 transition-all duration-150 cursor-pointer">
                   Sign In
                 </button>
               </Link>
               <Link href="/drivers">
-                <button className="px-6 py-2.5 text-sm font-bold text-white bg-[#094718] hover:bg-[#073713] rounded-full shadow-sm hover:shadow-md transition-all duration-150 flex items-center gap-1.5 cursor-pointer">
+                <button className="px-5 sm:px-6 py-2.5 text-sm font-black text-[#14532D] bg-[#FACC15] hover:bg-[#EAB308] rounded-full shadow-md hover:shadow-lg transition-all duration-150 flex items-center gap-1.5 cursor-pointer">
                   Book a Ride
                 </button>
               </Link>
@@ -315,7 +315,7 @@ export function Navbar() {
           {/* Mobile Menu Toggle Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
+            className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors cursor-pointer"
             aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -330,7 +330,7 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-b border-border bg-card px-4 pt-2 pb-6 space-y-2 overflow-hidden"
+            className="md:hidden border-b border-emerald-900 bg-[#14532D] px-4 pt-2 pb-6 space-y-2 overflow-hidden text-white"
           >
             <Link
               href="/drivers"
