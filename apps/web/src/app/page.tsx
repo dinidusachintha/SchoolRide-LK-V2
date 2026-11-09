@@ -840,48 +840,61 @@ export default function HomePage() {
       </section>
 
       {/* ======================================================== */}
-      {/* 2. INSTANT SCHOOL VAN FINDER (INTERACTIVE SEARCH BAR)     */}
+      {/* 2. QUICK ROUTE MATCHER (BLACK BG & WHITE GLASS CARDS)     */}
       {/* ======================================================== */}
-      <section className="py-10 bg-[#FFFFFF] dark:bg-slate-900 border-b border-slate-200/80 dark:border-slate-800 relative">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
+      <section className="py-12 sm:py-16 bg-black text-white border-b border-white/10 relative overflow-hidden">
+        {/* Soft Ambient Radial Accents */}
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-[450px] h-[450px] rounded-full bg-[#FACC15]/10 blur-3xl pointer-events-none" />
+
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="p-6 sm:p-8 rounded-[28px] bg-white dark:bg-slate-850 border border-slate-200/90 dark:border-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.04)]"
+            className="p-6 sm:p-8 rounded-[28px] bg-white/[0.08] backdrop-blur-xl border border-white/[0.18] shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
           >
-            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+            <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-6">
               
-              <div className="space-y-1 pr-4">
-                <span className="text-[11px] font-black uppercase tracking-wider text-[#16A34A] flex items-center gap-1.5">
+              {/* Left Header Tag & Title */}
+              <div className="space-y-1.5 pr-2 shrink-0">
+                <span className="text-[11px] font-black uppercase tracking-wider text-[#FACC15] flex items-center gap-1.5">
                   <Sparkles className="h-3.5 w-3.5 text-[#FACC15]" /> Quick Route Matcher
                 </span>
-                <h3 className="text-lg sm:text-xl font-black text-[#1F2937] dark:text-white">
+                <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
                   Find Verified Vans Serving Your School
                 </h3>
+                <p className="text-xs text-white/70 font-normal">
+                  Filter by province, school, or pickup corridor across Sri Lanka.
+                </p>
               </div>
 
-              {/* District & School Filter Controls */}
+              {/* 3 White Glass Effect Cards for Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1 max-w-3xl">
-                {/* District */}
-                <div className="relative">
-                  <label className="block text-[11px] font-bold text-[#4B5563] dark:text-slate-400 mb-1">
+                
+                {/* 1. District Glass Card */}
+                <div className="relative p-2.5 rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/[0.15] hover:border-white/30 transition-all">
+                  <label className="block text-[11px] font-bold text-white/80 mb-1">
                     Province / District
                   </label>
                   <select
                     value={selectedDistrict}
                     onChange={(e) => handleDistrictFilter(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-emerald-200 dark:border-slate-700 bg-[#FAFDF9] dark:bg-slate-800 text-sm font-semibold text-[#1F2937] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+                    className="w-full px-2.5 py-2 rounded-xl border border-white/20 bg-white/[0.12] text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15] cursor-pointer"
                   >
-                    <option value="All">All Districts (Sri Lanka)</option>
-                    <option value="Colombo">Colombo (Western)</option>
-                    <option value="Kandy">Kandy (Central)</option>
+                    <option value="All" className="bg-slate-900 text-white">All Districts (Sri Lanka)</option>
+                    <option value="Colombo" className="bg-slate-900 text-white">Colombo (Western)</option>
+                    <option value="Gampaha" className="bg-slate-900 text-white">Gampaha (Western)</option>
+                    <option value="Kalutara" className="bg-slate-900 text-white">Kalutara (Western)</option>
+                    <option value="Kandy" className="bg-slate-900 text-white">Kandy (Central)</option>
+                    <option value="Galle" className="bg-slate-900 text-white">Galle (Southern)</option>
+                    <option value="Kurunegala" className="bg-slate-900 text-white">Kurunegala (North Western)</option>
                   </select>
                 </div>
 
-                {/* School Input */}
-                <div className="relative">
-                  <label className="block text-[11px] font-bold text-[#4B5563] dark:text-slate-400 mb-1">
+                {/* 2. School Glass Card */}
+                <div className="relative p-2.5 rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/[0.15] hover:border-white/30 transition-all">
+                  <label className="block text-[11px] font-bold text-white/80 mb-1">
                     Child's School
                   </label>
                   <div className="relative">
@@ -890,33 +903,34 @@ export default function HomePage() {
                       placeholder="e.g. Royal, Visakha, Ananda"
                       value={schoolSearchQuery}
                       onChange={(e) => handleSchoolSearch(e.target.value)}
-                      className="w-full pl-8 pr-3 py-2.5 rounded-xl border border-emerald-200 dark:border-slate-700 bg-[#FAFDF9] dark:bg-slate-800 text-sm font-semibold text-[#1F2937] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-white/20 bg-white/[0.12] text-sm font-semibold text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                     />
-                    <School className="absolute left-2.5 top-3 h-4 w-4 text-[#4B5563] pointer-events-none" />
+                    <School className="absolute left-2.5 top-2.5 h-4 w-4 text-white/60 pointer-events-none" />
                   </div>
                 </div>
 
-                {/* Pickup Area */}
-                <div className="relative">
-                  <label className="block text-[11px] font-bold text-[#4B5563] dark:text-slate-400 mb-1">
+                {/* 3. Pickup Town Glass Card */}
+                <div className="relative p-2.5 rounded-2xl bg-white/[0.07] backdrop-blur-md border border-white/[0.15] hover:border-white/30 transition-all">
+                  <label className="block text-[11px] font-bold text-white/80 mb-1">
                     Home / Pickup Town
                   </label>
                   <div className="relative">
                     <input
                       type="text"
-                      placeholder="e.g. Nugegoda, Rajagiriya"
-                      className="w-full pl-8 pr-3 py-2.5 rounded-xl border border-emerald-200 dark:border-slate-700 bg-[#FAFDF9] dark:bg-slate-800 text-sm font-semibold text-[#1F2937] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+                      placeholder="e.g. Nugegoda, Malabe"
+                      className="w-full pl-8 pr-3 py-2 rounded-xl border border-white/20 bg-white/[0.12] text-sm font-semibold text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                     />
-                    <MapPin className="absolute left-2.5 top-3 h-4 w-4 text-[#4B5563] pointer-events-none" />
+                    <MapPin className="absolute left-2.5 top-2.5 h-4 w-4 text-white/60 pointer-events-none" />
                   </div>
                 </div>
+
               </div>
 
               {/* Action Button */}
               <div className="pt-2 lg:pt-0 shrink-0">
                 <Link href="/drivers">
-                  <button className="w-full lg:w-auto px-6 py-3 rounded-xl bg-[#14532D] hover:bg-[#073713] text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
-                    <Search className="h-4 w-4" />
+                  <button className="w-full lg:w-auto px-7 py-3.5 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-[#14532D] font-black text-sm sm:text-base shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
+                    <Search className="h-4 w-4 stroke-[2.5]" />
                     <span>Search Verified Fleet</span>
                   </button>
                 </Link>
@@ -924,6 +938,49 @@ export default function HomePage() {
 
             </div>
           </motion.div>
+        </div>
+      </section>
+
+      {/* ======================================================== */}
+      <section className="py-20 md:py-24 bg-[#14532D] text-white text-center relative overflow-hidden shadow-xl">
+        
+        {/* Soft decorative background circles */}
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-lime-400/10 blur-3xl pointer-events-none" />
+
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 space-y-8 relative z-10">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-emerald-200">
+            <Sparkles className="h-4 w-4 text-[#FACC15]" />
+            <span>Join Sri Lanka's Verified School Transport Network</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight max-w-3xl mx-auto">
+            Ready to give your child a <br />
+            <span className="text-[#16A34A]">safer, stress-free</span> commute?
+          </h2>
+
+          <p className="text-sm sm:text-base text-emerald-100/90 max-w-xl mx-auto leading-relaxed">
+            Connect with verified school van drivers in your neighborhood, view transparent monthly rates, and track morning journeys in real-time.
+          </p>
+
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-3 max-w-lg mx-auto">
+            <Link href="/drivers" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-[#14532D] font-black text-sm sm:text-base shadow-lg hover:bg-emerald-50 transition-all cursor-pointer">
+                Book a School Ride Now
+              </button>
+            </Link>
+            <Link href="/register?role=DRIVER" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#073713] border-2 border-white/60 text-white font-bold text-sm sm:text-base hover:bg-[#0B2C22] transition-all cursor-pointer">
+                Register as Van Driver
+              </button>
+            </Link>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-xs text-emerald-200/80">
+            <span className="flex items-center gap-1.5">✓ 100% Inspected Drivers</span>
+            <span className="flex items-center gap-1.5">✓ Encrypted GPS Telemetry</span>
+            <span className="flex items-center gap-1.5">✓ Zero Booking Surcharges</span>
+          </div>
         </div>
       </section>
 
@@ -1814,48 +1871,7 @@ export default function HomePage() {
 
       {/* ======================================================== */}
       {/* 11. DUAL CALL-TO-ACTION (PARENTS & DRIVERS)               */}
-      {/* ======================================================== */}
-      <section className="py-20 md:py-24 bg-[#14532D] text-white text-center relative overflow-hidden shadow-xl">
-        
-        {/* Soft decorative background circles */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-lime-400/10 blur-3xl pointer-events-none" />
-
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-8 space-y-8 relative z-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold text-emerald-200">
-            <Sparkles className="h-4 w-4 text-[#FACC15]" />
-            <span>Join Sri Lanka's Verified School Transport Network</span>
-          </div>
-
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight leading-tight max-w-3xl mx-auto">
-            Ready to give your child a <br />
-            <span className="text-[#16A34A]">safer, stress-free</span> commute?
-          </h2>
-
-          <p className="text-sm sm:text-base text-emerald-100/90 max-w-xl mx-auto leading-relaxed">
-            Connect with verified school van drivers in your neighborhood, view transparent monthly rates, and track morning journeys in real-time.
-          </p>
-
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-3 max-w-lg mx-auto">
-            <Link href="/drivers" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-white text-[#14532D] font-black text-sm sm:text-base shadow-lg hover:bg-emerald-50 transition-all cursor-pointer">
-                Book a School Ride Now
-              </button>
-            </Link>
-            <Link href="/register?role=DRIVER" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto px-8 py-4 rounded-full bg-[#073713] border-2 border-white/60 text-white font-bold text-sm sm:text-base hover:bg-[#0B2C22] transition-all cursor-pointer">
-                Register as Van Driver
-              </button>
-            </Link>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-xs text-emerald-200/80">
-            <span className="flex items-center gap-1.5">✓ 100% Inspected Drivers</span>
-            <span className="flex items-center gap-1.5">✓ Encrypted GPS Telemetry</span>
-            <span className="flex items-center gap-1.5">✓ Zero Booking Surcharges</span>
-          </div>
-        </div>
-      </section>
+      
 
     </div>
   );
