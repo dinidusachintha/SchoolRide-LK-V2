@@ -60,7 +60,7 @@ export function NotificationPopover() {
     <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
       <PopoverPrimitive.Trigger asChild>
         <button
-          className="relative rounded-lg p-2 text-foreground/80 hover:bg-muted/60 transition-colors focus:outline-none cursor-pointer"
+          className="relative rounded-lg p-2 text-white/85 hover:bg-white/10 hover:text-white transition-colors focus:outline-none cursor-pointer"
           aria-label="Notifications"
         >
           <Bell className="h-5 w-5" />

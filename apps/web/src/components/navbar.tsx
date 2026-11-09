@@ -23,8 +23,10 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-emerald-900/80 bg-[#14532D] backdrop-blur-md transition-all shadow-[0_4px_20px_rgba(20,83,45,0.18)]">
-      <div className="w-full max-w-[1600px] mx-auto flex h-[72px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16">
+    <header className="sticky top-0 z-40 w-full border-b border-white/[0.14] bg-black/75 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] supports-[backdrop-filter]:bg-black/70">
+      {/* Frosted Glass Top Specular Highlight */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+      <div className="w-full max-w-[1600px] mx-auto flex h-[72px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16 relative">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center group">
           <div className="relative flex items-center transition-transform duration-150 group-hover:scale-102">
@@ -85,7 +87,7 @@ export function Navbar() {
           {user?.role === 'PARENT' && (
             <Link
               href="/parent/dashboard"
-              className="px-3 py-1 rounded-full bg-emerald-50 text-[#094718] dark:bg-emerald-950/60 dark:text-emerald-300 font-bold text-xs border border-emerald-200/60 hover:bg-emerald-100 transition-colors"
+              className="px-3 py-1 rounded-full bg-white/10 text-emerald-400 font-bold text-xs border border-white/20 hover:bg-white/20 transition-colors"
             >
               Parent Portal
             </Link>
@@ -94,7 +96,7 @@ export function Navbar() {
           {user?.role === 'DRIVER' && (
             <Link
               href="/driver/dashboard"
-              className="px-3 py-1 rounded-full bg-emerald-50 text-[#094718] dark:bg-emerald-950/60 dark:text-emerald-300 font-bold text-xs border border-emerald-200/60 hover:bg-emerald-100 transition-colors"
+              className="px-3 py-1 rounded-full bg-white/10 text-emerald-400 font-bold text-xs border border-white/20 hover:bg-white/20 transition-colors"
             >
               Driver Console
             </Link>
@@ -103,7 +105,7 @@ export function Navbar() {
           {user?.role === 'ADMIN' && (
             <Link
               href="/admin/dashboard"
-              className="px-3 py-1 rounded-full bg-primary/10 text-primary font-bold text-xs border border-primary/20 hover:bg-primary/20 transition-colors"
+              className="px-3 py-1 rounded-full bg-[#FACC15]/20 text-[#FACC15] font-bold text-xs border border-[#FACC15]/40 hover:bg-[#FACC15]/30 transition-colors"
             >
               Admin
             </Link>
@@ -120,16 +122,16 @@ export function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-muted/60 transition-colors cursor-pointer select-none text-left"
+                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer select-none text-left"
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-xs border border-primary/20">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FACC15] text-[#14532D] font-black text-xs shadow-sm">
                     {user.fullName.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="hidden sm:block">
-                    <p className="text-xs font-semibold text-foreground leading-none">{user.fullName}</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5 capitalize">{user.role.toLowerCase()}</p>
+                    <p className="text-xs font-semibold text-white leading-none">{user.fullName}</p>
+                    <p className="text-[10px] text-white/70 mt-0.5 capitalize">{user.role.toLowerCase()}</p>
                   </div>
-                  <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                  <ChevronDown className="h-3.5 w-3.5 text-white/70" />
                 </button>
 
                 <AnimatePresence>
@@ -139,11 +141,11 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -4, scale: 0.96 }}
                       transition={{ duration: 0.12 }}
-                      className="absolute right-0 mt-2 w-48 rounded-xl border border-border bg-card p-1.5 shadow-floating z-50"
+                      className="absolute right-0 mt-2 w-52 rounded-xl border border-white/20 bg-neutral-900/90 backdrop-blur-2xl p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.5)] z-50 text-white"
                     >
-                      <div className="px-3 py-2 border-b border-border/60 mb-1">
-                        <p className="text-xs font-semibold text-foreground truncate">{user.fullName}</p>
-                        <p className="text-[10px] text-muted-foreground truncate">{user.email}</p>
+                      <div className="px-3 py-2 border-b border-white/10 mb-1">
+                        <p className="text-xs font-semibold text-white truncate">{user.fullName}</p>
+                        <p className="text-[10px] text-white/60 truncate">{user.email}</p>
                       </div>
 
                       {user.role === 'PARENT' && (
@@ -151,35 +153,35 @@ export function Navbar() {
                           <Link
                             href="/parent/dashboard"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Dashboard
                           </Link>
                           <Link
                             href="/parent/children"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             My Children
                           </Link>
                           <Link
                             href="/parent/bookings"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Bookings
                           </Link>
                           <Link
                             href="/parent/complaints"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-amber-600 hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-amber-400 hover:bg-amber-400/10 transition-colors"
                           >
                             Report Concern
                           </Link>
                           <Link
                             href="/parent/settings"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Settings & Profile
                           </Link>
@@ -191,42 +193,42 @@ export function Navbar() {
                           <Link
                             href="/driver/dashboard"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Dashboard
                           </Link>
                           <Link
                             href="/driver/console"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Route Console
                           </Link>
                           <Link
                             href="/driver/bookings"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Incoming Requests
                           </Link>
                           <Link
                             href="/driver/vehicles"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Fleet Vehicles
                           </Link>
                           <Link
                             href="/driver/onboarding"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Verification Docs
                           </Link>
                           <Link
                             href="/driver/settings"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Routes & Bio
                           </Link>
@@ -238,56 +240,56 @@ export function Navbar() {
                           <Link
                             href="/admin/dashboard"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Control Overview
                           </Link>
                           <Link
                             href="/admin/verifications"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Driver Verifications
                           </Link>
                           <Link
                             href="/admin/users"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             User Moderation
                           </Link>
                           <Link
                             href="/admin/schools"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Schools Master DB
                           </Link>
                           <Link
                             href="/admin/complaints"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-amber-600 hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-amber-400 hover:bg-amber-400/10 transition-colors"
                           >
                             Safety Complaints
                           </Link>
                           <Link
                             href="/admin/audit-logs"
                             onClick={() => setUserDropdownOpen(false)}
-                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                            className="block px-3 py-1.5 rounded-lg text-xs font-medium text-white/90 hover:bg-white/10 hover:text-white transition-colors"
                           >
                             Security Audit Trail
                           </Link>
                         </>
                       )}
 
-                      <div className="border-t border-border/60 my-1" />
+                      <div className="border-t border-white/10 my-1" />
 
                       <button
                         onClick={() => {
                           setUserDropdownOpen(false);
                           logout();
                         }}
-                        className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-red-400 hover:bg-red-400/10 transition-colors cursor-pointer"
                       >
                         <LogOut className="h-3.5 w-3.5" />
                         Sign Out
@@ -300,7 +302,7 @@ export function Navbar() {
           ) : (
             <div className="flex items-center gap-3">
               <Link href="/login">
-                <button className="px-5 sm:px-6 py-2.5 text-sm font-bold text-white border-2 border-white/60 hover:border-white rounded-full hover:bg-white/10 transition-all duration-150 cursor-pointer">
+                <button className="px-5 sm:px-6 py-2.5 text-sm font-bold text-white border border-white/30 hover:border-white/70 bg-white/[0.08] hover:bg-white/[0.16] backdrop-blur-md rounded-full transition-all duration-150 cursor-pointer shadow-sm">
                   Sign In
                 </button>
               </Link>
@@ -330,82 +332,112 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-b border-emerald-900 bg-[#14532D] px-4 pt-2 pb-6 space-y-2 overflow-hidden text-white"
+            className="md:hidden border-b border-white/[0.14] bg-black/85 backdrop-blur-2xl px-4 pt-3 pb-6 space-y-2.5 overflow-hidden text-white shadow-[0_16px_40px_rgba(0,0,0,0.6)]"
           >
             <Link
-              href="/drivers"
+              href="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-sm font-medium text-foreground hover:text-primary"
+              className="block py-2 text-sm font-semibold text-white/90 hover:text-[#FACC15] transition-colors"
             >
-              Find Van Drivers
+              Home
+            </Link>
+            <Link
+              href="/#how-it-works"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-sm font-semibold text-white/90 hover:text-[#FACC15] transition-colors"
+            >
+              How it Works
+            </Link>
+            <Link
+              href="/#routes"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-sm font-semibold text-white/90 hover:text-[#FACC15] transition-colors"
+            >
+              Routes
             </Link>
             <Link
               href="/safety"
               onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-sm font-medium text-foreground hover:text-primary"
+              className="block py-2 text-sm font-semibold text-white/90 hover:text-[#FACC15] transition-colors"
             >
-              Safety & Verification
+              Safety
+            </Link>
+            <Link
+              href="/#about"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-sm font-semibold text-white/90 hover:text-[#FACC15] transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              href="/#contact"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block py-2 text-sm font-semibold text-white/90 hover:text-[#FACC15] transition-colors"
+            >
+              Contact
             </Link>
 
             {user?.role === 'PARENT' && (
-              <>
+              <div className="pt-2 border-t border-white/10 space-y-1">
                 <Link
                   href="/parent/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 text-sm font-medium text-primary"
+                  className="block py-2 text-sm font-semibold text-[#FACC15]"
                 >
                   Parent Dashboard
                 </Link>
                 <Link
                   href="/parent/rides/live"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 text-sm font-medium text-emerald-600"
+                  className="block py-2 text-sm font-medium text-emerald-400"
                 >
                   Live Ride Tracking
                 </Link>
-              </>
+              </div>
             )}
 
             {user?.role === 'DRIVER' && (
-              <>
+              <div className="pt-2 border-t border-white/10 space-y-1">
                 <Link
                   href="/driver/dashboard"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 text-sm font-medium text-primary"
+                  className="block py-2 text-sm font-semibold text-[#FACC15]"
                 >
                   Driver Portal
                 </Link>
                 <Link
                   href="/driver/console"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-2 text-sm font-medium text-primary"
+                  className="block py-2 text-sm font-medium text-emerald-400"
                 >
                   Ride Console
                 </Link>
-              </>
+              </div>
             )}
 
             {user?.role === 'ADMIN' && (
-              <Link
-                href="/admin/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-medium text-primary"
-              >
-                Admin Oversight
-              </Link>
+              <div className="pt-2 border-t border-white/10">
+                <Link
+                  href="/admin/dashboard"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block py-2 text-sm font-semibold text-[#FACC15]"
+                >
+                  Admin Oversight
+                </Link>
+              </div>
             )}
 
             {!user && (
-              <div className="pt-4 flex gap-2">
-                <Link href="/login" className="w-1/2">
-                  <Button variant="outline" className="w-full">
+              <div className="pt-4 flex gap-3 border-t border-white/10">
+                <Link href="/login" className="w-1/2" onClick={() => setMobileMenuOpen(false)}>
+                  <button className="w-full py-2.5 rounded-full border border-white/60 text-white font-bold text-sm hover:bg-white/10 transition-colors">
                     Sign In
-                  </Button>
+                  </button>
                 </Link>
-                <Link href="/register" className="w-1/2">
-                  <Button variant="primary" className="w-full">
-                    Register
-                  </Button>
+                <Link href="/drivers" className="w-1/2" onClick={() => setMobileMenuOpen(false)}>
+                  <button className="w-full py-2.5 rounded-full bg-[#FACC15] text-[#14532D] font-black text-sm hover:bg-[#EAB308] transition-colors shadow-md">
+                    Book a Ride
+                  </button>
                 </Link>
               </div>
             )}
