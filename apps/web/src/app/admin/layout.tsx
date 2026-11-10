@@ -119,7 +119,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Logo & Root Tag */}
           <div className="space-y-3 pb-4 border-b border-emerald-100/80">
             <Link href="/" className="inline-block group">
-              <div className="p-2 rounded-2xl bg-[#FAFDF9] border border-emerald-100 hover:border-emerald-300 transition-all">
+              <div className="px-3.5 py-2 rounded-2xl bg-slate-950 border border-slate-800 hover:border-slate-700 transition-all inline-flex items-center">
                 <Image
                   src="/logo.png"
                   alt="SchoolRide LK"

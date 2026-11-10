@@ -24,13 +24,13 @@ export function Footer() {
           {/* Column 1: Platform Info */}
           <div className="space-y-4 md:col-span-1 text-left">
             <Link href="/" className="inline-block group">
-              <div className="bg-[#14532D] px-3.5 py-1.5 rounded-xl inline-flex items-center shadow-sm border border-emerald-500/30">
+              <div className="relative flex items-center transition-transform duration-150 group-hover:scale-102">
                 <Image
                   src="/logo.png"
                   alt="SchoolRide LK"
-                  width={160}
-                  height={32}
-                  className="h-7 w-auto object-contain"
+                  width={180}
+                  height={36}
+                  className="h-8 sm:h-9 w-auto object-contain"
                 />
               </div>
             </Link>
