@@ -8,7 +8,13 @@ import { Shield, Phone, Mail, MapPin } from 'lucide-react';
 export function Footer() {
   const pathname = usePathname();
 
-  if (pathname.startsWith('/admin')) {
+  if (
+    pathname.startsWith('/admin') ||
+    pathname === '/login' ||
+    pathname === '/register' ||
+    pathname === '/forgot-password' ||
+    pathname === '/reset-password'
+  ) {
     return null;
   }
   return (

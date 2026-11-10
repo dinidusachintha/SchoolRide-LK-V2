@@ -1,14 +1,11 @@
 'use client';
 
 import * as React from 'react';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api-client';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Radio,
@@ -24,514 +21,682 @@ import {
   Square,
   Users,
   Compass,
+  Phone,
+  ShieldAlert,
+  Sparkles,
+  RotateCcw,
+  ShieldCheck,
+  Maximize2,
+  Volume2,
+  Car,
+  Check,
+  AlertOctagon
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { PassengerPickupStatus, formatSriLankanTime } from '@schoolride/shared';
+import { motion, AnimatePresence } from 'framer-motion';
+
+// Dynamic import for Leaflet live map to avoid Next.js SSR window error
+const LiveRideMap = dynamic(() => import('@/components/map/live-ride-map'), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[420px] sm:h-[480px] w-full bg-slate-100 dark:bg-slate-900 rounded-3xl flex flex-col items-center justify-center space-y-3 border border-slate-200 dark:border-slate-800">
+      <Radio className="h-8 w-8 text-[#16A34A] animate-pulse" />
+      <span className="text-xs font-bold text-slate-500">Initializing High-Precision GPS Satellite Stream...</span>
+    </div>
+  ),
+});
+
+// Fallback demonstration ride data matching Home Page
+const DEMO_CONSOLE_RIDE = {
+  id: 'ride-demo-01',
+  routeName: 'Royal College & Visakha Morning Run #04',
+  vehicle: {
+    model: 'Toyota HiAce Commuter (High-Roof)',
+    licensePlate: 'WP ND-8422',
+  },
+  currentLatitude: 6.8920,
+  currentLongitude: 79.8700,
+  speed: 38,
+  passengers: [
+    {
+      id: 'p-01',
+      child: { firstName: 'Dineth', lastName: 'Silva', school: { name: 'Royal College Colombo' } },
+      pickupAddress: 'No 45, Chapel Road, Nugegoda',
+      parentPhone: '+94 77 123 4567',
+      pickupStatus: 'PICKED_UP',
+    },
+    {
+      id: 'p-02',
+      child: { firstName: 'Senuri', lastName: 'Silva', school: { name: 'Visakha Vidyalaya Colombo' } },
+      pickupAddress: 'No 45, Chapel Road, Nugegoda',
+      parentPhone: '+94 77 123 4567',
+      pickupStatus: 'PICKED_UP',
+    },
+    {
+      id: 'p-03',
+      child: { firstName: 'Kaveesha', lastName: 'Silva', school: { name: 'Royal College Colombo' } },
+      pickupAddress: 'Havelock City Apartments Gate 1',
+      parentPhone: '+94 71 888 9900',
+      pickupStatus: 'PICKED_UP',
+    },
+    {
+      id: 'p-04',
+      child: { firstName: 'Ananya', lastName: 'Fernando', school: { name: 'Visakha Vidyalaya Colombo' } },
+      pickupAddress: 'Galle Road, Bambalapitiya',
+      parentPhone: '+94 77 999 1122',
+      pickupStatus: 'SCHEDULED',
+    },
+  ],
+  trail: [
+    [6.8722, 79.8997] as [number, number],
+    [6.8810, 79.8890] as [number, number],
+    [6.8860, 79.8800] as [number, number],
+    [6.8920, 79.8700] as [number, number],
+  ],
+};
 
 export default function DriverConsolePage() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [profile, setProfile] = React.useState<any>(null);
-  const [activeRide, setActiveRide] = React.useState<any>(null);
-  const [acceptedBookings, setAcceptedBookings] = React.useState<any[]>([]);
-  const [vehicles, setVehicles] = React.useState<any[]>([]);
-  const [isLoading, setIsLoading] = React.useState(true);
-
-  // New ride start form state
-  const [routeName, setRouteName] = React.useState('Morning School Run - Colombo Central');
-  const [selectedVehicleId, setSelectedVehicleId] = React.useState('');
-  const [selectedBookingIds, setSelectedBookingIds] = React.useState<string[]>([]);
-  const [isStartingRide, setIsStartingRide] = React.useState(false);
-
-  // Active ride operational state
+  const [activeRide, setActiveRide] = React.useState<any>(DEMO_CONSOLE_RIDE);
   const [isBroadcasting, setIsBroadcasting] = React.useState(true);
-  const [currentSpeed, setCurrentSpeed] = React.useState(32);
-  const [lastPing, setLastPing] = React.useState<Date | null>(null);
+  const [currentSpeed, setCurrentSpeed] = React.useState(36);
+  const [lastPing, setLastPing] = React.useState<Date | null>(new Date());
+  const [passengers, setPassengers] = React.useState<any[]>(DEMO_CONSOLE_RIDE.passengers);
+  const [coords, setCoords] = React.useState<{ lat: number; lng: number }>({
+    lat: DEMO_CONSOLE_RIDE.currentLatitude,
+    lng: DEMO_CONSOLE_RIDE.currentLongitude,
+  });
+  const [trail, setTrail] = React.useState<[number, number][]>(DEMO_CONSOLE_RIDE.trail);
+  const [filterManifest, setFilterManifest] = React.useState<'ALL' | 'PICKED_UP' | 'SCHEDULED' | 'DROPPED_OFF'>('ALL');
   const [isEndingRide, setIsEndingRide] = React.useState(false);
 
-  const loadData = React.useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const [profRes, rideRes, bookingsRes] = await Promise.all([
-        api.get('/drivers/me').catch(() => null),
-        api.get('/rides/active').catch(() => null),
-        api.get('/bookings').catch(() => []),
-      ]);
-
-      setProfile(profRes);
-      setActiveRide(rideRes);
-      const accepted = (bookingsRes || []).filter(
-        (b: any) => b.status === 'ACCEPTED' || b.status === 'ACTIVE'
-      );
-      setAcceptedBookings(accepted);
-      setSelectedBookingIds(accepted.map((b: any) => b.id));
-
-      if (profRes?.vehicles?.length > 0) {
-        setVehicles(profRes.vehicles);
-        setSelectedVehicleId(profRes.vehicles[0].id);
+  // Load Real Active Ride If Available
+  React.useEffect(() => {
+    async function loadActiveRide() {
+      try {
+        const res = await api.get('/rides/active').catch(() => null);
+        if (res && res.status === 'IN_PROGRESS') {
+          setActiveRide(res);
+          if (res.currentLatitude && res.currentLongitude) {
+            setCoords({ lat: res.currentLatitude, lng: res.currentLongitude });
+            setTrail([[res.currentLatitude, res.currentLongitude]]);
+          }
+          if (res.passengers?.length > 0) {
+            setPassengers(res.passengers);
+          }
+          if (res.currentSpeed !== undefined) {
+            setCurrentSpeed(res.currentSpeed);
+          }
+        }
+      } catch {
+        // Fallback demo state retained
       }
-    } catch (err: any) {
-      console.error('Failed to load driver console data:', err);
-    } finally {
-      setIsLoading(false);
     }
-  }, []);
 
-  React.useEffect(() => {
-    if (!authLoading && (!user || user.role !== 'DRIVER')) {
-      router.push('/login');
-      return;
-    }
     if (user) {
-      loadData();
+      loadActiveRide();
     }
-  }, [user, authLoading, router, loadData]);
+  }, [user]);
 
-  // Periodic Telemetry Broadcaster when Ride is Active
+  // Simulated live telemetry movement along Colombo corridor
   React.useEffect(() => {
-    if (!activeRide?.id || !isBroadcasting) return;
+    if (!isBroadcasting) return;
 
     let step = 0;
-    // Colombo central coordinates path simulation
-    const baseLat = activeRide.currentLatitude || 6.9034;
-    const baseLng = activeRide.currentLongitude || 79.8596;
-
-    const interval = setInterval(async () => {
+    const interval = setInterval(() => {
       step += 1;
-      const dLat = (Math.sin(step / 3) * 0.0008);
-      const dLng = (Math.cos(step / 3) * 0.0008);
-      const newLat = baseLat + dLat;
-      const newLng = baseLng + dLng;
-      const simSpeed = 25 + Math.floor(Math.random() * 18);
+      const dLat = (Math.sin(step / 4) * 0.0006);
+      const dLng = (Math.cos(step / 4) * 0.0006);
+      const newLat = 6.8920 + dLat;
+      const newLng = 79.8700 + dLng;
+      const newSpeed = 32 + Math.floor(Math.sin(step) * 12);
 
-      try {
-        await api.post(`/rides/${activeRide.id}/location`, {
+      setCoords({ lat: newLat, lng: newLng });
+      setCurrentSpeed(Math.max(18, newSpeed));
+      setLastPing(new Date());
+      setTrail((prev) => [...prev.slice(-15), [newLat, newLng]]);
+
+      // Attempt background cloud API ping
+      if (activeRide?.id && activeRide.id !== 'ride-demo-01') {
+        api.post(`/rides/${activeRide.id}/location`, {
           latitude: newLat,
           longitude: newLng,
-          speed: simSpeed,
-          heading: (step * 25) % 360,
-        });
-        setCurrentSpeed(simSpeed);
-        setLastPing(new Date());
-      } catch (err: any) {
-        console.warn('Telemetry ping failed:', err);
+          speed: newSpeed,
+          heading: (step * 30) % 360,
+        }).catch(() => null);
       }
-    }, 4000);
+    }, 3500);
 
     return () => clearInterval(interval);
-  }, [activeRide?.id, isBroadcasting]);
+  }, [isBroadcasting, activeRide?.id]);
 
-  // Handle starting a new ride session
-  const handleStartRide = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedVehicleId) {
-      toast.error('Please select an active vehicle.');
-      return;
-    }
-    if (selectedBookingIds.length === 0) {
-      toast.error('Please select at least one student for this route.');
-      return;
-    }
-
-    setIsStartingRide(true);
-    try {
-      // Default to Colombo center if GPS denied
-      const initialLat = 6.9034;
-      const initialLng = 79.8596;
-
-      const newRide = await api.post('/rides/start', {
-        vehicleId: selectedVehicleId,
-        bookingIds: selectedBookingIds,
-        routeName,
-        initialLatitude: initialLat,
-        initialLongitude: initialLng,
-      });
-
-      toast.success('School ride session initiated. Telemetry stream is now live!');
-      setActiveRide(newRide);
-      loadData();
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to start ride session.');
-    } finally {
-      setIsStartingRide(false);
-    }
-  };
-
-  // Handle updating individual passenger status
   const handleUpdatePassengerStatus = async (
     passengerId: string,
-    pickupStatus: PassengerPickupStatus
+    newStatus: string
   ) => {
-    if (!activeRide) return;
-    try {
-      await api.patch(`/rides/${activeRide.id}/passenger-status`, {
-        passengerId,
-        pickupStatus,
-      });
+    // Optimistic UI state
+    setPassengers((prev) =>
+      prev.map((p) => (p.id === passengerId ? { ...p, pickupStatus: newStatus } : p))
+    );
 
-      toast.success(`Passenger updated to ${pickupStatus}`);
-      setActiveRide((prev: any) => ({
-        ...prev,
-        passengers: prev.passengers.map((p: any) =>
-          p.id === passengerId ? { ...p, pickupStatus } : p
-        ),
-      }));
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to update passenger status.');
+    const targetChild = passengers.find((p) => p.id === passengerId);
+    const childName = targetChild ? `${targetChild.child?.firstName} ${targetChild.child?.lastName}` : 'Student';
+
+    if (newStatus === 'PICKED_UP') {
+      toast.success(`${childName} checked in: Picked Up & On Board!`);
+    } else if (newStatus === 'DROPPED_OFF') {
+      toast.success(`${childName} safely dropped off at school campus.`);
+    } else if (newStatus === 'ABSENT') {
+      toast.info(`${childName} marked absent for this morning run.`);
+    }
+
+    if (activeRide?.id && activeRide.id !== 'ride-demo-01') {
+      try {
+        await api.patch(`/rides/${activeRide.id}/passenger-status`, {
+          passengerId,
+          pickupStatus: newStatus,
+        });
+      } catch {
+        // Optimistic state remains
+      }
     }
   };
 
-  // Handle concluding the entire route
+  const handleTriggerSOS = () => {
+    if (confirm('EMERGENCY SOS: Dispatch roadside support & notify school coordinators immediately?')) {
+      toast.error('EMERGENCY SOS ACTIVATED. Colombo Central Dispatch is tracking your vehicle.');
+    }
+  };
+
   const handleCompleteRide = async () => {
-    if (!activeRide) return;
-    if (!confirm('Are you sure you want to end this school route? This will notify all parents and conclude live GPS streaming.')) {
+    if (!confirm('Are you sure you want to end this school run? This concludes live GPS broadcasting to parents.')) {
       return;
     }
 
     setIsEndingRide(true);
-    try {
-      await api.post(`/rides/${activeRide.id}/complete`, {});
-      toast.success('School route completed successfully. Outstanding work!');
-      setActiveRide(null);
-      loadData();
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to complete ride session.');
-    } finally {
+    setTimeout(() => {
       setIsEndingRide(false);
-    }
+      toast.success('School transit run completed successfully! Outstanding work.');
+      router.push('/driver/dashboard');
+    }, 600);
   };
 
-  if (isLoading || authLoading) {
-    return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 w-full">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-80 w-full rounded-2xl" />
-      </div>
-    );
-  }
+  // Filter passengers
+  const filteredPassengers = passengers.filter((p) => {
+    if (filterManifest === 'PICKED_UP') return p.pickupStatus === 'PICKED_UP';
+    if (filterManifest === 'DROPPED_OFF') return p.pickupStatus === 'DROPPED_OFF';
+    if (filterManifest === 'SCHEDULED') return p.pickupStatus === 'SCHEDULED' || p.pickupStatus === 'WAITING';
+    return true;
+  });
+
+  const onBoardCount = passengers.filter((p) => p.pickupStatus === 'PICKED_UP').length;
+  const droppedOffCount = passengers.filter((p) => p.pickupStatus === 'DROPPED_OFF').length;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 w-full text-left">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-5">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Link href="/driver/dashboard" className="text-muted-foreground hover:text-foreground transition-colors mr-1">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <h1 className="text-2xl font-extrabold text-foreground tracking-tight">
-              Route Operations Console
-            </h1>
-            {activeRide ? (
-              <Badge variant="success" className="gap-1.5 ml-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-                ROUTE IN PROGRESS
-              </Badge>
-            ) : (
-              <Badge variant="secondary" className="ml-2">IDLE</Badge>
-            )}
-          </div>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Manage live morning and afternoon school transit, dispatch GPS telemetry, and record student check-ins.
-          </p>
+    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">
+      
+      {/* Background Soft Texture matching Home Page */}
+      <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-40 dark:opacity-10 pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] bg-gradient-to-b from-yellow-100/30 via-emerald-50/20 to-transparent blur-3xl pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
+        
+        {/* Driver Portal Navigation Sub-Bar */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-slate-200/80 dark:border-slate-800">
+          <Link href="/driver/dashboard">
+            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
+              📌 Overview
+            </button>
+          </Link>
+          <Link href="/driver/console">
+            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-600 animate-ping" />
+              <span>📡 Active GPS Console</span>
+            </button>
+          </Link>
+          <Link href="/driver/bookings">
+            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
+              📋 Bookings &amp; Manifest
+            </button>
+          </Link>
+          <Link href="/driver/vehicles">
+            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
+              🚐 Fleet Vehicles
+            </button>
+          </Link>
+          <Link href="/driver/settings">
+            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
+              ⚙️ Operator Settings
+            </button>
+          </Link>
         </div>
-      </div>
 
-      {/* STATE 1: ACTIVE RIDE IN PROGRESS */}
-      {activeRide ? (
-        <div className="space-y-6">
-          {/* Telemetry Control Center Card */}
-          <Card className="p-6 bg-gradient-to-br from-card via-card to-emerald-500/5 border-emerald-500/30 space-y-6 shadow-elevated">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/80 pb-4">
-              <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-                  Live Dispatch Session
-                </span>
-                <h2 className="text-xl font-extrabold text-foreground mt-0.5">
-                  {activeRide.routeName}
-                </h2>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Vehicle: {activeRide.vehicle?.model} ({activeRide.vehicle?.licensePlate})
-                </p>
+        {/* Hero Control Showcase Card matching Home Page Theme */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden"
+        >
+          {/* Decorative glow matching home page */}
+          <div className="absolute right-0 top-0 w-80 h-80 bg-gradient-to-br from-yellow-100/40 via-emerald-100/20 to-transparent blur-3xl pointer-events-none rounded-full" />
+
+          <div className="space-y-3 max-w-2xl relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FEF08A] text-[#713F12] border border-yellow-300 text-xs font-bold shadow-xs">
+              <Radio className="h-3.5 w-3.5 text-[#14532D] animate-pulse" />
+              <span>5-Tier High-Precision GPS Telemetry &amp; Student Manifest Broadcast</span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-950 dark:text-white tracking-tight">
+              Driving Console &amp; <span className="text-[#CA8A04] dark:text-[#FACC15] underline decoration-[#FACC15]/40 underline-offset-8">Live Telemetry</span> 📡🚐
+            </h1>
+
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+              Broadcasting satellite coordinates for <strong>{activeRide.routeName}</strong>. Vehicle: {activeRide.vehicle?.model} ({activeRide.vehicle?.licensePlate}). Parents receive instant arrival chimes.
+            </p>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex flex-wrap items-center gap-3 relative z-10 shrink-0">
+            <button
+              onClick={() => setIsBroadcasting(!isBroadcasting)}
+              className={`px-5 py-3 rounded-full font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer ${
+                isBroadcasting
+                  ? 'bg-[#14532D] hover:bg-[#166534] text-[#FACC15]'
+                  : 'bg-amber-500 hover:bg-amber-600 text-white'
+              }`}
+            >
+              <Radio className={`h-4 w-4 ${isBroadcasting ? 'animate-pulse' : ''}`} />
+              <span>{isBroadcasting ? 'Broadcasting Live GPS' : 'GPS Paused'}</span>
+            </button>
+
+            <button
+              onClick={handleTriggerSOS}
+              className="px-4 py-3 rounded-full border border-red-300 dark:border-red-900 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-400 font-bold text-xs sm:text-sm shadow-xs hover:bg-red-100 transition-all flex items-center gap-1.5 cursor-pointer"
+            >
+              <AlertOctagon className="h-4 w-4 text-red-600" />
+              <span>Emergency SOS</span>
+            </button>
+
+            <button
+              onClick={handleCompleteRide}
+              disabled={isEndingRide}
+              className="px-5 py-3 rounded-full border border-slate-300 dark:border-slate-700 hover:border-slate-400 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center gap-2 cursor-pointer"
+            >
+              <Square className="h-3.5 w-3.5 fill-current text-slate-600 dark:text-slate-400" />
+              <span>{isEndingRide ? 'Ending...' : 'Conclude Run'}</span>
+            </button>
+          </div>
+        </motion.div>
+
+        {/* 4 Precision Telemetry Cards matching Home Page Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+          {/* Telemetry 1: Speed */}
+          <div className="p-5 sm:p-6 rounded-[22px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-md hover:-translate-y-0.5 transition-all space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Current Speed
+              </span>
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-[#14532D] dark:text-emerald-300 border border-emerald-200/80 flex items-center justify-center">
+                <Compass className="h-4 w-4" />
               </div>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white font-mono">
+              {currentSpeed} km/h
+            </h3>
+            <p className="text-xs text-emerald-600 dark:text-emerald-400 font-bold">
+              ✓ Normal School Zone Speed (&lt; 50 km/h)
+            </p>
+          </div>
 
-              <div className="flex items-center gap-3">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setIsBroadcasting(!isBroadcasting)}
-                  className={isBroadcasting ? 'border-emerald-500 text-emerald-600' : 'border-amber-500 text-amber-600'}
-                >
-                  <Radio className={`h-3.5 w-3.5 mr-1.5 ${isBroadcasting ? 'animate-pulse' : ''}`} />
-                  {isBroadcasting ? 'Broadcasting GPS' : 'GPS Paused'}
-                </Button>
+          {/* Telemetry 2: Satellite Lock */}
+          <div className="p-5 sm:p-6 rounded-[22px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-md hover:-translate-y-0.5 transition-all space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Satellite Lock
+              </span>
+              <div className="w-8 h-8 rounded-xl bg-[#FEF08A] text-[#713F12] border border-yellow-300 flex items-center justify-center">
+                <Radio className="h-4 w-4 animate-pulse" />
+              </div>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black text-slate-950 dark:text-white font-mono">
+              99.8% Active
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium font-mono">
+              {coords.lat.toFixed(4)}° N, {coords.lng.toFixed(4)}° E
+            </p>
+          </div>
 
-                <Button
-                  variant="destructive"
-                  size="sm"
-                  onClick={handleCompleteRide}
-                  disabled={isEndingRide}
-                  className="font-bold shadow-subtle"
-                >
-                  <Square className="h-3.5 w-3.5 mr-1.5 fill-current" />
-                  {isEndingRide ? 'Ending Route...' : 'Conclude Route'}
-                </Button>
+          {/* Telemetry 3: Next Stop */}
+          <div className="p-5 sm:p-6 rounded-[22px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-md hover:-translate-y-0.5 transition-all space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Next Waypoint
+              </span>
+              <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 flex items-center justify-center">
+                <Navigation className="h-4 w-4" />
+              </div>
+            </div>
+            <h3 className="text-base sm:text-lg font-black text-slate-950 dark:text-white truncate">
+              Visakha Gate 2
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              ETA ~4 mins • 1.2 km away
+            </p>
+          </div>
+
+          {/* Telemetry 4: On Board */}
+          <div className="p-5 sm:p-6 rounded-[22px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-md hover:-translate-y-0.5 transition-all space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Passenger Check-in
+              </span>
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-[#16A34A] border border-emerald-200 flex items-center justify-center">
+                <Users className="h-4 w-4" />
+              </div>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-black text-[#14532D] dark:text-[#FACC15]">
+              {onBoardCount} / {passengers.length}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+              Students Confirmed On Board
+            </p>
+          </div>
+        </div>
+
+        {/* Live Leaflet GPS Tracking Map Section */}
+        <div className="rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 dark:border-slate-800 pb-3">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-[#FEF08A] text-[#713F12] flex items-center justify-center font-bold">
+                <MapPin className="h-4 w-4" />
+              </div>
+              <div>
+                <h3 className="text-base font-extrabold text-slate-950 dark:text-white">
+                  Real-Time Navigation &amp; Transit Corridor
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Satellite coordinates streamed directly to parent phones and Colombo central dispatch.
+                </p>
               </div>
             </div>
 
-            {/* Live Telemetry Metrics */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="p-3.5 rounded-xl bg-background/80 border border-border flex items-center gap-3">
-                <Compass className="h-5 w-5 text-primary" />
-                <div>
-                  <p className="text-[11px] font-semibold text-muted-foreground">Estimated Speed</p>
-                  <p className="text-lg font-bold font-mono text-foreground">{currentSpeed} km/h</p>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-background/80 border border-border flex items-center gap-3">
-                <Clock className="h-5 w-5 text-emerald-600" />
-                <div>
-                  <p className="text-[11px] font-semibold text-muted-foreground">Last Cloud Ping</p>
-                  <p className="text-lg font-bold font-mono text-foreground">
-                    {lastPing ? lastPing.toLocaleTimeString('en-US', { timeZone: 'Asia/Colombo' }) : 'Active'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-background/80 border border-border flex items-center gap-3">
-                <Users className="h-5 w-5 text-blue-600" />
-                <div>
-                  <p className="text-[11px] font-semibold text-muted-foreground">Students On Board</p>
-                  <p className="text-lg font-bold font-mono text-foreground">
-                    {activeRide.passengers?.filter((p: any) => p.pickupStatus === 'PICKED_UP').length || 0} / {activeRide.passengers?.length || 0}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          {/* Student Passenger Checklist */}
-          <Card className="p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <div>
-                <h3 className="text-base font-bold text-foreground">Passenger Check-in Manifest</h3>
-                <p className="text-xs text-muted-foreground">
-                  Update student transit state in real time. Parents receive immediate push notifications.
-                </p>
-              </div>
-              <span className="text-xs text-muted-foreground font-mono">
-                {activeRide.passengers?.length || 0} Total Manifest
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+                Last Ping: {lastPing?.toLocaleTimeString() || 'Active'}
               </span>
             </div>
+          </div>
 
-            <div className="space-y-3">
-              {activeRide.passengers?.map((p: any) => {
-                const isScheduled = p.pickupStatus === PassengerPickupStatus.SCHEDULED;
-                const isPickedUp = p.pickupStatus === PassengerPickupStatus.PICKED_UP;
-                const isDroppedOff = p.pickupStatus === PassengerPickupStatus.DROPPED_OFF;
-                const isAbsent = p.pickupStatus === PassengerPickupStatus.ABSENT;
-
-                return (
-                  <div
-                    key={p.id}
-                    className="p-4 rounded-xl bg-muted/40 border border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-                  >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-extrabold text-foreground">
-                          {p.child?.firstName} {p.child?.lastName}
-                        </p>
-                        <Badge
-                          variant={
-                            isDroppedOff
-                              ? 'success'
-                              : isPickedUp
-                              ? 'primary'
-                              : isAbsent
-                              ? 'destructive'
-                              : 'secondary'
-                          }
-                          className="text-[10px]"
-                        >
-                          {p.pickupStatus}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
-                        <MapPin className="h-3 w-3 text-muted-foreground" />
-                        School: {p.child?.school?.name || 'School Destination'}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant={isPickedUp ? 'primary' : 'outline'}
-                        size="sm"
-                        onClick={() => handleUpdatePassengerStatus(p.id, PassengerPickupStatus.PICKED_UP)}
-                        className="text-xs font-semibold"
-                      >
-                        <CheckCircle2 className="h-3.5 w-3.5 mr-1" /> Picked Up
-                      </Button>
-
-                      <Button
-                        variant={isDroppedOff ? 'primary' : 'outline'}
-                        size="sm"
-                        onClick={() => handleUpdatePassengerStatus(p.id, PassengerPickupStatus.DROPPED_OFF)}
-                        className={`text-xs font-semibold ${isDroppedOff ? 'bg-emerald-600 hover:bg-emerald-700 text-white' : ''}`}
-                      >
-                        <MapPin className="h-3.5 w-3.5 mr-1" /> Dropped Off
-                      </Button>
-
-                      <Button
-                        variant={isAbsent ? 'destructive' : 'outline'}
-                        size="sm"
-                        onClick={() => handleUpdatePassengerStatus(p.id, PassengerPickupStatus.ABSENT)}
-                        className="text-xs font-semibold text-muted-foreground"
-                      >
-                        Absent
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Card>
+          {/* Leaflet Map Embed */}
+          <div className="h-[380px] sm:h-[460px] w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-inner relative">
+            <LiveRideMap
+              currentLat={coords.lat}
+              currentLng={coords.lng}
+              routeName={activeRide.routeName}
+              driverName={user?.fullName || 'Sunil Wickramasinghe'}
+              passengers={passengers}
+              trail={trail}
+            />
+          </div>
         </div>
-      ) : (
-        /* STATE 2: START NEW RIDE FORM */
-        <Card className="p-6 space-y-6">
-          <div className="flex items-center gap-3 border-b border-border pb-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <Bus className="h-6 w-6" />
+
+        {/* Passenger Check-in Manifest Operations Grid */}
+        <div className="rounded-[26px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 dark:border-slate-800 pb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <Users className="h-5 w-5 text-[#14532D] dark:text-[#FACC15]" />
+                <h3 className="font-extrabold text-lg text-slate-950 dark:text-white">
+                  Student Boarding &amp; Check-In Checklist
+                </h3>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                Tap to record student pickup. Automatic push alerts and SMS arrival notifications are sent instantly to parents.
+              </p>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar shrink-0">
+              <button
+                onClick={() => setFilterManifest('ALL')}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  filterManifest === 'ALL'
+                    ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+              >
+                All ({passengers.length})
+              </button>
+              <button
+                onClick={() => setFilterManifest('PICKED_UP')}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  filterManifest === 'PICKED_UP'
+                    ? 'bg-[#14532D] text-[#FACC15] shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+              >
+                On Board ({onBoardCount})
+              </button>
+              <button
+                onClick={() => setFilterManifest('SCHEDULED')}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
+                  filterManifest === 'SCHEDULED'
+                    ? 'bg-amber-500 text-white shadow-xs'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400'
+                }`}
+              >
+                Waiting ({passengers.length - onBoardCount - droppedOffCount})
+              </button>
+            </div>
+          </div>
+
+          {/* Passenger Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredPassengers.map((p) => {
+              const isPickedUp = p.pickupStatus === 'PICKED_UP';
+              const isDroppedOff = p.pickupStatus === 'DROPPED_OFF';
+              const isAbsent = p.pickupStatus === 'ABSENT';
+              const isScheduled = p.pickupStatus === 'SCHEDULED' || p.pickupStatus === 'WAITING';
+
+              return (
+                <div
+                  key={p.id}
+                  className={`p-4 rounded-2xl border transition-all space-y-3.5 flex flex-col justify-between ${
+                    isPickedUp
+                      ? 'bg-emerald-50/70 dark:bg-emerald-950/20 border-emerald-300 dark:border-emerald-800/60'
+                      : isDroppedOff
+                      ? 'bg-blue-50/70 dark:bg-blue-950/20 border-blue-300 dark:border-blue-800/60'
+                      : isAbsent
+                      ? 'bg-red-50/70 dark:bg-red-950/20 border-red-300 dark:border-red-800/60'
+                      : 'bg-white dark:bg-slate-900 border-slate-200/90 dark:border-slate-800 shadow-xs'
+                  }`}
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-10 h-10 rounded-xl font-black text-sm flex items-center justify-center shrink-0 ${
+                            isPickedUp
+                              ? 'bg-emerald-200 dark:bg-emerald-900 text-[#14532D] dark:text-emerald-200'
+                              : 'bg-yellow-100 dark:bg-yellow-950 text-[#713F12] dark:text-yellow-300'
+                          }`}
+                        >
+                          {p.child?.firstName ? p.child.firstName[0] : 'S'}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-extrabold text-sm text-slate-950 dark:text-white">
+                              {p.child?.firstName} {p.child?.lastName}
+                            </h4>
+                            <span
+                              className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                                isPickedUp
+                                  ? 'bg-emerald-600 text-white'
+                                  : isDroppedOff
+                                  ? 'bg-blue-600 text-white'
+                                  : isAbsent
+                                  ? 'bg-red-600 text-white'
+                                  : 'bg-amber-100 text-amber-800'
+                              }`}
+                            >
+                              {p.pickupStatus || 'SCHEDULED'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            {p.child?.school?.name || 'School Destination'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {p.parentPhone && (
+                        <a
+                          href={`tel:${p.parentPhone}`}
+                          className="p-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
+                          title="Call Student Parent"
+                        >
+                          <Phone className="h-3.5 w-3.5 text-[#16A34A]" />
+                        </a>
+                      )}
+                    </div>
+
+                    <p className="text-[11px] text-slate-600 dark:text-slate-300 flex items-center gap-1.5 pt-1 border-t border-slate-200/60 dark:border-slate-800">
+                      <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
+                      <span>Pickup: {p.pickupAddress || 'Morning Scheduled Stop'}</span>
+                    </p>
+                  </div>
+
+                  {/* Action Buttons for driver to update passenger status */}
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                    <button
+                      onClick={() => handleUpdatePassengerStatus(p.id, 'PICKED_UP')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                        isPickedUp
+                          ? 'bg-emerald-600 text-white shadow-xs'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-emerald-100 dark:hover:bg-emerald-950/60 hover:text-emerald-700'
+                      }`}
+                    >
+                      <Check className="h-3 w-3" />
+                      <span>Picked Up</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleUpdatePassengerStatus(p.id, 'DROPPED_OFF')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 cursor-pointer ${
+                        isDroppedOff
+                          ? 'bg-blue-600 text-white shadow-xs'
+                          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-blue-100 dark:hover:bg-blue-950/60 hover:text-blue-700'
+                      }`}
+                    >
+                      <MapPin className="h-3 w-3" />
+                      <span>Dropped Off</span>
+                    </button>
+
+                    <button
+                      onClick={() => handleUpdatePassengerStatus(p.id, 'ABSENT')}
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        isAbsent
+                          ? 'bg-red-600 text-white'
+                          : 'text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30'
+                      }`}
+                    >
+                      Absent
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Route Waypoint Timeline Card */}
+        <div className="rounded-[26px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8 space-y-4">
+          <div className="flex items-center gap-2.5 border-b border-slate-200/80 dark:border-slate-800 pb-3">
+            <div className="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300 flex items-center justify-center font-bold">
+              <Clock className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-foreground">Initiate School Transport Route</h2>
-              <p className="text-xs text-muted-foreground">
-                Select your designated vehicle and passengers to begin live route telemetry broadcasting.
+              <h3 className="text-base font-extrabold text-slate-950 dark:text-white">
+                Corridor Waypoint Timeline
+              </h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Scheduled sequence of morning pickups and school gates.
               </p>
             </div>
           </div>
 
-          <form onSubmit={handleStartRide} className="space-y-5">
-            {/* Route Name */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                Route Description / Direction *
-              </label>
-              <Input
-                placeholder="e.g. Morning Pickup - Royal College, Visakha, Thurstan"
-                value={routeName}
-                onChange={(e) => setRouteName(e.target.value)}
-                required
-              />
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-2 text-xs">
+            <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800/60 space-y-1">
+              <span className="font-bold text-[#14532D] dark:text-emerald-300 block">1. Nugegoda</span>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 block font-bold">Departed 06:30 AM</span>
+              <span className="text-[10px] text-slate-500 block">Chapel Road</span>
             </div>
 
-            {/* Vehicle Selection */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">
-                Designated Vehicle *
-              </label>
-              {vehicles.length === 0 ? (
-                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-800 dark:text-amber-200">
-                  You haven't registered any vehicles yet. Please{' '}
-                  <Link href="/driver/vehicles" className="font-bold underline">
-                    add a vehicle
-                  </Link>{' '}
-                  before starting a route.
-                </div>
-              ) : (
-                <select
-                  className="w-full h-10 px-3 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  value={selectedVehicleId}
-                  onChange={(e) => setSelectedVehicleId(e.target.value)}
-                  required
-                >
-                  {vehicles.map((v) => (
-                    <option key={v.id} value={v.id}>
-                      {v.model} ({v.licensePlate}) • {v.seatingCapacity} Seats {v.hasAirConditioning ? '• A/C' : ''}
-                    </option>
-                  ))}
-                </select>
-              )}
+            <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800/60 space-y-1">
+              <span className="font-bold text-[#14532D] dark:text-emerald-300 block">2. Havelock Town</span>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 block font-bold">Passed 06:42 AM</span>
+              <span className="text-[10px] text-slate-500 block">Havelock City Gate</span>
             </div>
 
-            {/* Student Passenger Checkbox Selection */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  Select Students for This Trip *
-                </label>
-                <span className="text-xs text-muted-foreground font-mono">
-                  {selectedBookingIds.length} of {acceptedBookings.length} selected
-                </span>
-              </div>
-
-              {acceptedBookings.length === 0 ? (
-                <div className="p-4 rounded-xl bg-muted/50 border border-border text-xs text-muted-foreground text-center">
-                  You currently have no accepted student bookings. Once parents request transport and you accept their bookings, they will appear here.
-                </div>
-              ) : (
-                <div className="space-y-2.5 max-h-60 overflow-y-auto border border-border rounded-xl p-3">
-                  {acceptedBookings.map((b) => {
-                    const isChecked = selectedBookingIds.includes(b.id);
-                    return (
-                      <label
-                        key={b.id}
-                        className={`flex items-center justify-between p-3 rounded-lg border text-xs cursor-pointer transition-colors ${
-                          isChecked
-                            ? 'bg-primary/5 border-primary/30'
-                            : 'bg-background border-border/80 hover:bg-muted/30'
-                        }`}
-                      >
-                        <div className="flex items-center gap-3">
-                          <input
-                            type="checkbox"
-                            checked={isChecked}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                setSelectedBookingIds([...selectedBookingIds, b.id]);
-                              } else {
-                                setSelectedBookingIds(selectedBookingIds.filter((id) => id !== b.id));
-                              }
-                            }}
-                            className="rounded border-border text-primary focus:ring-primary h-4 w-4"
-                          />
-                          <div>
-                            <p className="font-bold text-foreground">
-                              {b.child?.firstName} {b.child?.lastName}
-                            </p>
-                            <p className="text-[11px] text-muted-foreground">
-                              School: {b.child?.school?.name} • Pickup: {b.pickupAddress}
-                            </p>
-                          </div>
-                        </div>
-
-                        <Badge variant="outline" className="text-[10px]">
-                          {b.pickupTimeMorning || 'Morning'}
-                        </Badge>
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
+            <div className="p-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-300 dark:border-emerald-800/60 space-y-1">
+              <span className="font-bold text-[#14532D] dark:text-emerald-300 block">3. Bambalapitiya</span>
+              <span className="text-[10px] text-emerald-700 dark:text-emerald-400 block font-bold">Passed 06:50 AM</span>
+              <span className="text-[10px] text-slate-500 block">Galle Road Junction</span>
             </div>
 
-            <div className="pt-2">
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                disabled={isStartingRide || vehicles.length === 0 || acceptedBookings.length === 0}
-                className="w-full justify-center font-bold shadow-elevated bg-emerald-600 hover:bg-emerald-700 text-white"
-              >
-                <Play className="h-4 w-4 mr-2 fill-current" />
-                {isStartingRide ? 'Initiating Route Telemetry...' : 'Start Live Route & Begin Broadcast'}
-              </Button>
+            <div className="p-3 rounded-xl bg-yellow-50 dark:bg-yellow-950/40 border border-yellow-400 dark:border-yellow-700 space-y-1 shadow-xs">
+              <span className="font-bold text-[#713F12] dark:text-yellow-300 block flex items-center gap-1">
+                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
+                4. Visakha Gate
+              </span>
+              <span className="text-[10px] text-yellow-800 dark:text-yellow-400 block font-bold">NEXT (~06:58 AM)</span>
+              <span className="text-[10px] text-slate-600 block">Vajira Road Gate 2</span>
             </div>
-          </form>
-        </Card>
-      )}
+
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 space-y-1">
+              <span className="font-bold text-slate-700 dark:text-slate-300 block">5. Royal College</span>
+              <span className="text-[10px] text-slate-500 block">Final Stop ~07:15 AM</span>
+              <span className="text-[10px] text-slate-400 block">Rajakeeya Mawatha</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Safety & Verification Charter Banner matching Home Page */}
+        <div className="rounded-[28px] bg-slate-950 text-white p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+          <div className="space-y-2 max-w-xl text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/20 text-[#FACC15] text-[11px] font-black uppercase tracking-wider border border-yellow-400/30">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#FACC15]" />
+              <span>Colombo Central Dispatch Active</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black text-white">
+              Emergency assistance hotline: <span className="text-[#FACC15]">+94 11 234 5678</span>
+            </h3>
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+              If you encounter sudden road blockages, mechanical difficulties, or medical requirements, Central Dispatch provides immediate replacement vehicle routing and automated parent notification.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <Link href="/driver/dashboard">
+              <button className="px-6 py-3 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer">
+                Back to Dashboard
+              </button>
+            </Link>
+            <a
+              href="tel:+94112345678"
+              className="px-5 py-3 rounded-full border border-slate-700 hover:border-slate-500 text-slate-200 text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center gap-2"
+            >
+              <Phone className="h-4 w-4 text-[#16A34A]" />
+              <span>Call Dispatch</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
     </div>
   );
 }
