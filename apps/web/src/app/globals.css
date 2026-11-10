@@ -204,6 +204,14 @@
   animation: skeleton-fade 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
+/* 5-Tier Safety Charter Desktop Slanted Seam */
+@media (min-width: 1024px) {
+  .safety-photo-slant {
+    clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+    -webkit-clip-path: polygon(8% 0, 100% 0, 100% 100%, 0% 100%);
+  }
+}
+
 /* Reduced Motion Accessibility */
 @media (prefers-reduced-motion: reduce) {
   html {

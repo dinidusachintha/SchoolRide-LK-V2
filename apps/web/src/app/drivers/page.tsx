@@ -396,121 +396,137 @@ export default function DriversDirectoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white relative overflow-hidden select-none pb-24">
+    <div className="min-h-screen bg-[#060D1A] text-white relative overflow-hidden select-none pb-24">
       
-      {/* Background Soft Subtle Texture matching Home Page */}
-      <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-40 dark:opacity-10 pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[850px] h-[340px] bg-gradient-to-b from-yellow-100/35 via-emerald-50/20 to-transparent blur-3xl pointer-events-none" />
+      {/* Luminous Ambient Glass Glow Spheres (Refracting through all cards & panels) */}
+      <div className="absolute -top-32 -left-32 w-[680px] h-[680px] bg-blue-600/20 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute top-1/4 -right-32 w-[620px] h-[620px] bg-indigo-600/18 rounded-full blur-[140px] pointer-events-none" />
+            <div className="absolute bottom-1/4 -right-20 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute -bottom-24 left-1/3 w-[720px] h-[520px] bg-blue-600/15 rounded-full blur-[160px] pointer-events-none" />
+      
+      {/* Precision Glass Dot Grid Matrix */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.07)_1px,transparent_1px)] [background-size:28px_28px] pointer-events-none" />
+      
+      {/* Top Specular Sheen Gradient */}
+      <div className="absolute top-0 inset-x-0 h-[480px] bg-gradient-to-b from-blue-500/[0.09] via-indigo-500/[0.03] to-transparent pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 space-y-8 relative z-10 text-left">
         
-        {/* Hero Header Showcase matching Home Page */}
+        {/* Hero Header Showcase with Deep Navy Glass */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-6 sm:p-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden"
+          className="rounded-[28px] md:rounded-[32px] bg-[#0B1528]/85 text-white border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-2xl p-6 sm:p-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden"
         >
-          {/* Decorative ambient gradient */}
-          <div className="absolute right-0 top-0 w-80 h-80 bg-gradient-to-br from-yellow-100/40 via-emerald-100/20 to-transparent blur-3xl pointer-events-none rounded-full" />
+          {/* Ambient Inner Glow Accents */}
+          <div className="absolute right-0 top-0 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -left-12 -bottom-12 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] via-transparent to-transparent pointer-events-none" />
 
           <div className="space-y-3.5 max-w-2xl relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FEF08A] text-[#713F12] border border-yellow-300 text-xs font-bold shadow-xs">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#CA8A04]" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-yellow-400/10 text-[#FACC15] border border-yellow-400/30 text-xs font-bold shadow-xs backdrop-blur-md">
               <span>100% Police &amp; NTCA Vetted Sri Lankan Van Operators</span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-950 dark:text-white tracking-tight leading-tight">
-              Find Verified <span className="text-[#CA8A04] dark:text-[#FACC15] underline decoration-[#FACC15]/40 underline-offset-8">School Van Operators</span> 🚐🎒
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+              Find Verified <span className="text-[#FACC15] underline decoration-[#FACC15]/40 underline-offset-8">School Van Operators</span>
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-blue-100/80 leading-relaxed font-normal">
               Search licensed, background-checked school transport operators across Colombo, Kandy, Gampaha, Kalutara, Galle, and all 25 Sri Lankan districts.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 relative z-10 shrink-0">
+          {/* Glass Effect 3D Buttons */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 relative z-10 shrink-0">
             <Link href="/parent/bookings">
-              <button className="px-6 py-3.5 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer">
-                <span>View My Bookings</span>
-                <ArrowRight className="h-4 w-4" />
+              <button className="relative group overflow-hidden px-7 py-3.5 rounded-full bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black text-xs sm:text-sm tracking-tight border border-yellow-200/80 shadow-[0_5px_0_#B45309,0_12px_24px_rgba(250,204,21,0.35)] hover:shadow-[0_6px_0_#B45309,0_16px_28px_rgba(250,204,21,0.45)] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_2px_0_#B45309,0_6px_12px_rgba(250,204,21,0.3)] transition-all duration-150 flex items-center justify-center cursor-pointer">
+                {/* Top Glass Specular Gloss Sheen */}
+                <div className="absolute inset-x-2 top-0.5 h-[46%] rounded-full bg-gradient-to-b from-white/70 via-white/20 to-transparent pointer-events-none" />
+                <span className="relative z-10">View My Bookings</span>
               </button>
             </Link>
             <Link href="/parent/rides/live">
-              <button className="px-5 py-3.5 rounded-full bg-[#14532D] hover:bg-[#166534] text-[#FACC15] font-bold text-xs sm:text-sm shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer">
-                <Radio className="h-4 w-4 animate-pulse text-emerald-400" />
-                <span>Live GPS Map</span>
+              <button className="relative group overflow-hidden px-6 py-3.5 rounded-full bg-gradient-to-b from-[#15803D]/90 via-[#14532D]/95 to-[#052E16] text-[#FACC15] font-bold text-xs sm:text-sm tracking-tight border border-emerald-400/40 backdrop-blur-xl shadow-[0_5px_0_#064E3B,0_12px_24px_rgba(5,150,105,0.3)] hover:shadow-[0_6px_0_#064E3B,0_16px_28px_rgba(5,150,105,0.4)] hover:-translate-y-0.5 active:translate-y-1 active:shadow-[0_2px_0_#064E3B,0_6px_12px_rgba(5,150,105,0.25)] transition-all duration-150 flex items-center justify-center cursor-pointer">
+                {/* Top Glass Specular Gloss Sheen */}
+                <div className="absolute inset-x-2 top-0.5 h-[46%] rounded-full bg-gradient-to-b from-white/35 via-white/10 to-transparent pointer-events-none" />
+                <span className="relative z-10">Live GPS Map</span>
               </button>
             </Link>
           </div>
         </motion.div>
 
-        {/* 4 Summary KPIs matching Home Page */}
+        {/* 4 Summary KPIs with Enhanced Glass Translucency */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-          <div className="p-5 sm:p-6 rounded-[22px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-md hover:-translate-y-0.5 transition-all space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <div className="p-5 sm:p-6 rounded-[24px] bg-[#0B1528]/80 text-white border border-white/10 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:border-yellow-400/50 hover:shadow-[0_15px_35px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 transition-all space-y-2 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] via-transparent to-transparent pointer-events-none" />
+            <div className="flex items-center justify-between relative z-10">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-blue-200/70">
                 Active Fleet
               </span>
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-[#14532D] dark:text-emerald-300 border border-emerald-200/80 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-yellow-400/10 text-[#FACC15] border border-yellow-400/30 flex items-center justify-center backdrop-blur-md">
                 <Bus className="h-4 w-4" />
               </div>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white">
+            <h3 className="text-2xl sm:text-3xl font-black text-white relative z-10">
               250+
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <p className="text-xs text-blue-100/70 font-medium relative z-10">
               Vetted Vans &amp; Mini-Buses
             </p>
           </div>
 
-          <div className="p-5 sm:p-6 rounded-[22px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-md hover:-translate-y-0.5 transition-all space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <div className="p-5 sm:p-6 rounded-[24px] bg-[#0B1528]/80 text-white border border-white/10 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:border-yellow-400/50 hover:shadow-[0_15px_35px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 transition-all space-y-2 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] via-transparent to-transparent pointer-events-none" />
+            <div className="flex items-center justify-between relative z-10">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-blue-200/70">
                 Safety Vetting
               </span>
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-[#16A34A] border border-emerald-200 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-emerald-400/15 text-emerald-400 border border-emerald-400/30 flex items-center justify-center backdrop-blur-md">
                 <ShieldCheck className="h-4 w-4" />
               </div>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-[#14532D] dark:text-[#FACC15]">
+            <h3 className="text-2xl sm:text-3xl font-black text-[#FACC15] relative z-10">
               100%
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <p className="text-xs text-blue-100/70 font-medium relative z-10">
               Police Clearance Cleared
             </p>
           </div>
 
-          <div className="p-5 sm:p-6 rounded-[22px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-md hover:-translate-y-0.5 transition-all space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <div className="p-5 sm:p-6 rounded-[24px] bg-[#0B1528]/80 text-white border border-white/10 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:border-yellow-400/50 hover:shadow-[0_15px_35px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 transition-all space-y-2 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] via-transparent to-transparent pointer-events-none" />
+            <div className="flex items-center justify-between relative z-10">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-blue-200/70">
                 Parent Rating
               </span>
-              <div className="w-8 h-8 rounded-xl bg-[#FEF08A] text-[#713F12] border border-yellow-300 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-yellow-400/15 text-[#FACC15] border border-yellow-400/30 flex items-center justify-center backdrop-blur-md">
                 <Star className="h-4 w-4 fill-current" />
               </div>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white">
+            <h3 className="text-2xl sm:text-3xl font-black text-white relative z-10">
               4.92 ★
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <p className="text-xs text-blue-100/70 font-medium relative z-10">
               Over 1,200+ Verified Reviews
             </p>
           </div>
 
-          <div className="p-5 sm:p-6 rounded-[22px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-md hover:-translate-y-0.5 transition-all space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+          <div className="p-5 sm:p-6 rounded-[24px] bg-[#0B1528]/80 text-white border border-white/10 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.35)] hover:border-yellow-400/50 hover:shadow-[0_15px_35px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 transition-all space-y-2 relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] via-transparent to-transparent pointer-events-none" />
+            <div className="flex items-center justify-between relative z-10">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-blue-200/70">
                 Telemetry
               </span>
-              <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 border border-blue-200 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-blue-500/15 text-blue-400 border border-blue-500/30 flex items-center justify-center backdrop-blur-md">
                 <Radio className="h-4 w-4" />
               </div>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-slate-950 dark:text-white">
+            <h3 className="text-2xl sm:text-3xl font-black text-white relative z-10">
               Live GPS
             </h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <p className="text-xs text-blue-100/70 font-medium relative z-10">
               Sub-Second Speed &amp; ETA Lock
             </p>
           </div>
@@ -522,8 +538,8 @@ export default function DriversDirectoryPage() {
             onClick={() => handleQuickFilter('ALL')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeQuickFilter === 'ALL'
-                ? 'bg-[#14532D] text-[#FACC15] shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50'
+                ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-md border border-yellow-200/80'
+                : 'bg-[#0B1528]/80 text-blue-100/90 border border-white/10 hover:border-yellow-400/40 hover:text-white backdrop-blur-xl'
             }`}
           >
             All Sri Lanka ({drivers.length})
@@ -533,8 +549,8 @@ export default function DriversDirectoryPage() {
             onClick={() => handleQuickFilter('COLOMBO')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeQuickFilter === 'COLOMBO'
-                ? 'bg-[#14532D] text-[#FACC15] shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50'
+                ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-md border border-yellow-200/80'
+                : 'bg-[#0B1528]/80 text-blue-100/90 border border-white/10 hover:border-yellow-400/40 hover:text-white backdrop-blur-xl'
             }`}
           >
             📍 Colombo Corridors
@@ -544,8 +560,8 @@ export default function DriversDirectoryPage() {
             onClick={() => handleQuickFilter('KANDY')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeQuickFilter === 'KANDY'
-                ? 'bg-[#14532D] text-[#FACC15] shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50'
+                ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-md border border-yellow-200/80'
+                : 'bg-[#0B1528]/80 text-blue-100/90 border border-white/10 hover:border-yellow-400/40 hover:text-white backdrop-blur-xl'
             }`}
           >
             ⛰️ Kandy Hill Country
@@ -555,8 +571,8 @@ export default function DriversDirectoryPage() {
             onClick={() => handleQuickFilter('AC')}
             className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeQuickFilter === 'AC'
-                ? 'bg-[#14532D] text-[#FACC15] shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50'
+                ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-md border border-yellow-200/80'
+                : 'bg-[#0B1528]/80 text-blue-100/90 border border-white/10 hover:border-yellow-400/40 hover:text-white backdrop-blur-xl'
             }`}
           >
             ❄️ Dual A/C Vans Only
@@ -565,7 +581,7 @@ export default function DriversDirectoryPage() {
           {(district || schoolId || query || vehicleType) && (
             <button
               onClick={handleResetFilters}
-              className="px-3.5 py-2 rounded-full text-xs font-bold bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800 hover:bg-red-100 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+              className="px-3.5 py-2 rounded-full text-xs font-bold bg-red-950/40 text-red-300 border border-red-800/60 hover:bg-red-900/50 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap backdrop-blur-md"
             >
               <RotateCcw className="h-3 w-3" />
               <span>Reset Filters</span>
@@ -574,11 +590,12 @@ export default function DriversDirectoryPage() {
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="p-5 rounded-[24px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="p-5 rounded-[24px] bg-[#0B1528]/80 text-white border border-white/10 backdrop-blur-2xl shadow-[0_16px_40px_rgba(0,0,0,0.4)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-white/[0.04] via-transparent to-transparent pointer-events-none" />
           
           {/* District Select */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+          <div className="space-y-1.5 relative z-10">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-yellow-400/90">
               District
             </label>
             <select
@@ -587,11 +604,11 @@ export default function DriversDirectoryPage() {
                 setDistrict(e.target.value);
                 setSchoolId('');
               }}
-              className="flex h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-3 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+              className="flex h-11 w-full rounded-xl border border-blue-900/60 bg-[#060D1A]/80 px-3 text-xs text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
             >
-              <option value="">All 25 Sri Lankan Districts</option>
+              <option value="" className="bg-[#0B1528] text-white">All 25 Sri Lankan Districts</option>
               {SRI_LANKAN_DISTRICTS.map((d) => (
-                <option key={d.name} value={d.name}>
+                <option key={d.name} value={d.name} className="bg-[#0B1528] text-white">
                   {d.name} ({d.province} Province)
                 </option>
               ))}
@@ -599,18 +616,18 @@ export default function DriversDirectoryPage() {
           </div>
 
           {/* School Select */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+          <div className="space-y-1.5 relative z-10">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-yellow-400/90">
               School Served
             </label>
             <select
               value={schoolId}
               onChange={(e) => setSchoolId(e.target.value)}
-              className="flex h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-3 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+              className="flex h-11 w-full rounded-xl border border-blue-900/60 bg-[#060D1A]/80 px-3 text-xs text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
             >
-              <option value="">All Schools</option>
+              <option value="" className="bg-[#0B1528] text-white">All Schools</option>
               {filteredSchools.map((s) => (
-                <option key={s.id} value={s.id}>
+                <option key={s.id} value={s.id} className="bg-[#0B1528] text-white">
                   {s.name} ({s.city})
                 </option>
               ))}
@@ -618,35 +635,35 @@ export default function DriversDirectoryPage() {
           </div>
 
           {/* Vehicle Type */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+          <div className="space-y-1.5 relative z-10">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-yellow-400/90">
               Vehicle Type
             </label>
             <select
               value={vehicleType}
               onChange={(e) => setVehicleType(e.target.value)}
-              className="flex h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-3 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+              className="flex h-11 w-full rounded-xl border border-blue-900/60 bg-[#060D1A]/80 px-3 text-xs text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
             >
-              <option value="">All Vehicle Categories</option>
-              <option value="VAN">Standard Van (HiAce, NV350 Caravan)</option>
-              <option value="MINI_BUS">Mini Bus (Toyota Coaster, Rosa)</option>
-              <option value="CAR">Car / Station Wagon</option>
+              <option value="" className="bg-[#0B1528] text-white">All Vehicle Categories</option>
+              <option value="VAN" className="bg-[#0B1528] text-white">Standard Van (HiAce, NV350 Caravan)</option>
+              <option value="MINI_BUS" className="bg-[#0B1528] text-white">Mini Bus (Toyota Coaster, Rosa)</option>
+              <option value="CAR" className="bg-[#0B1528] text-white">Car / Station Wagon</option>
             </select>
           </div>
 
           {/* Search Input */}
-          <div className="space-y-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+          <div className="space-y-1.5 relative z-10">
+            <label className="text-[11px] font-bold uppercase tracking-wider text-yellow-400/90">
               Search Operator or Suburb
             </label>
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-yellow-400/70" />
               <input
                 type="text"
                 placeholder="e.g. Sunil, Nugegoda, Malabe..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="flex h-11 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 pl-10 pr-3 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+                className="flex h-11 w-full rounded-xl border border-blue-900/60 bg-[#060D1A]/80 pl-10 pr-3 text-xs text-white placeholder:text-blue-200/50 focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
               />
             </div>
           </div>
@@ -656,7 +673,7 @@ export default function DriversDirectoryPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="h-96 rounded-[26px] bg-slate-100 dark:bg-slate-900 animate-pulse border border-slate-200 dark:border-slate-800" />
+              <div key={i} className="h-96 rounded-[28px] bg-[#0B1528]/80 animate-pulse border border-white/10" />
             ))}
           </div>
         ) : drivers.length === 0 ? (
@@ -679,15 +696,20 @@ export default function DriversDirectoryPage() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="rounded-[26px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.03)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden relative"
+                  className="rounded-[28px] bg-gradient-to-b from-[#0B1528]/85 via-[#0E1A33]/80 to-[#070D18]/90 backdrop-blur-2xl border border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(250,204,21,0.18)] hover:border-yellow-400/50 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden relative group text-white"
                 >
-                  <div className="p-6 space-y-4">
+                  {/* Glass Ambient Radial Glows */}
+                  <div className="absolute -top-10 -right-10 w-44 h-44 bg-blue-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-blue-400/15 transition-colors duration-500" />
+                  <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-b from-white/[0.05] via-transparent to-transparent pointer-events-none" />
+
+                  <div className="p-6 space-y-4 relative z-10">
                     
                     {/* Driver Top Row */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div className="relative">
-                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-yellow-400 to-[#14532D] text-white font-black text-base flex items-center justify-center shrink-0 shadow-xs">
+                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#FACC15] via-amber-400 to-yellow-600 text-slate-950 font-black text-base flex items-center justify-center shrink-0 shadow-md border border-yellow-200/50">
                             {driver.fullName
                               .split(' ')
                               .map((n: string) => n[0])
@@ -696,45 +718,46 @@ export default function DriversDirectoryPage() {
                           </div>
                           <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500" />
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400 ring-2 ring-[#0B1528]" />
                           </span>
                         </div>
 
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <h3 className="font-extrabold text-base text-slate-950 dark:text-white truncate">
+                            <h3 className="font-extrabold text-base text-white group-hover:text-yellow-300 transition-colors truncate">
                               {driver.fullName}
                             </h3>
-                            <ShieldCheck className="h-4 w-4 text-[#16A34A] shrink-0" />
+                            <ShieldCheck className="h-4 w-4 text-[#FACC15] shrink-0" />
                           </div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
-                            <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
+                          <p className="text-xs text-blue-200/70 flex items-center gap-1 mt-0.5 font-medium">
+                            <MapPin className="h-3 w-3 text-yellow-400/80 shrink-0" />
                             <span>{driver.city || driver.district}, {driver.district}</span>
                           </p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-yellow-100 text-[#713F12] text-xs font-black shrink-0 border border-yellow-200">
-                        <Star className="h-3.5 w-3.5 fill-current" />
-                        <span>{driver.ratingAverage.toFixed(1)}</span>
-                        <span className="text-[10px] text-slate-500 font-medium">({driver.ratingCount})</span>
+                      {/* Glass Star Rating Pill */}
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-400/10 border border-yellow-400/30 text-[#FACC15] text-xs font-black shrink-0 backdrop-blur-md shadow-xs">
+                        <Star className="h-3.5 w-3.5 fill-[#FACC15] text-[#FACC15]" />
+                        <span className="text-white font-bold">{driver.ratingAverage.toFixed(1)}</span>
+                        <span className="text-[10px] text-yellow-200/70 font-medium">({driver.ratingCount})</span>
                       </div>
                     </div>
 
-                    {/* Vehicle Spec Pill */}
-                    <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-1.5 text-xs">
-                      <div className="flex items-center justify-between font-bold text-slate-900 dark:text-white">
+                    {/* Vehicle Spec Box with Glass Effect */}
+                    <div className="p-3.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] backdrop-blur-md space-y-1.5 text-xs relative overflow-hidden">
+                      <div className="flex items-center justify-between font-bold text-white">
                         <span className="flex items-center gap-1.5">
-                          <Bus className="h-3.5 w-3.5 text-[#CA8A04]" />
-                          <span>{vehicle.make} {vehicle.model} ({vehicle.year || 2018})</span>
+                          <Bus className="h-3.5 w-3.5 text-[#FACC15]" />
+                          <span className="truncate">{vehicle.make} {vehicle.model} ({vehicle.year || 2018})</span>
                         </span>
-                        <span className="font-mono text-[11px] px-2 py-0.5 rounded bg-emerald-100 text-[#14532D] font-bold">
+                        <span className="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-400/15 border border-emerald-400/30 text-emerald-300 font-bold shrink-0">
                           {vehicle.availableSeats || 2} Seats Open
                         </span>
                       </div>
                       
-                      <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-slate-400 font-medium pt-0.5">
-                        <span className="font-mono text-slate-600 dark:text-slate-300 font-bold">
+                      <div className="flex items-center gap-3 text-[11px] text-blue-100/70 font-medium pt-0.5 flex-wrap">
+                        <span className="font-mono text-[#FACC15] font-bold">
                           {vehicle.licensePlate || 'WP NA-4521'}
                         </span>
                         {vehicle.isAirConditioned && <span>• Dual A/C</span>}
@@ -745,30 +768,30 @@ export default function DriversDirectoryPage() {
 
                     {/* Route Corridor Path */}
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                        <Compass className="h-3 w-3" /> Pickup Suburbs
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-yellow-400/90 flex items-center gap-1">
+                        <Compass className="h-3 w-3 text-[#FACC15]" /> Pickup Suburbs
                       </span>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
+                      <p className="text-xs text-blue-100/90 font-medium leading-relaxed">
                         {driver.corridor}
                       </p>
                     </div>
 
                     {/* Schools Covered */}
                     <div className="space-y-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                        <GraduationCap className="h-3 w-3" /> Served Schools ({schoolsList.length})
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-yellow-400/90 flex items-center gap-1">
+                        <GraduationCap className="h-3 w-3 text-[#FACC15]" /> Served Schools ({schoolsList.length})
                       </span>
                       <div className="flex flex-wrap gap-1.5">
                         {schoolsList.slice(0, 3).map((school: any) => (
                           <span
                             key={school.id || school.name}
-                            className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-[#14532D] dark:text-emerald-300 text-[11px] font-bold border border-emerald-200/60 dark:border-emerald-800 truncate max-w-[210px]"
+                            className="px-2.5 py-1 rounded-lg bg-blue-900/30 border border-blue-400/25 text-white text-[11px] font-semibold backdrop-blur-md hover:border-yellow-400/40 hover:text-yellow-200 transition-colors truncate max-w-[210px]"
                           >
                             {school.name}
                           </span>
                         ))}
                         {schoolsList.length > 3 && (
-                          <span className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[10px] text-slate-500 font-bold">
+                          <span className="px-2 py-1 rounded-lg bg-white/[0.05] border border-white/10 text-[10px] text-blue-200 font-bold">
                             +{schoolsList.length - 3} more
                           </span>
                         )}
@@ -777,35 +800,39 @@ export default function DriversDirectoryPage() {
 
                     {/* Bio Snippet */}
                     {driver.bio && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-blue-200/70 line-clamp-2 leading-relaxed">
                         {driver.bio}
                       </p>
                     )}
                   </div>
 
-                  {/* Card Footer: Monthly Fee & Action Buttons */}
-                  <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/60 flex items-center justify-between gap-3">
+                  {/* Card Footer: Monthly Fee & Glass 3D Action Buttons */}
+                  <div className="px-6 py-4 border-t border-blue-900/40 bg-black/35 backdrop-blur-xl flex items-center justify-between gap-3 relative z-10">
                     <div>
-                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                      <span className="text-[10px] text-yellow-400/80 font-bold uppercase tracking-wider block">
                         Monthly Seat Fee
                       </span>
-                      <span className="text-sm font-black text-slate-950 dark:text-white font-mono">
+                      <span className="text-sm font-black text-white font-mono">
                         Rs. {driver.monthlyRateLKR.toLocaleString()}{' '}
-                        <span className="text-[10px] font-normal text-slate-500">/ child</span>
+                        <span className="text-[10px] font-normal text-blue-200/60">/ child</span>
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => openInquiryModal(driver)}
-                        className="px-3.5 py-2 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-xs shadow-xs transition-all cursor-pointer whitespace-nowrap"
+                        className="relative group/btn overflow-hidden px-4 py-2 rounded-full bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black text-xs border border-yellow-200/80 shadow-[0_3px_0_#B45309,0_8px_16px_rgba(250,204,21,0.3)] hover:shadow-[0_4px_0_#B45309,0_10px_20px_rgba(250,204,21,0.4)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_#B45309] transition-all cursor-pointer whitespace-nowrap"
                       >
-                        Inquire
+                        {/* Top Glass Specular Gloss Sheen */}
+                        <div className="absolute inset-x-1 top-0.5 h-[44%] rounded-full bg-gradient-to-b from-white/60 to-transparent pointer-events-none" />
+                        <span className="relative z-10">Inquire</span>
                       </button>
                       <Link href={`/drivers/${driver.id}`}>
-                        <button className="px-3.5 py-2 rounded-full bg-[#14532D] hover:bg-[#166534] text-white font-bold text-xs shadow-xs transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap">
-                          <span>Profile</span>
-                          <ArrowRight className="h-3 w-3" />
+                        <button className="relative group/pbtn overflow-hidden px-4 py-2 rounded-full bg-gradient-to-b from-[#15803D]/90 via-[#14532D] to-[#052E16] text-[#FACC15] font-bold text-xs border border-emerald-400/40 backdrop-blur-xl shadow-[0_3px_0_#064E3B,0_8px_16px_rgba(5,150,105,0.25)] hover:shadow-[0_4px_0_#064E3B,0_10px_20px_rgba(5,150,105,0.35)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_#064E3B] transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap">
+                          {/* Top Glass Specular Gloss Sheen */}
+                          <div className="absolute inset-x-1 top-0.5 h-[44%] rounded-full bg-gradient-to-b from-white/30 to-transparent pointer-events-none" />
+                          <span className="relative z-10">Profile</span>
+                          <ArrowRight className="relative z-10 h-3 w-3 text-[#FACC15] group-hover/pbtn:translate-x-0.5 transition-transform" />
                         </button>
                       </Link>
                     </div>
@@ -819,34 +846,37 @@ export default function DriversDirectoryPage() {
         {/* Seat Inquiry Modal */}
         <AnimatePresence>
           {inquiryModalOpen && selectedDriverForInquiry && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-[28px] border border-slate-200 dark:border-slate-800 shadow-2xl p-6 sm:p-8 space-y-6 text-left relative overflow-hidden"
+                className="w-full max-w-lg bg-[#0B1528] rounded-[28px] border border-blue-900/50 shadow-2xl p-6 sm:p-8 space-y-6 text-left relative overflow-hidden text-white"
               >
-                <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800 pb-4">
+                {/* Ambient glow inside modal */}
+                <div className="absolute right-0 top-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="flex items-center justify-between border-b border-blue-900/40 pb-4 relative z-10">
                   <div>
-                    <h3 className="text-lg font-black text-slate-950 dark:text-white">
+                    <h3 className="text-lg font-black text-white">
                       Seat Booking Inquiry
                     </h3>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-blue-200/70">
                       Sending inquiry directly to operator {selectedDriverForInquiry.fullName}
                     </p>
                   </div>
                   <button
                     onClick={() => setInquiryModalOpen(false)}
-                    className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 cursor-pointer"
+                    className="p-1.5 rounded-full hover:bg-white/10 text-blue-200/70 hover:text-white cursor-pointer transition-colors"
                   >
                     <X className="h-5 w-5" />
                   </button>
                 </div>
 
-                <form onSubmit={handleSendInquiry} className="space-y-4">
+                <form onSubmit={handleSendInquiry} className="space-y-4 relative z-10">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                      Student Full Name <span className="text-red-500">*</span>
+                    <label className="text-xs font-bold text-yellow-400/90">
+                      Student Full Name <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="text"
@@ -854,37 +884,37 @@ export default function DriversDirectoryPage() {
                       placeholder="e.g. Dineth Silva"
                       value={inquiryData.studentName}
                       onChange={(e) => setInquiryData({ ...inquiryData, studentName: e.target.value })}
-                      className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+                      className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-blue-900/60 bg-[#060D1A]/80 text-white placeholder:text-blue-200/40 focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      <label className="text-xs font-bold text-yellow-400/90">
                         Student Grade
                       </label>
                       <select
                         value={inquiryData.grade}
                         onChange={(e) => setInquiryData({ ...inquiryData, grade: e.target.value })}
-                        className="w-full h-10 px-3 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+                        className="w-full h-10 px-3 text-xs sm:text-sm rounded-xl border border-blue-900/60 bg-[#060D1A]/80 text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                       >
-                        <option value="Grade 1">Grade 1</option>
-                        <option value="Grade 2">Grade 2</option>
-                        <option value="Grade 3">Grade 3</option>
-                        <option value="Grade 4">Grade 4</option>
-                        <option value="Grade 5">Grade 5</option>
-                        <option value="Grade 6">Grade 6</option>
-                        <option value="Grade 7">Grade 7</option>
-                        <option value="Grade 8">Grade 8</option>
-                        <option value="Grade 9">Grade 9</option>
-                        <option value="Grade 10">Grade 10</option>
-                        <option value="Grade 11">Grade 11 (O/L)</option>
-                        <option value="Grade 12">Grade 12 (A/L)</option>
+                        <option value="Grade 1" className="bg-[#0B1528] text-white">Grade 1</option>
+                        <option value="Grade 2" className="bg-[#0B1528] text-white">Grade 2</option>
+                        <option value="Grade 3" className="bg-[#0B1528] text-white">Grade 3</option>
+                        <option value="Grade 4" className="bg-[#0B1528] text-white">Grade 4</option>
+                        <option value="Grade 5" className="bg-[#0B1528] text-white">Grade 5</option>
+                        <option value="Grade 6" className="bg-[#0B1528] text-white">Grade 6</option>
+                        <option value="Grade 7" className="bg-[#0B1528] text-white">Grade 7</option>
+                        <option value="Grade 8" className="bg-[#0B1528] text-white">Grade 8</option>
+                        <option value="Grade 9" className="bg-[#0B1528] text-white">Grade 9</option>
+                        <option value="Grade 10" className="bg-[#0B1528] text-white">Grade 10</option>
+                        <option value="Grade 11" className="bg-[#0B1528] text-white">Grade 11 (O/L)</option>
+                        <option value="Grade 12" className="bg-[#0B1528] text-white">Grade 12 (A/L)</option>
                       </select>
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      <label className="text-xs font-bold text-yellow-400/90">
                         Target School
                       </label>
                       <input
@@ -892,14 +922,14 @@ export default function DriversDirectoryPage() {
                         value={inquiryData.schoolName}
                         onChange={(e) => setInquiryData({ ...inquiryData, schoolName: e.target.value })}
                         required
-                        className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+                        className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-blue-900/60 bg-[#060D1A]/80 text-white placeholder:text-blue-200/40 focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                      Residential Pickup Address <span className="text-red-500">*</span>
+                    <label className="text-xs font-bold text-yellow-400/90">
+                      Residential Pickup Address <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="text"
@@ -907,13 +937,13 @@ export default function DriversDirectoryPage() {
                       placeholder="e.g. No. 15, High Level Road, Nugegoda"
                       value={inquiryData.pickupAddress}
                       onChange={(e) => setInquiryData({ ...inquiryData, pickupAddress: e.target.value })}
-                      className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+                      className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-blue-900/60 bg-[#060D1A]/80 text-white placeholder:text-blue-200/40 focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
-                      Parent Contact Phone Number <span className="text-red-500">*</span>
+                    <label className="text-xs font-bold text-yellow-400/90">
+                      Parent Contact Phone Number <span className="text-red-400">*</span>
                     </label>
                     <input
                       type="text"
@@ -921,12 +951,12 @@ export default function DriversDirectoryPage() {
                       placeholder="e.g. +94 77 123 4567"
                       value={inquiryData.parentContact}
                       onChange={(e) => setInquiryData({ ...inquiryData, parentContact: e.target.value })}
-                      className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+                      className="w-full px-4 py-2.5 text-xs sm:text-sm rounded-xl border border-blue-900/60 bg-[#060D1A]/80 text-white placeholder:text-blue-200/40 focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                     />
                   </div>
 
-                  <div className="p-3.5 rounded-xl bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200 dark:border-yellow-900/40 text-xs text-yellow-900 dark:text-yellow-200 flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-[#CA8A04] shrink-0" />
+                  <div className="p-3.5 rounded-xl bg-yellow-400/10 border border-yellow-400/25 text-xs text-yellow-200 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-[#FACC15] shrink-0" />
                     <span>
                       Standard seat fee: Rs. {selectedDriverForInquiry.monthlyRateLKR.toLocaleString()} / month. Zero booking fees charged to parents.
                     </span>
@@ -936,14 +966,14 @@ export default function DriversDirectoryPage() {
                     <button
                       type="button"
                       onClick={() => setInquiryModalOpen(false)}
-                      className="px-5 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs font-bold hover:bg-slate-50 cursor-pointer"
+                      className="px-5 py-2.5 rounded-full border border-blue-900/60 text-blue-200 text-xs font-bold hover:bg-white/5 cursor-pointer transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       type="submit"
                       disabled={isSubmittingInquiry}
-                      className="px-6 py-2.5 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 text-xs font-black shadow-md flex items-center gap-2 cursor-pointer"
+                      className="relative overflow-hidden px-6 py-2.5 rounded-full bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 text-xs font-black border border-yellow-200/80 shadow-[0_3px_0_#B45309,0_8px_16px_rgba(250,204,21,0.3)] hover:shadow-[0_4px_0_#B45309] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_#B45309] flex items-center gap-2 cursor-pointer transition-all"
                     >
                       <Send className="h-3.5 w-3.5" />
                       <span>{isSubmittingInquiry ? 'Submitting...' : 'Send Inquiry to Driver'}</span>

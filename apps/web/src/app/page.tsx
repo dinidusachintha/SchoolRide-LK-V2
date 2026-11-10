@@ -302,17 +302,17 @@ const initialTestimonials = [
   },
 ];
 
-// Verified School Fleet Dataset (Matching Industrial / Heritage Template Layout)
+// Verified School Fleet Dataset (Matching Industrial / Heritage Template Layout with Web Details)
 const fleetTabsData = {
   mission: {
     tabLabel: 'OUR MISSION',
     eyebrow: 'WHO WE ARE',
-    headlineMain: 'We work for you ',
+    headlineMain: 'We work for your children ',
     headlineAccent: 'since 2018.',
-    headlineSub: 'Verified School Fleet Across Sri Lanka',
+    headlineSub: "Meet Sri Lanka's Most Trusted Drivers",
     image: '/images/school-van-hero-showcase.jpg',
     secondaryImage: '/images/verified-driver-portrait.jpg',
-    secondaryAlt: 'Verified SchoolRide LK driver uncle with official ID badge',
+    secondaryAlt: 'Verified SchoolRide LK driver Sunil Wickramasinghe',
     description:
       'Over 450+ Toyota HiAce and Nissan Caravan commuter vans independently inspected for school transport safety across Colombo, Kandy, Galle, and Gampaha. Dedicated to safe, punctual, and comfortable daily journeys for every student.',
     bullets: [
@@ -320,27 +320,27 @@ const fleetTabsData = {
       '100% Police Cleared & Background Vetted',
       'Dual Factory A/C & Guaranteed Clean Seating',
     ],
-    badgeTitle: 'Toyota HiAce Super GL',
-    badgeSub: '14 Seats • 100% Inspected',
+    badgeTitle: 'Sunil Wickramasinghe (14 Yrs Exp)',
+    badgeSub: 'Toyota HiAce GL • Colombo Routes',
   },
   vision: {
     tabLabel: 'OUR VISION',
     eyebrow: 'SAFETY CHARTER',
-    headlineMain: 'Zero-compromise safety ',
-    headlineAccent: 'for every child.',
+    headlineMain: 'Standardized fleet comfort & ',
+    headlineAccent: 'safety.',
     headlineSub: '5-Tier Charter & Telemetry Compliance',
     image: '/images/school-van-hero-showcase.jpg',
-    secondaryImage: '/images/live-tracking-mockup.jpg',
-    secondaryAlt: 'SchoolRide LK live telemetry and route tracking map',
+    secondaryImage: '/images/van-vehicle-focus.jpg',
+    secondaryAlt: 'Inspected Toyota HiAce school commuter van',
     description:
       'Our fleet operates on a strict zero-tolerance safety charter. Every school van is speed-governed at 40 km/h in school zones, continuously tracked via GPS telemetry, and supervised by verified attendants.',
     bullets: [
       'Automated 40 km/h School Zone Speed Governors',
       'Real-Time OBD-II Live GPS & Route Telemetry',
-      'Commercial Student Passenger Insurance',
+      'Mandatory Annual Mechanical & Fitness Testing',
     ],
-    badgeTitle: 'Active Telemetry',
-    badgeSub: 'OBD-II • Live Route Sensors',
+    badgeTitle: 'Gamini Fernando (9 Yrs Exp)',
+    badgeSub: 'Nissan Caravan High-Roof • Kandy Routes',
   },
   history: {
     tabLabel: 'OUR HISTORY',
@@ -358,8 +358,8 @@ const fleetTabsData = {
       'Trained Female Matron Attendants Onboard',
       'Automated Parent SMS & Gate Arrival Alerts',
     ],
-    badgeTitle: '99.8% On-Time Record',
-    badgeSub: '1,480+ School Days Logged',
+    badgeTitle: 'Pradeep Kumara (11 Yrs Exp)',
+    badgeSub: 'Toyota Commuter Bus • Gampaha Routes',
   },
 };
 
@@ -369,6 +369,7 @@ export default function HomePage() {
   const [isFiltering, setIsFiltering] = React.useState(false);
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(0);
   const [isSchoolsDropdownOpen, setIsSchoolsDropdownOpen] = React.useState(false);
+  const [activeSafetyTab, setActiveSafetyTab] = React.useState<'driver' | 'vehicle' | 'telemetry' | 'attendance'>('attendance');
   const [fleetActiveTab, setFleetActiveTab] = React.useState<'mission' | 'vision' | 'history'>('mission');
 
   // Feedback & Parent Reviews states
@@ -1048,16 +1049,31 @@ export default function HomePage() {
       </section>
 
       {/* ======================================================== */}
-      {/* 3. LIVE TRUST & STATS MARQUEE (DARK NAVY BLUE THEME)     */}
+      {/* 3. LIVE TRUST & STATS MARQUEE (DARK NAVY FADE & SCHOOL THEME) */}
       {/* ======================================================== */}
-      <section className="py-7 sm:py-9 border-b border-blue-900/30 bg-[#0B1528] text-white relative overflow-hidden">
-        {/* Ambient Subtle Navy Glow Behind Metrics */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[140px] bg-blue-500/[0.1] blur-[90px] rounded-full pointer-events-none" />
-          <div className="absolute top-1/2 right-1/4 translate-x-1/2 -translate-y-1/2 w-[400px] h-[140px] bg-indigo-500/[0.08] blur-[90px] rounded-full pointer-events-none" />
+      <section className="relative w-full py-8 sm:py-10 lg:py-12 bg-[#0B1528] text-white border-y border-blue-900/30 overflow-hidden flex items-center">
+        {/* Cinematic Background Image (School Theme Vehicle on Right, Dark Motion Road) */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/fleet-stats-motion-bg.jpg"
+            alt="SchoolRide LK verified school commuter fleet"
+            fill
+            priority
+            sizes="100vw"
+            quality={92}
+            className="object-cover object-right lg:object-[85%_center] filter brightness-[0.82] contrast-[1.08]"
+          />
+
+          {/* Seamless Dark Navy Blue Fade: Solid dark navy on left & center, revealing school van on right */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0B1528] via-[#0B1528]/95 via-50% to-[#0B1528]/35" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B1528] via-transparent to-[#0B1528]/75 pointer-events-none" />
+
+          {/* Ambient Navy & Gold Glow Accents */}
+          <div className="absolute left-1/4 top-1/2 -translate-y-1/2 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute right-1/3 top-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
         </div>
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -1065,70 +1081,70 @@ export default function HomePage() {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], staggerChildren: 0.1 }}
             className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-center"
           >
-            {/* Stat 1 */}
+            {/* Stat 1: Verified Van Operators */}
             <motion.div
               whileHover={{ y: -3, scale: 1.02 }}
               transition={{ duration: 0.2 }}
-              className="py-3.5 px-3 sm:py-4 sm:px-4 rounded-xl bg-[#0F1D38]/80 backdrop-blur-md border border-blue-500/20 hover:border-[#FACC15]/50 hover:bg-[#132347] transition-all duration-300 flex flex-col items-center justify-center space-y-1 group shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+              className="py-4 px-3 sm:py-5 sm:px-4 rounded-2xl bg-[#0B1528]/85 backdrop-blur-xl border border-blue-500/25 hover:border-[#FACC15]/50 hover:bg-[#0E1E3A]/90 transition-all duration-300 flex flex-col items-center justify-center space-y-1.5 group shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
             >
-              <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-[#FACC15] group-hover:bg-[#FACC15]/20 transition-all">
-                <UserCheck className="w-3.5 h-3.5" />
+              <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-[#FACC15] group-hover:bg-[#FACC15]/20 group-hover:border-[#FACC15]/40 transition-all">
+                <UserCheck className="w-4 h-4" />
               </div>
-              <span className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight">
+              <span className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight font-mono">
                 <StatCounter target={250} suffix="+" />
               </span>
-              <p className="text-[11px] sm:text-xs font-semibold text-blue-100/70 group-hover:text-white transition-colors">
+              <p className="text-[11px] sm:text-xs font-semibold text-blue-100/80 group-hover:text-white transition-colors">
                 Verified Van Operators
               </p>
             </motion.div>
 
-            {/* Stat 2 */}
+            {/* Stat 2: Safe Morning Trips */}
             <motion.div
               whileHover={{ y: -3, scale: 1.02 }}
               transition={{ duration: 0.2 }}
-              className="py-3.5 px-3 sm:py-4 sm:px-4 rounded-xl bg-[#0F1D38]/80 backdrop-blur-md border border-blue-500/20 hover:border-[#FACC15]/50 hover:bg-[#132347] transition-all duration-300 flex flex-col items-center justify-center space-y-1 group shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+              className="py-4 px-3 sm:py-5 sm:px-4 rounded-2xl bg-[#0B1528]/85 backdrop-blur-xl border border-blue-500/25 hover:border-[#FACC15]/50 hover:bg-[#0E1E3A]/90 transition-all duration-300 flex flex-col items-center justify-center space-y-1.5 group shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
             >
-              <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-[#FACC15] group-hover:bg-[#FACC15]/20 transition-all">
-                <Bus className="w-3.5 h-3.5" />
+              <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-[#FACC15] group-hover:bg-[#FACC15]/20 group-hover:border-[#FACC15]/40 transition-all">
+                <Bus className="w-4 h-4" />
               </div>
-              <span className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight">
+              <span className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight font-mono">
                 <StatCounter target={18500} suffix="+" />
               </span>
-              <p className="text-[11px] sm:text-xs font-semibold text-blue-100/70 group-hover:text-white transition-colors">
+              <p className="text-[11px] sm:text-xs font-semibold text-blue-100/80 group-hover:text-white transition-colors">
                 Safe Morning Trips
               </p>
             </motion.div>
 
-            {/* Stat 3 */}
+            {/* Stat 3: Premier Schools Covered */}
             <motion.div
               whileHover={{ y: -3, scale: 1.02 }}
               transition={{ duration: 0.2 }}
-              className="py-3.5 px-3 sm:py-4 sm:px-4 rounded-xl bg-[#0F1D38]/80 backdrop-blur-md border border-blue-500/20 hover:border-[#FACC15]/50 hover:bg-[#132347] transition-all duration-300 flex flex-col items-center justify-center space-y-1 group shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+              className="py-4 px-3 sm:py-5 sm:px-4 rounded-2xl bg-[#0B1528]/85 backdrop-blur-xl border border-blue-500/25 hover:border-[#FACC15]/50 hover:bg-[#0E1E3A]/90 transition-all duration-300 flex flex-col items-center justify-center space-y-1.5 group shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
             >
-              <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-[#FACC15] group-hover:bg-[#FACC15]/20 transition-all">
-                <School className="w-3.5 h-3.5" />
+              <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-[#FACC15] group-hover:bg-[#FACC15]/20 group-hover:border-[#FACC15]/40 transition-all">
+                <School className="w-4 h-4" />
               </div>
-              <span className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight">
+              <span className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight font-mono">
                 <StatCounter target={48} suffix="+" />
               </span>
-              <p className="text-[11px] sm:text-xs font-semibold text-blue-100/70 group-hover:text-white transition-colors">
+              <p className="text-[11px] sm:text-xs font-semibold text-blue-100/80 group-hover:text-white transition-colors">
                 Premier Schools Covered
               </p>
             </motion.div>
 
-            {/* Stat 4 */}
+            {/* Stat 4: On-Time School Arrivals */}
             <motion.div
               whileHover={{ y: -3, scale: 1.02 }}
               transition={{ duration: 0.2 }}
-              className="py-3.5 px-3 sm:py-4 sm:px-4 rounded-xl bg-[#0F1D38]/80 backdrop-blur-md border border-blue-500/20 hover:border-[#FACC15]/50 hover:bg-[#132347] transition-all duration-300 flex flex-col items-center justify-center space-y-1 group shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
+              className="py-4 px-3 sm:py-5 sm:px-4 rounded-2xl bg-[#0B1528]/85 backdrop-blur-xl border border-blue-500/25 hover:border-[#FACC15]/50 hover:bg-[#0E1E3A]/90 transition-all duration-300 flex flex-col items-center justify-center space-y-1.5 group shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
             >
-              <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-[#FACC15] group-hover:bg-[#FACC15]/20 transition-all">
-                <Clock className="w-3.5 h-3.5" />
+              <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-400/20 flex items-center justify-center text-[#FACC15] group-hover:bg-[#FACC15]/20 group-hover:border-[#FACC15]/40 transition-all">
+                <Clock className="w-4 h-4" />
               </div>
-              <span className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight">
+              <span className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight leading-tight font-mono">
                 <StatCounter target={99.8} decimals={1} suffix="%" />
               </span>
-              <p className="text-[11px] sm:text-xs font-semibold text-blue-100/70 group-hover:text-white transition-colors">
+              <p className="text-[11px] sm:text-xs font-semibold text-blue-100/80 group-hover:text-white transition-colors">
                 On-Time School Arrivals
               </p>
             </motion.div>
@@ -1137,18 +1153,18 @@ export default function HomePage() {
       </section>
 
       {/* ======================================================== */}
-      {/* 4. HOW TO REQUEST A RIDE & SERVICES (GLASS EFFECT CARDS)  */}
+      {/* 4. HOW TO REQUEST A RIDE & SERVICES (AIRY GLASS CARDS)   */}
       {/* ======================================================== */}
-      <section id="how-it-works" className="py-14 sm:py-18 lg:py-20 bg-slate-50/60 dark:bg-slate-950 text-[#1F2937] dark:text-slate-100 border-b border-slate-200/90 dark:border-slate-800 relative overflow-hidden">
-        {/* Ambient Soft Glow Orbs for Glassmorphism Depth */}
-        <div className="absolute top-12 left-1/4 w-96 h-96 bg-yellow-400/10 dark:bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-blue-500/10 dark:bg-blue-600/5 rounded-full blur-3xl pointer-events-none" />
+      <section id="how-it-works" className="py-16 sm:py-20 lg:py-24 bg-[#F0F4F9] dark:bg-slate-950 text-[#1F2937] dark:text-slate-100 border-b border-slate-200/90 dark:border-slate-800 relative overflow-hidden">
+        {/* Soft Ambient Ethereal Glow Blobs for Glass Depth */}
+        <div className="absolute top-10 left-1/4 w-[500px] h-[500px] bg-sky-400/10 dark:bg-blue-600/5 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute bottom-10 right-1/4 w-[500px] h-[500px] bg-blue-400/10 dark:bg-sky-500/5 blur-3xl rounded-full pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-40 dark:opacity-5 pointer-events-none" />
 
         <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10">
           
           {/* Section Header: Split Layout */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-8 sm:pb-12 text-left">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-10 sm:pb-14 text-left">
             <div className="space-y-3 max-w-2xl">
               {/* Eyebrow Badge: [ OUR SERVICES ] */}
               <div className="inline-block">
@@ -1158,21 +1174,21 @@ export default function HomePage() {
               </div>
 
               {/* Main Headline */}
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[42px] font-black text-slate-900 dark:text-white tracking-tight leading-[1.15]">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12]">
                 School Van Services Designed For Every Type Of Ride
               </h2>
             </div>
 
             {/* Right Subtitle Paragraph */}
             <div className="max-w-xl text-left">
-              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+              <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                 From daily morning school runs to afternoon sports activities and dedicated term passes, SchoolRide LK connects your family with verified, punctual drivers across Sri Lanka.
               </p>
             </div>
           </div>
 
-          {/* 3-Column Services Glass Grid: Compact, Small Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 lg:gap-7">
+          {/* 3-Column Services Glass Grid: Matching Uploaded Glass Card Template */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
             
             {/* Card 1: Daily School Commute */}
             <motion.div
@@ -1180,133 +1196,89 @@ export default function HomePage() {
               whileInView="visible"
               viewport={{ once: true, margin: '-40px' }}
               variants={cardItemVariants}
-              className="group relative flex flex-col justify-between rounded-2xl md:rounded-[24px] p-3.5 sm:p-4 bg-white/75 dark:bg-slate-900/65 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(15,23,42,0.05)] hover:shadow-[0_16px_36px_rgba(250,204,21,0.12)] hover:border-[#FACC15]/60 hover:-translate-y-1 transition-all duration-300"
+              className="group relative flex flex-col justify-between rounded-[32px] sm:rounded-[36px] overflow-hidden bg-gradient-to-b from-blue-50/30 via-white/60 to-white/85 dark:from-slate-900/40 dark:via-slate-900/60 dark:to-slate-950/85 backdrop-blur-xl border border-white/60 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.1)] hover:-translate-y-1.5 transition-all duration-500"
             >
-              {/* Specular Glass Highlight Line */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/90 dark:via-white/20 to-transparent rounded-t-[24px] pointer-events-none" />
+              {/* Top Specular Rim */}
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white dark:via-white/20 to-transparent pointer-events-none" />
 
-              <div>
-                {/* Compact Photo Window */}
-                <div className="relative w-full h-44 sm:h-48 rounded-xl md:rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-inner">
-                  <Image
-                    src="/images/service-school-commute.jpg"
-                    alt="Daily morning school commute with verified school van"
-                    fill
-                    priority
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  />
-
-                  {/* Floating Glass Icon Badge */}
-                  <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/90 dark:bg-slate-950/85 backdrop-blur-md border border-white/80 dark:border-white/10 text-slate-900 dark:text-white shadow-sm">
-                    <div className="w-5 h-5 rounded-lg bg-[#FACC15] flex items-center justify-center text-slate-950 font-bold">
-                      <Bus className="w-3 h-3 stroke-[2.5]" />
-                    </div>
-                    <span className="text-[11px] font-bold tracking-tight">Morning &amp; Afternoon</span>
-                  </div>
-
-                  {/* Floating Glass Pill */}
-                  <div className="absolute bottom-2.5 right-2.5 z-10 px-2.5 py-0.5 rounded-full bg-slate-950/70 backdrop-blur-md border border-white/20 text-white text-[10px] font-semibold tracking-wide">
-                    Fixed Monthly Pass
-                  </div>
-                </div>
-
-                {/* Content Area */}
-                <div className="pt-3.5 pb-2 px-1 text-left space-y-1.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                      Daily School Commute
-                    </h3>
-                    <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200/80 dark:border-emerald-800/60 shrink-0">
-                      Verified Vans
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                    Doorstep pickup and punctual drop-offs directly to top schools in Colombo, Kandy, Galle, and Gampaha with zero surge pricing.
-                  </p>
-                </div>
+              {/* Card Upper Image with Minimized Soft Bleed */}
+              <div className="relative w-full h-60 sm:h-64 overflow-hidden rounded-t-[32px] sm:rounded-t-[36px] bg-slate-100 dark:bg-slate-800">
+                <Image
+                  src="/images/service-daily-commute.jpg"
+                  alt="Daily School Commute"
+                  fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                />
+                {/* Minimized subtle edge transition — sharp, vivid image with reduced white fade */}
+                <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/40 to-transparent dark:from-slate-900/50 dark:to-transparent pointer-events-none" />
               </div>
 
-              {/* Action Footer */}
-              <div className="pt-3 mt-1 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between px-1">
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
-                  <Check className="w-3.5 h-3.5 text-emerald-500 stroke-[3]" />
-                  <span>Guaranteed Seat</span>
+              {/* Card Lower Content Area */}
+              <div className="p-6 sm:p-7 md:p-8 pt-4 flex flex-col justify-between flex-1 text-left">
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Daily School Commute.
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed line-clamp-3">
+                    Book verified daily morning &amp; afternoon school runs directly to leading schools across Colombo, Kandy, Galle, and Gampaha with zero surge pricing.
+                  </p>
                 </div>
 
-                <Link href="/drivers">
-                  <button className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 text-xs font-bold transition-all shadow-xs hover:shadow-md cursor-pointer group/btn">
-                    <span>Book Now</span>
-                    <ArrowRight className="w-3 h-3 transition-transform group-hover/btn:translate-x-0.5" />
-                  </button>
+                {/* Minimalist Explore Link matching template */}
+                <Link
+                  href="/drivers"
+                  className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/link mt-auto"
+                >
+                  <span>Explore</span>
+                  <span className="transition-transform duration-200 group-hover/link:translate-x-1">→</span>
                 </Link>
               </div>
             </motion.div>
 
-            {/* Card 2: City & Extracurricular Runs */}
+            {/* Card 2: City & Activity Rides */}
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: '-40px' }}
               variants={cardItemVariants}
-              className="group relative flex flex-col justify-between rounded-2xl md:rounded-[24px] p-3.5 sm:p-4 bg-white/75 dark:bg-slate-900/65 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(15,23,42,0.05)] hover:shadow-[0_16px_36px_rgba(250,204,21,0.12)] hover:border-[#FACC15]/60 hover:-translate-y-1 transition-all duration-300"
+              className="group relative flex flex-col justify-between rounded-[32px] sm:rounded-[36px] overflow-hidden bg-gradient-to-b from-blue-50/30 via-white/60 to-white/85 dark:from-slate-900/40 dark:via-slate-900/60 dark:to-slate-950/85 backdrop-blur-xl border border-white/60 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.1)] hover:-translate-y-1.5 transition-all duration-500"
             >
-              {/* Specular Glass Highlight Line */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/90 dark:via-white/20 to-transparent rounded-t-[24px] pointer-events-none" />
+              {/* Top Specular Rim */}
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white dark:via-white/20 to-transparent pointer-events-none" />
 
-              <div>
-                {/* Compact Photo Window */}
-                <div className="relative w-full h-44 sm:h-48 rounded-xl md:rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-inner">
-                  <Image
-                    src="/images/service-school-route.jpg"
-                    alt="After-school and extracurricular city school van rides"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  />
-
-                  {/* Floating Glass Icon Badge */}
-                  <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/90 dark:bg-slate-950/85 backdrop-blur-md border border-white/80 dark:border-white/10 text-slate-900 dark:text-white shadow-sm">
-                    <div className="w-5 h-5 rounded-lg bg-[#FACC15] flex items-center justify-center text-slate-950 font-bold">
-                      <School className="w-3 h-3 stroke-[2.5]" />
-                    </div>
-                    <span className="text-[11px] font-bold tracking-tight">Tuition &amp; Sports</span>
-                  </div>
-
-                  {/* Floating Glass Pill */}
-                  <div className="absolute bottom-2.5 right-2.5 z-10 px-2.5 py-0.5 rounded-full bg-slate-950/70 backdrop-blur-md border border-white/20 text-white text-[10px] font-semibold tracking-wide">
-                    Flexible Schedule
-                  </div>
-                </div>
-
-                {/* Content Area */}
-                <div className="pt-3.5 pb-2 px-1 text-left space-y-1.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                      City &amp; Activity Rides
-                    </h3>
-                    <span className="text-[10px] font-bold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded-full border border-amber-200/80 dark:border-amber-800/60 shrink-0">
-                      Special Trips
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                    Transport for afternoon tuition, sports practice, swimming meets, or school tournaments with verified local drivers who know every shortcut.
-                  </p>
-                </div>
+              {/* Card Upper Image with Minimized Soft Bleed */}
+              <div className="relative w-full h-60 sm:h-64 overflow-hidden rounded-t-[32px] sm:rounded-t-[36px] bg-slate-100 dark:bg-slate-800">
+                <Image
+                  src="/images/service-city-activity.jpg"
+                  alt="City & Activity Rides"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                />
+                {/* Minimized subtle edge transition — sharp, vivid image with reduced white fade */}
+                <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/40 to-transparent dark:from-slate-900/50 dark:to-transparent pointer-events-none" />
               </div>
 
-              {/* Action Footer */}
-              <div className="pt-3 mt-1 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between px-1">
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
-                  <Check className="w-3.5 h-3.5 text-emerald-500 stroke-[3]" />
-                  <span>Direct Routing</span>
+              {/* Card Lower Content Area */}
+              <div className="p-6 sm:p-7 md:p-8 pt-4 flex flex-col justify-between flex-1 text-left">
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    City &amp; Activity Rides.
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed line-clamp-3">
+                    Dedicated after-school transit for tuition classes, sports practice, swimming meets, and tournaments with vetted local drivers who know every shortcut.
+                  </p>
                 </div>
 
-                <Link href="/drivers">
-                  <button className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 text-xs font-bold transition-all shadow-xs hover:shadow-md cursor-pointer group/btn">
-                    <span>Book Now</span>
-                    <ArrowRight className="w-3 h-3 transition-transform group-hover/btn:translate-x-0.5" />
-                  </button>
+                {/* Minimalist Explore Link matching template */}
+                <Link
+                  href="/drivers"
+                  className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/link mt-auto"
+                >
+                  <span>Explore</span>
+                  <span className="transition-transform duration-200 group-hover/link:translate-x-1">→</span>
                 </Link>
               </div>
             </motion.div>
@@ -1317,64 +1289,42 @@ export default function HomePage() {
               whileInView="visible"
               viewport={{ once: true, margin: '-40px' }}
               variants={cardItemVariants}
-              className="group relative flex flex-col justify-between rounded-2xl md:rounded-[24px] p-3.5 sm:p-4 bg-white/75 dark:bg-slate-900/65 backdrop-blur-xl border border-white/80 dark:border-white/10 shadow-[0_8px_30px_rgba(15,23,42,0.05)] hover:shadow-[0_16px_36px_rgba(250,204,21,0.12)] hover:border-[#FACC15]/60 hover:-translate-y-1 transition-all duration-300"
+              className="group relative flex flex-col justify-between rounded-[32px] sm:rounded-[36px] overflow-hidden bg-gradient-to-b from-blue-50/30 via-white/60 to-white/85 dark:from-slate-900/40 dark:via-slate-900/60 dark:to-slate-950/85 backdrop-blur-xl border border-white/60 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.1)] hover:-translate-y-1.5 transition-all duration-500"
             >
-              {/* Specular Glass Highlight Line */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/90 dark:via-white/20 to-transparent rounded-t-[24px] pointer-events-none" />
+              {/* Top Specular Rim */}
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white dark:via-white/20 to-transparent pointer-events-none" />
 
-              <div>
-                {/* Compact Photo Window */}
-                <div className="relative w-full h-44 sm:h-48 rounded-xl md:rounded-2xl overflow-hidden bg-slate-100 dark:bg-slate-800 shadow-inner">
-                  <Image
-                    src="/images/service-driver-safety.jpg"
-                    alt="Dedicated term pass with verified driver and child safety"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                  />
-
-                  {/* Floating Glass Icon Badge */}
-                  <div className="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/90 dark:bg-slate-950/85 backdrop-blur-md border border-white/80 dark:border-white/10 text-slate-900 dark:text-white shadow-sm">
-                    <div className="w-5 h-5 rounded-lg bg-[#FACC15] flex items-center justify-center text-slate-950 font-bold">
-                      <ShieldCheck className="w-3 h-3 stroke-[2.5]" />
-                    </div>
-                    <span className="text-[11px] font-bold tracking-tight">Full Safety Charter</span>
-                  </div>
-
-                  {/* Floating Glass Pill */}
-                  <div className="absolute bottom-2.5 right-2.5 z-10 px-2.5 py-0.5 rounded-full bg-slate-950/70 backdrop-blur-md border border-white/20 text-white text-[10px] font-semibold tracking-wide">
-                    Live GPS Telemetry
-                  </div>
-                </div>
-
-                {/* Content Area */}
-                <div className="pt-3.5 pb-2 px-1 text-left space-y-1.5">
-                  <div className="flex items-center justify-between gap-2">
-                    <h3 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white leading-snug group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
-                      Dedicated Term Pass
-                    </h3>
-                    <span className="text-[10px] font-bold text-blue-700 dark:text-blue-300 bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 rounded-full border border-blue-200/80 dark:border-blue-800/60 shrink-0">
-                      Full Term
-                    </span>
-                  </div>
-                  <p className="text-xs sm:text-[13px] text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
-                    Reserve a fixed seat for the entire term with automated real-time GPS tracking, parent gate-arrival notifications, and verified driver vetting.
-                  </p>
-                </div>
+              {/* Card Upper Image with Minimized Soft Bleed */}
+              <div className="relative w-full h-60 sm:h-64 overflow-hidden rounded-t-[32px] sm:rounded-t-[36px] bg-slate-100 dark:bg-slate-800">
+                <Image
+                  src="/images/service-dedicated-termpass.jpg"
+                  alt="Dedicated Term Pass"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                />
+                {/* Minimized subtle edge transition — sharp, vivid image with reduced white fade */}
+                <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-white/40 to-transparent dark:from-slate-900/50 dark:to-transparent pointer-events-none" />
               </div>
 
-              {/* Action Footer */}
-              <div className="pt-3 mt-1 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between px-1">
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
-                  <Check className="w-3.5 h-3.5 text-emerald-500 stroke-[3]" />
-                  <span>Matron Care Included</span>
+              {/* Card Lower Content Area */}
+              <div className="p-6 sm:p-7 md:p-8 pt-4 flex flex-col justify-between flex-1 text-left">
+                <div className="space-y-2 mb-6">
+                  <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight leading-snug group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    Dedicated Term Pass.
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed line-clamp-3">
+                    Reserve a guaranteed seat for the entire school term with automated real-time GPS tracking, parent gate-arrival alerts, and caring female matron attendants.
+                  </p>
                 </div>
 
-                <Link href="/drivers">
-                  <button className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 text-xs font-bold transition-all shadow-xs hover:shadow-md cursor-pointer group/btn">
-                    <span>Book Now</span>
-                    <ArrowRight className="w-3 h-3 transition-transform group-hover/btn:translate-x-0.5" />
-                  </button>
+                {/* Minimalist Explore Link matching template */}
+                <Link
+                  href="/drivers"
+                  className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/link mt-auto"
+                >
+                  <span>Explore</span>
+                  <span className="transition-transform duration-200 group-hover/link:translate-x-1">→</span>
                 </Link>
               </div>
             </motion.div>
@@ -1385,19 +1335,16 @@ export default function HomePage() {
       </section>
 
       {/* ======================================================== */}
-      {/* 5. 5-TIER SAFETY & VERIFICATION CHARTER (TEMPLATE LAYOUT) */}
+      {/* 5. 5-TIER SAFETY & VERIFICATION CHARTER SHOWCASE CARD    */}
+      {/* (UNIFIED MASTER CARD: IMAGE 1 TEMPLATE + IMAGE 2 DETAILS) */}
       {/* ======================================================== */}
       <section id="safety" className="py-16 sm:py-20 lg:py-24 border-b border-slate-200/90 dark:border-slate-800 bg-[#FAFAFA] dark:bg-slate-950 relative overflow-hidden">
-        {/* About Anchor for Navigation */}
-        <div id="about" className="absolute -top-20" />
-        
-        {/* Ambient Soft Glow Blobs */}
-        <div className="absolute top-10 left-1/4 w-96 h-96 bg-orange-400/10 dark:bg-orange-500/5 blur-3xl rounded-full pointer-events-none" />
-        <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-amber-400/10 dark:bg-amber-500/5 blur-3xl rounded-full pointer-events-none" />
+        {/* Navigation anchor support for #about links */}
+        <div id="about" className="absolute -top-24 pointer-events-none" />
 
         <div className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           
-          {/* Framed Feature Showcase Card (Matching Template Layout) */}
+          {/* Framed Feature Showcase Card (Template from Image 1, Details from Image 2) */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -1405,92 +1352,188 @@ export default function HomePage() {
             variants={sectionFadeUp}
             className="relative rounded-3xl sm:rounded-[36px] overflow-hidden border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl group"
           >
-            <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[520px]">
+            <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch min-h-[560px]">
               
-              {/* LEFT COLUMN: Narrative, Headline, 2 Features, Bottom Button & Officer Signature */}
-              <div className="lg:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-14 space-y-8 text-left">
+              {/* LEFT COLUMN: 5-Tier Safety & Verification Charter Details (Image 2) */}
+              <div className="lg:col-span-7 flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-14 space-y-6 text-left">
                 
                 <div className="space-y-4">
-                  {/* Decorative Eyebrow Badge matching template */}
+                  {/* Eyebrow Badge matching Image 2 */}
                   <div className="inline-block">
-                    <span className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-bold text-[#EA580C] dark:text-amber-400 bg-orange-50 dark:bg-orange-950/40 border border-orange-200/80 dark:border-orange-800/60 uppercase tracking-widest shadow-2xs">
-                      <span>◆</span>
-                      <span>5-Tier Safety Charter</span>
-                      <span>◆</span>
+                    <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FEFCE8] dark:bg-yellow-950/40 text-[#854D0E] dark:text-[#FACC15] border border-[#FEF08A] dark:border-yellow-700/50 text-xs font-bold shadow-2xs">
+                      <ShieldCheck className="h-4 w-4 text-[#CA8A04] dark:text-[#FACC15]" />
+                      <span>5-Tier Safety &amp; Verification Charter</span>
                     </span>
                   </div>
 
-                  {/* Headline matching template cadence */}
-                  <h2 className="text-3xl sm:text-4xl lg:text-[42px] xl:text-[48px] font-black text-slate-950 dark:text-white tracking-tight leading-[1.12]">
-                    Driven by Trust,{' '}
-                    <span className="text-[#EA580C] dark:text-[#F97316]">Powered</span><br />
-                    <span className="text-[#EA580C] dark:text-[#F97316]">by Verification.</span>
+                  {/* Headline matching Image 2 */}
+                  <h2 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[46px] font-black font-serif text-slate-900 dark:text-white tracking-tight leading-[1.14]">
+                    Trust earned through{' '}
+                    <span className="text-[#CA8A04] dark:text-[#FACC15]">rigorous<br />inspection.</span>
                   </h2>
 
-                  {/* Lead Narrative */}
+                  {/* Lead Narrative matching Image 2 */}
                   <p className="text-xs sm:text-sm md:text-base text-slate-600 dark:text-slate-300 leading-relaxed font-normal max-w-xl">
-                    We deliver verified student transport solutions that empower families across Sri Lanka, ensuring zero-compromise safety, driver accountability, and peace of mind on every school journey.
+                    We believe child safety requires verifiable criteria, not just slogans. Every school van operator on SchoolRide LK must submit proof of identity, legal credentials, and vehicle fitness before accepting student bookings.
                   </p>
                 </div>
 
-                {/* Two Circular Highlight Callouts (Side-by-side matching template) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 pt-1">
-                  {/* Callout 1: Police Cleared */}
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-11 h-11 rounded-full bg-[#EA580C] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
-                      <ShieldCheck className="w-5 h-5 stroke-[2.2]" />
-                    </div>
-                    <div className="space-y-0.5">
-                      <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                        Police-Cleared Drivers
-                      </h4>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                        100% background vetting, NIC identity, and commercial heavy passenger license verification.
-                      </p>
-                    </div>
+                {/* 4 Interactive Safety Tabs (Yellow 3D Active Theme) */}
+                <div className="space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setActiveSafetyTab('driver')}
+                      className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer ${
+                        activeSafetyTab === 'driver'
+                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80 -translate-y-0.5'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300'
+                      }`}
+                    >
+                      1. Driver Background
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveSafetyTab('vehicle')}
+                      className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer ${
+                        activeSafetyTab === 'vehicle'
+                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80 -translate-y-0.5'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300'
+                      }`}
+                    >
+                      2. Vehicle Roadworthiness
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveSafetyTab('telemetry')}
+                      className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer ${
+                        activeSafetyTab === 'telemetry'
+                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80 -translate-y-0.5'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300'
+                      }`}
+                    >
+                      3. Speed &amp; Telemetry
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveSafetyTab('attendance')}
+                      className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer ${
+                        activeSafetyTab === 'attendance'
+                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80 -translate-y-0.5'
+                          : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300'
+                      }`}
+                    >
+                      4. Attendance Alerts
+                    </button>
                   </div>
 
-                  {/* Callout 2: 24/7 Live Telemetry */}
-                  <div className="flex items-start gap-3.5">
-                    <div className="w-11 h-11 rounded-full bg-[#EA580C] text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
-                      <Gauge className="w-5 h-5 stroke-[2.2]" />
-                    </div>
-                    <div className="space-y-0.5">
-                      <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                        24/7 Live Telemetry
-                      </h4>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-                        Real-time GPS tracking with strict 40 km/h school-zone speed governor and panic monitoring.
-                      </p>
-                    </div>
+                  {/* Active Tab Description Box matching Image 2 */}
+                  <div className="p-4 sm:p-5 rounded-2xl border border-yellow-300/80 dark:border-yellow-700/60 bg-[#FFFDF5] dark:bg-yellow-950/20 shadow-xs min-h-[96px] flex items-center">
+                    <AnimatePresence mode="wait">
+                      {activeSafetyTab === 'attendance' && (
+                        <motion.div
+                          key="attendance"
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.18 }}
+                          className="space-y-1.5 w-full"
+                        >
+                          <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                            <Bell className="h-5 w-5 text-[#CA8A04] dark:text-[#FACC15] stroke-[2.2]" />
+                            <span>Instant Doorstep Pickup &amp; School Gate Chimes</span>
+                          </h4>
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            Parents receive an instant notification when the van arrives at their gate, when the student boards, and the moment the van stops safely at the school entrance.
+                          </p>
+                        </motion.div>
+                      )}
+
+                      {activeSafetyTab === 'driver' && (
+                        <motion.div
+                          key="driver"
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.18 }}
+                          className="space-y-1.5 w-full"
+                        >
+                          <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                            <UserCheck className="h-5 w-5 text-[#CA8A04] dark:text-[#FACC15] stroke-[2.2]" />
+                            <span>Police Records &amp; NIC Identity Verification</span>
+                          </h4>
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            Every driver submits their government National Identity Card (NIC) and Heavy Passenger Commercial Driver&apos;s License. Our team cross-references background credentials and previous passenger transport experience before granting approved status.
+                          </p>
+                        </motion.div>
+                      )}
+
+                      {activeSafetyTab === 'vehicle' && (
+                        <motion.div
+                          key="vehicle"
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.18 }}
+                          className="space-y-1.5 w-full"
+                        >
+                          <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                            <Car className="h-5 w-5 text-[#CA8A04] dark:text-[#FACC15] stroke-[2.2]" />
+                            <span>Annual Revenue License &amp; Passenger Insurance</span>
+                          </h4>
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            All vans are required to maintain active Provincial Revenue Licenses and valid commercial passenger liability insurance. Vans must be equipped with working seatbelts, first aid kits, and emergency door releases.
+                          </p>
+                        </motion.div>
+                      )}
+
+                      {activeSafetyTab === 'telemetry' && (
+                        <motion.div
+                          key="telemetry"
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.18 }}
+                          className="space-y-1.5 w-full"
+                        >
+                          <h4 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white flex items-center gap-2.5">
+                            <Gauge className="h-5 w-5 text-[#CA8A04] dark:text-[#FACC15] stroke-[2.2]" />
+                            <span>Live GPS Tracking &amp; Strict Speed Limiter Telemetry</span>
+                          </h4>
+                          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                            School vans stream live speed and location coordinates directly to parents. The system automatically triggers warnings if speeds exceed 40 km/h in school safety corridors or if sudden route deviations occur.
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </div>
 
-                {/* Bottom Row: Dual-Tone Action Button + Founder/Officer Signature Block */}
-                <div className="flex flex-wrap items-center justify-between gap-6 pt-4 border-t border-slate-200/80 dark:border-slate-800">
-                  {/* Dual-Tone "Read More" Button */}
+                {/* Bottom Row: 3D Yellow Action Button + Fleet Safety Officer Signature */}
+                <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-100 dark:border-slate-800/80">
+                  {/* 3D Yellow Glass Button matching Image 2 */}
                   <Link href="/safety">
-                    <button className="group inline-flex items-center gap-3.5 pl-6 pr-2 py-2 rounded-full bg-[#EA580C] hover:bg-[#D94606] text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all cursor-pointer">
-                      <span>Read More</span>
-                      <span className="flex h-7 w-7 rounded-full bg-slate-950 text-white items-center justify-center group-hover:translate-x-0.5 transition-transform">
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </span>
+                    <button className="relative group overflow-hidden px-6 py-3.5 rounded-full bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black text-xs sm:text-sm tracking-tight border border-yellow-200/80 shadow-[0_4px_0_#B45309,0_10px_20px_rgba(250,204,21,0.3)] hover:shadow-[0_5px_0_#B45309,0_14px_24px_rgba(250,204,21,0.4)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_2px_0_#B45309] transition-all cursor-pointer inline-flex items-center gap-2.5">
+                      <div className="absolute inset-x-2 top-0.5 h-[44%] rounded-full bg-gradient-to-b from-white/70 via-white/20 to-transparent pointer-events-none" />
+                      <span className="relative z-10">View Complete Safety Protocol</span>
+                      <ArrowRight className="relative z-10 h-4 w-4 text-slate-950 group-hover:translate-x-0.5 transition-transform" />
                     </button>
                   </Link>
 
-                  {/* Officer Profile + Cursive Signature */}
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-11 h-11 rounded-full overflow-hidden border-2 border-orange-200 dark:border-orange-900/60 shadow-xs shrink-0 bg-slate-100 dark:bg-slate-800">
+                  {/* Officer Signature Block (from Image 1 template) */}
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5">
+                      <div className="relative w-9 h-9 rounded-full overflow-hidden border border-slate-200 dark:border-slate-700 shadow-xs">
                         <Image
-                          src="/images/verified-driver-portrait.jpg"
+                          src="/images/safety-charter-driver-kids.jpg"
                           alt="Sunil Jayasuriya"
                           fill
-                          className="object-cover object-top"
+                          sizes="36px"
+                          className="object-cover object-[68%_22%]"
                         />
                       </div>
-                      <div>
-                        <span className="text-xs font-black text-slate-900 dark:text-white block leading-tight">
+                      <div className="text-left">
+                        <span className="text-xs font-bold text-slate-900 dark:text-white block leading-tight">
                           Sunil Jayasuriya
                         </span>
                         <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium block leading-tight">
@@ -1522,57 +1565,50 @@ export default function HomePage() {
 
               </div>
 
-              {/* RIGHT COLUMN: Diagonal Cutout Photo with Centered Rotating Stamp Badge */}
-              <div className="lg:col-span-5 relative min-h-[380px] lg:min-h-[520px] bg-slate-950 overflow-hidden">
-                {/* Slanted Driver Photo */}
-                <div
-                  className="relative w-full h-full min-h-[380px] lg:min-h-full"
-                  style={{
-                    clipPath: 'polygon(12% 0, 100% 0, 100% 100%, 0% 100%)',
-                    WebkitClipPath: 'polygon(12% 0, 100% 0, 100% 100%, 0% 100%)',
-                  }}
-                >
+              {/* RIGHT COLUMN: Diagonal Van Showcase with Overlapping Rotating Stamp Badge */}
+              <div className="lg:col-span-5 relative min-h-[380px] lg:min-h-[560px] bg-white dark:bg-slate-900">
+                <div className="safety-photo-slant relative w-full h-full min-h-[380px] lg:min-h-full overflow-hidden">
                   <Image
-                    src="/images/verified-driver-portrait.jpg"
-                    alt="Verified School Van Driver Standing Proudly with Commuter Van"
+                    src="/images/safety-charter-driver-kids.jpg"
+                    alt="Verified School Van Driver and Students Beside Commuter Van"
                     fill
                     priority
                     sizes="(max-width: 1024px) 100vw, 45vw"
-                    className="object-cover object-[65%_center] group-hover:scale-103 transition-transform duration-700"
+                    className="object-cover object-[55%_center] group-hover:scale-103 transition-transform duration-700"
                   />
                   
-                  {/* Subtle Vignette Gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-black/20 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent pointer-events-none" />
 
                   {/* Floating Safety Badge at Bottom Right */}
                   <div className="absolute bottom-5 right-5 z-10">
-                    <div className="backdrop-blur-md bg-slate-950/80 border border-white/20 px-3.5 py-1.5 rounded-xl text-white shadow-lg flex items-center gap-2">
+                    <div className="backdrop-blur-md bg-black/85 border border-white/10 px-3.5 py-1.5 rounded-full text-white shadow-md flex items-center gap-2">
                       <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-[11px] font-bold">100% Verified Fleet Standard</span>
+                      <span className="text-[11px] font-bold tracking-tight">100% Verified Fleet Standard</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Overlapping Rotating Circular Stamp Badge on the Seam */}
-                <div className="absolute top-1/2 left-[6%] -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center justify-center w-28 h-28 rounded-full bg-white dark:bg-slate-900 border-2 border-slate-200/90 dark:border-slate-700 shadow-2xl">
-                  {/* Rotating SVG Circular Text */}
-                  <svg className="w-full h-full animate-[spin_14s_linear_infinite]" viewBox="0 0 100 100">
+                {/* Overlapping Rotating Circular Stamp Badge on the Slanted Seam */}
+                <div
+                  className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 hidden lg:flex items-center justify-center w-28 h-28 rounded-full bg-white dark:bg-slate-900 border-2 border-yellow-200/90 dark:border-yellow-700/80 shadow-xl"
+                  style={{ left: '4%' }}
+                >
+                  <svg className="w-full h-full animate-[spin_18s_linear_infinite]" viewBox="0 0 100 100">
                     <defs>
                       <path
                         id="stampCirclePathSafety"
-                        d="M 50,50 m -33,0 a 33,33 0 1,1 66,0 a 33,33 0 1,1 -66,0"
+                        d="M 50,50 m -34,0 a 34,34 0 1,1 68,0 a 34,34 0 1,1 -68,0"
                         fill="none"
                       />
                     </defs>
-                    <text className="text-[7.8px] font-black uppercase tracking-[0.24em] fill-slate-700 dark:fill-slate-300">
+                    <text className="text-[8.5px] font-black uppercase tracking-[0.22em] fill-[#CA8A04] dark:fill-[#FACC15]">
                       <textPath href="#stampCirclePathSafety">EXPLORE MORE • EXPLORE MORE • </textPath>
                     </text>
                   </svg>
 
-                  {/* Center Arrow */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="w-10 h-10 rounded-full border border-orange-200 dark:border-orange-900/60 bg-orange-50 dark:bg-orange-950/40 flex items-center justify-center shadow-xs">
-                      <ArrowUpRight className="w-5 h-5 text-[#EA580C] stroke-[2.5]" />
+                    <div className="w-11 h-11 rounded-full border border-yellow-200 dark:border-yellow-700/60 bg-yellow-50 dark:bg-yellow-950/60 flex items-center justify-center shadow-xs">
+                      <ArrowUpRight className="w-5 h-5 text-[#CA8A04] dark:text-[#FACC15] stroke-[2.5]" />
                     </div>
                   </div>
                 </div>
@@ -1832,7 +1868,7 @@ export default function HomePage() {
         
         {/* Soft Ambient Texture & Golden Glow */}
         <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-40 dark:opacity-10 pointer-events-none" />
-        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-yellow-200/25 dark:bg-yellow-500/10 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 dark:bg-blue-600/5 blur-3xl rounded-full pointer-events-none" />
         
         <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -1996,7 +2032,7 @@ export default function HomePage() {
       <section id="feedback" className="py-16 sm:py-20 lg:py-24 border-b border-slate-200/90 dark:border-slate-800 bg-[#FFFFFF] dark:bg-slate-950 text-slate-900 dark:text-slate-100 relative overflow-hidden">
         {/* Subtle Ambient Radial Grid Texture */}
         <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-40 dark:opacity-10 pointer-events-none" />
-        <div className="absolute -top-20 left-1/3 w-96 h-96 bg-yellow-300/10 dark:bg-yellow-500/5 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute -top-20 left-1/3 w-96 h-96 bg-blue-500/5 dark:bg-blue-600/5 blur-3xl rounded-full pointer-events-none" />
 
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
           
@@ -2372,14 +2408,30 @@ export default function HomePage() {
       </section>
 
       {/* ======================================================== */}
-      {/* VERIFIED SCHOOL FLEET (MATCHING INDUSTRIAL / HERITAGE TEMPLATE) */}
+      {/* ======================================================== */}
+      {/* 11. VERIFIED SCHOOL FLEET / WHO WE ARE (DRIVER ROSTER)   */}
+      {/* ======================================================== */}
+      {/* ======================================================== */}
+      {/* VERIFIED SCHOOL FLEET (PREVIOUS SECTION TEMPLATE)        */}
       {/* ======================================================== */}
       <section id="fleet" className="py-16 sm:py-20 lg:py-24 border-b border-slate-200/90 dark:border-slate-800 bg-[#FFFFFF] dark:bg-slate-950 text-slate-900 dark:text-slate-100 relative overflow-hidden">
         
-        {/* Subtle Ambient Radial Texture & Glow */}
+        {/* Subtle Ambient Radial Texture & Soft Blue Accent */}
         <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-40 dark:opacity-10 pointer-events-none" />
-        <div className="absolute -top-24 right-1/4 w-96 h-96 bg-amber-400/10 dark:bg-amber-500/5 blur-3xl rounded-full pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-80 h-80 bg-orange-500/10 dark:bg-orange-600/5 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute -top-24 right-1/4 w-96 h-96 bg-blue-500/5 dark:bg-blue-600/5 blur-3xl rounded-full pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-80 h-80 bg-indigo-500/5 dark:bg-indigo-600/5 blur-3xl rounded-full pointer-events-none" />
+
+        {/* Decorative Faint Gear Watermark matching Template */}
+        <svg
+          className="absolute -right-24 top-1/2 -translate-y-1/2 w-[460px] h-[460px] text-slate-900/[0.03] dark:text-white/[0.02] pointer-events-none"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="0.8"
+        >
+          <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+        </svg>
 
         <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10">
           
@@ -2419,7 +2471,7 @@ export default function HomePage() {
               {/* Stepped Frame Container */}
               <div className="relative w-full max-w-[540px] h-[400px] sm:h-[480px] lg:h-[530px] xl:h-[560px] group">
                 {/* Ambient Glow behind the stepped shape */}
-                <div className="absolute -inset-4 bg-gradient-to-tr from-amber-500/15 via-yellow-400/10 to-transparent rounded-[40px] blur-2xl pointer-events-none" />
+                <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 via-indigo-500/5 to-transparent rounded-[40px] blur-2xl pointer-events-none" />
 
                 {/* Clipped Image Wrapper */}
                 <div 
@@ -2470,7 +2522,7 @@ export default function HomePage() {
             >
               {/* Eyebrow Pill */}
               <div className="inline-block">
-                <span className="px-3.5 py-1 rounded-full border border-amber-500/40 text-[#EA580C] dark:text-amber-400 text-xs font-bold tracking-wider uppercase bg-amber-500/5 shadow-2xs">
+                <span className="px-3.5 py-1 rounded-full border border-blue-500/30 text-blue-600 dark:text-blue-400 text-xs font-bold tracking-wider uppercase bg-blue-50/50 dark:bg-blue-950/40 shadow-2xs">
                   {fleetTabsData[fleetActiveTab].eyebrow}
                 </span>
               </div>
@@ -2478,7 +2530,7 @@ export default function HomePage() {
               {/* Main Headline */}
               <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[42px] font-black text-slate-950 dark:text-white tracking-tight leading-[1.15]">
                 {fleetTabsData[fleetActiveTab].headlineMain}{' '}
-                <span className="text-[#EA580C] dark:text-[#F97316]">
+                <span className="text-[#CA8A04] dark:text-[#FACC15]">
                   {fleetTabsData[fleetActiveTab].headlineAccent}
                 </span>
                 <br />
@@ -2499,7 +2551,7 @@ export default function HomePage() {
                       onClick={() => setFleetActiveTab(tabKey)}
                       className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 cursor-pointer ${
                         isActive
-                          ? 'bg-[#EA580C] text-white shadow-md shadow-orange-500/25 border border-[#EA580C]'
+                          ? 'bg-[#0B1528] text-white shadow-md border border-blue-900/60'
                           : 'bg-transparent text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white border border-slate-300 dark:border-slate-700 hover:border-slate-400'
                       }`}
                     >
@@ -2541,7 +2593,7 @@ export default function HomePage() {
                   <ul className="space-y-2 pt-1">
                     {fleetTabsData[fleetActiveTab].bullets.map((bullet, idx) => (
                       <li key={idx} className="flex items-center gap-2.5 text-xs sm:text-[13px] font-semibold text-slate-800 dark:text-slate-200">
-                        <span className="flex h-4 w-4 rounded-full bg-[#EA580C] text-white items-center justify-center shrink-0 shadow-2xs">
+                        <span className="flex h-4 w-4 rounded-full bg-[#0B1528] text-[#FACC15] items-center justify-center shrink-0 shadow-2xs">
                           <Check className="h-2.5 w-2.5 stroke-[3]" />
                         </span>
                         <span>{bullet}</span>
@@ -2554,9 +2606,9 @@ export default function HomePage() {
               {/* Bottom Row: [ Know More ↗ ] + Hotline Widget */}
               <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-200/80 dark:border-slate-800">
                 <Link href="/drivers">
-                  <button className="group inline-flex items-center justify-between gap-3.5 px-5 sm:px-6 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-[#EA580C] text-slate-800 dark:text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer">
+                  <button className="group inline-flex items-center justify-between gap-3.5 px-5 sm:px-6 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-slate-900 text-slate-800 dark:text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer">
                     <span>Know More</span>
-                    <span className="flex h-6 w-6 rounded-full bg-[#EA580C] text-white items-center justify-center group-hover:scale-110 transition-transform">
+                    <span className="flex h-6 w-6 rounded-full bg-[#0B1528] text-white items-center justify-center group-hover:scale-110 transition-transform">
                       <ArrowUpRight className="h-3.5 w-3.5" />
                     </span>
                   </button>
@@ -2567,12 +2619,12 @@ export default function HomePage() {
                     <Phone className="h-4 w-4" />
                   </div>
                   <div className="text-left">
-                    <span className="block text-[11px] font-bold text-[#EA580C] dark:text-amber-400 leading-tight">
+                    <span className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 leading-tight">
                       Have question?
                     </span>
                     <a
                       href="tel:+94112345678"
-                      className="text-xs sm:text-sm font-black text-slate-900 dark:text-white hover:text-[#EA580C] transition-colors leading-tight"
+                      className="text-xs sm:text-sm font-black text-slate-900 dark:text-white hover:text-blue-600 transition-colors leading-tight"
                     >
                       Call Us 0-800-433-5788
                     </a>
