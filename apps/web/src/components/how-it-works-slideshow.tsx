@@ -80,7 +80,7 @@ const PAGE_2_STEPS: HowToStep[] = [
   },
   {
     id: 6,
-    image: '/images/vango-hero-split-right.jpg',
+    image: '/images/service-school-commute.jpg',
     imageAlt: 'Children arriving safely at school gate',
     icon: Bell,
     title: 'Instant Gate Arrival Notifications',
