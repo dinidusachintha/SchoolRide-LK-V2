@@ -93,45 +93,50 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-8 w-full text-left">
-      {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-100 pb-5">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Link href="/admin/dashboard" className="text-[#4E6258] hover:text-[#094718] transition-colors mr-1">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <h1 className="text-2xl font-black text-[#0B2C22] tracking-tight">
-              User Identity <span className="text-[#16A34A]">&amp; Access Control</span>
-            </h1>
-          </div>
-          <p className="text-xs sm:text-sm text-[#4E6258]">
-            Manage platform users, inspect role assignments, and enforce safety suspensions.
-          </p>
-        </div>
+      {/* 2nd Section: Top Banner Card (Dark Navy Blue Background) */}
+      <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0B1528] text-white p-6 sm:p-8 border border-[#0B1528] shadow-md overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-[#FFC928]/10 rounded-full blur-3xl pointer-events-none" />
 
-        <span className="px-3.5 py-1.5 rounded-full bg-[#EAF6ED] border border-[#BCE6C9] text-[#094718] text-xs font-bold shrink-0">
-          {users.length} Users Listed
-        </span>
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <Link href="/admin/dashboard" className="text-slate-400 hover:text-white transition-colors mr-1">
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                User Identity <span className="text-[#FFC928]">&amp; Access Control</span>
+              </h1>
+            </div>
+            <p className="text-xs sm:text-sm text-blue-100/80 max-w-2xl leading-relaxed">
+              Manage platform users, inspect role assignments, and enforce safety suspensions across Sri Lanka.
+            </p>
+          </div>
+
+          <span className="px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-[#FFC928] text-xs font-extrabold shrink-0 shadow-sm backdrop-blur-md">
+            {users.length} Users Listed
+          </span>
+        </div>
       </div>
 
-      {/* Filter Toolbar: White Card */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-white border border-emerald-950/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.03)] grid grid-cols-1 sm:grid-cols-4 gap-3 items-center">
+      {/* Search & Filter Toolbar: White Gray Glass Effect Background */}
+      <div className="glass-search-bar p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-4 gap-3 items-center relative overflow-hidden">
         <div className="sm:col-span-2 relative">
           <input
             type="text"
             placeholder="Search by full name, email, phone or district..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs text-[#0B2C22] placeholder:text-[#709080] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300/80 bg-white/95 text-xs text-[#0B2345] font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFC928] shadow-xs"
           />
-          <Search className="absolute left-3 top-3 h-4 w-4 text-[#709080]" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-[#0B2345]" />
         </div>
 
         <div>
           <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs font-semibold text-[#0B2C22] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+            className="w-full px-3 py-2.5 rounded-xl border border-slate-300/80 bg-white/95 text-xs font-bold text-[#0B2345] focus:outline-none focus:ring-2 focus:ring-[#FFC928] cursor-pointer shadow-xs"
           >
             <option value="">All Roles</option>
             <option value={UserRole.PARENT}>Parents</option>
@@ -144,7 +149,7 @@ export default function AdminUsersPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs font-semibold text-[#0B2C22] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+            className="w-full px-3 py-2.5 rounded-xl border border-slate-300/80 bg-white/95 text-xs font-bold text-[#0B2345] focus:outline-none focus:ring-2 focus:ring-[#FFC928] cursor-pointer shadow-xs"
           >
             <option value="">All Statuses</option>
             <option value={AccountStatus.ACTIVE}>Active</option>
@@ -154,44 +159,44 @@ export default function AdminUsersPage() {
         </div>
       </div>
 
-      {/* Users Table: White Card with Green Headers */}
-      <div className="rounded-2xl bg-white border border-emerald-950/[0.08] shadow-sm overflow-hidden">
+      {/* Users Table: Premium White Glass Card */}
+      <div className="glass-card-white rounded-3xl overflow-hidden shadow-md">
         {isLoading ? (
           <div className="p-8 space-y-4">
-            <Skeleton className="h-6 w-full bg-emerald-950/[0.05]" />
-            <Skeleton className="h-6 w-full bg-emerald-950/[0.05]" />
-            <Skeleton className="h-6 w-full bg-emerald-950/[0.05]" />
+            <Skeleton className="h-6 w-full bg-slate-200/60" />
+            <Skeleton className="h-6 w-full bg-slate-200/60" />
+            <Skeleton className="h-6 w-full bg-slate-200/60" />
           </div>
         ) : users.length === 0 ? (
-          <div className="p-12 text-center text-xs text-[#4E6258]">
+          <div className="p-12 text-center text-xs text-slate-500">
             No users found matching current filters.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F4FAF5] text-[#094718] border-b border-emerald-100 font-bold uppercase tracking-wider text-[11px]">
+              <thead className="bg-[#0B1528] text-white border-b border-blue-900/50 font-extrabold uppercase tracking-wider text-[11px]">
                 <tr>
-                  <th className="py-3.5 px-4">User</th>
-                  <th className="py-3.5 px-4">Contact</th>
-                  <th className="py-3.5 px-4">Role</th>
-                  <th className="py-3.5 px-4">Status</th>
-                  <th className="py-3.5 px-4">Location</th>
-                  <th className="py-3.5 px-4">Registered</th>
-                  <th className="py-3.5 px-4 text-right">Actions</th>
+                  <th className="py-4 px-4 text-white">User</th>
+                  <th className="py-4 px-4 text-slate-200">Contact</th>
+                  <th className="py-4 px-4 text-slate-200">Role</th>
+                  <th className="py-4 px-4 text-slate-200">Status</th>
+                  <th className="py-4 px-4 text-slate-200">Location</th>
+                  <th className="py-4 px-4 text-slate-200">Registered</th>
+                  <th className="py-4 px-4 text-right text-slate-200">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-emerald-100/60">
+              <tbody className="divide-y divide-slate-100">
                 {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-[#FAFDF9] transition-colors">
+                  <tr key={u.id} className="hover:bg-slate-50/70 transition-colors">
                     <td className="py-3.5 px-4">
-                      <div className="font-bold text-[#0B2C22]">{u.fullName}</div>
-                      <div className="text-[11px] text-[#4E6258]">{u.email}</div>
+                      <div className="font-extrabold text-[#0B2345]">{u.fullName}</div>
+                      <div className="text-[11px] text-slate-500">{u.email}</div>
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-[#0B2C22]">
+                    <td className="py-3.5 px-4 font-mono font-medium text-[#0B2345]">
                       {u.phone}
                     </td>
                     <td className="py-3.5 px-4">
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#EAF6ED] text-[#094718] border border-[#BCE6C9]">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-blue-50 text-[#0B2345] border border-blue-200/80">
                         {u.role}
                       </span>
                     </td>
@@ -199,7 +204,7 @@ export default function AdminUsersPage() {
                       <span
                         className={`px-2.5 py-1 rounded-full text-[10px] font-bold border ${
                           u.status === AccountStatus.ACTIVE
-                            ? 'bg-[#EBF7EE] text-[#16A34A] border-[#BCE6C9]'
+                            ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                             : u.status === AccountStatus.SUSPENDED
                             ? 'bg-rose-50 text-rose-700 border-rose-200'
                             : 'bg-amber-50 text-amber-700 border-amber-200'
@@ -208,10 +213,10 @@ export default function AdminUsersPage() {
                         {u.status}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-[#4E6258]">
+                    <td className="py-3.5 px-4 text-slate-600 font-medium">
                       {u.district} ({u.city})
                     </td>
-                    <td className="py-3.5 px-4 text-[#4E6258] font-mono text-[11px]">
+                    <td className="py-3.5 px-4 text-[#0B2345]/70 font-mono text-[11px] font-medium">
                       {formatSriLankanDateTime(u.createdAt)}
                     </td>
                     <td className="py-3.5 px-4 text-right">
@@ -223,7 +228,7 @@ export default function AdminUsersPage() {
                           }}
                           className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
                             u.status === AccountStatus.SUSPENDED
-                              ? 'bg-[#EAF6ED] text-[#094718] border-[#CDE9D3] hover:bg-[#D8EFE0]'
+                              ? 'bg-blue-50 text-[#0B2345] border-blue-200 hover:bg-blue-100'
                               : 'bg-white text-rose-700 border-rose-200 hover:bg-rose-50'
                           }`}
                         >
@@ -241,9 +246,9 @@ export default function AdminUsersPage() {
 
       {/* Suspend / Reactivate Dialog */}
       <Dialog open={!!suspendingUser} onOpenChange={() => setSuspendingUser(null)}>
-        <DialogContent className="sm:max-w-md bg-white border border-emerald-100 text-[#0B2C22]">
+        <DialogContent className="sm:max-w-md bg-white border border-slate-200 text-[#0B2345] rounded-3xl shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-[#0B2C22]">
+            <DialogTitle className="text-base font-black text-[#0B2345]">
               {suspendingUser?.status === AccountStatus.SUSPENDED
                 ? `Reactivate Account: ${suspendingUser?.fullName}`
                 : `Suspend Account: ${suspendingUser?.fullName}`}
@@ -263,7 +268,7 @@ export default function AdminUsersPage() {
                   placeholder="Reason for suspension (e.g., policy violation, complaint investigation)"
                   value={suspendReason}
                   onChange={(e) => setSuspendReason(e.target.value)}
-                  className="bg-[#FAFDF9] border-emerald-200 text-[#0B2C22] text-xs min-h-[90px]"
+                  className="bg-slate-50 border-slate-200 text-[#0B2345] text-xs min-h-[90px] focus:ring-2 focus:ring-[#FFC928]"
                 />
               </div>
             )}

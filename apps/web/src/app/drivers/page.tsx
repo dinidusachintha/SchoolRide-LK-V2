@@ -413,39 +413,38 @@ export default function DriversDirectoryPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="rounded-[28px] md:rounded-[32px] bg-white/75 dark:bg-slate-900/80 text-slate-900 dark:text-white border border-white/90 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.04)] backdrop-blur-2xl p-6 sm:p-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden"
+          className="rounded-[28px] md:rounded-[32px] bg-[#0B1528] text-white border border-blue-900/40 shadow-2xl p-6 sm:p-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden text-left"
         >
-          {/* Ambient Inner Glass Specular Sheen */}
-          <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
+          {/* Ambient Inner Glass Specular Sheen & Glow */}
+          <div className="absolute -top-24 -left-24 w-72 h-72 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none" />
 
           <div className="space-y-3.5 max-w-2xl relative z-10">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FEFCE8] dark:bg-yellow-950/40 text-[#854D0E] dark:text-[#FACC15] border border-[#FEF08A] dark:border-yellow-700/50 text-xs font-bold shadow-2xs backdrop-blur-md">
-              <ShieldCheck className="h-4 w-4 text-[#CA8A04] dark:text-[#FACC15]" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-[#FFC928] border border-white/15 text-xs font-bold shadow-sm backdrop-blur-md">
+              <ShieldCheck className="h-4 w-4 text-[#FFC928]" />
               <span>100% Police &amp; NTCA Vetted Sri Lankan Van Operators</span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-tight">
-              Find Verified <span className="text-[#CA8A04] dark:text-[#FACC15] underline decoration-[#CA8A04]/30 underline-offset-8">School Van Operators</span>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+              Find Verified <span className="text-[#FFC928]">School Van Operators</span>
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
               Search licensed, background-checked school transport operators across Colombo, Kandy, Gampaha, Kalutara, Galle, and all 25 Sri Lankan districts.
             </p>
           </div>
 
-          {/* Clean Glass Effect 3D Buttons */}
+          {/* Clean 3D Yellow Glass Buttons */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 relative z-10 shrink-0">
             <Link href="/parent/bookings">
-              <button className="relative group overflow-hidden px-7 py-3.5 rounded-full bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black text-xs sm:text-sm tracking-tight border border-yellow-200/80 shadow-[0_4px_0_#B45309,0_10px_20px_rgba(250,204,21,0.3)] hover:shadow-[0_5px_0_#B45309,0_14px_24px_rgba(250,204,21,0.4)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_2px_0_#B45309] transition-all duration-150 flex items-center justify-center cursor-pointer">
-                {/* Top Glass Specular Gloss Sheen */}
-                <div className="absolute inset-x-2 top-0.5 h-[46%] rounded-full bg-gradient-to-b from-white/70 via-white/20 to-transparent pointer-events-none" />
-                <span className="relative z-10">View My Bookings</span>
+              <button className="btn-glass-yellow-3d px-7 py-3.5 text-xs sm:text-sm">
+                <span>View My Bookings</span>
               </button>
             </Link>
             <Link href="/parent/rides/live">
-              <button className="relative group overflow-hidden px-6 py-3.5 rounded-full bg-white/90 dark:bg-slate-800 text-slate-800 dark:text-white font-bold text-xs sm:text-sm tracking-tight border border-slate-200/90 dark:border-slate-700 backdrop-blur-xl shadow-[0_4px_0_#E2E8F0,0_10px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_5px_0_#E2E8F0,0_12px_24px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_2px_0_#E2E8F0] transition-all duration-150 flex items-center justify-center cursor-pointer gap-2">
-                <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="relative z-10">Live GPS Map</span>
+              <button className="px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm tracking-tight border border-white/20 backdrop-blur-xl shadow-md hover:-translate-y-0.5 active:translate-y-0.5 transition-all flex items-center justify-center cursor-pointer gap-2">
+                <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Live GPS Map</span>
               </button>
             </Link>
           </div>
@@ -453,7 +452,7 @@ export default function DriversDirectoryPage() {
 
         {/* 4 Summary KPIs with Clean White Glass Translucency */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-          <div className="p-5 sm:p-6 rounded-[24px] bg-white/75 dark:bg-slate-900/80 text-slate-900 dark:text-white border border-white/90 dark:border-white/10 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:border-yellow-400/60 hover:shadow-[0_15px_35px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 transition-all space-y-2 relative overflow-hidden group">
+          <div className="p-5 sm:p-6 rounded-[24px] bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-800 shadow-[0_14px_35px_rgba(15,23,42,0.08),0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_22px_45px_rgba(15,23,42,0.13)] hover:-translate-y-1 transition-all duration-300 space-y-2 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -471,7 +470,7 @@ export default function DriversDirectoryPage() {
             </p>
           </div>
 
-          <div className="p-5 sm:p-6 rounded-[24px] bg-white/75 dark:bg-slate-900/80 text-slate-900 dark:text-white border border-white/90 dark:border-white/10 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:border-yellow-400/60 hover:shadow-[0_15px_35px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 transition-all space-y-2 relative overflow-hidden group">
+          <div className="p-5 sm:p-6 rounded-[24px] bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-800 shadow-[0_14px_35px_rgba(15,23,42,0.08),0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_22px_45px_rgba(15,23,42,0.13)] hover:-translate-y-1 transition-all duration-300 space-y-2 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -489,7 +488,7 @@ export default function DriversDirectoryPage() {
             </p>
           </div>
 
-          <div className="p-5 sm:p-6 rounded-[24px] bg-white/75 dark:bg-slate-900/80 text-slate-900 dark:text-white border border-white/90 dark:border-white/10 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:border-yellow-400/60 hover:shadow-[0_15px_35px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 transition-all space-y-2 relative overflow-hidden group">
+          <div className="p-5 sm:p-6 rounded-[24px] bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-800 shadow-[0_14px_35px_rgba(15,23,42,0.08),0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_22px_45px_rgba(15,23,42,0.13)] hover:-translate-y-1 transition-all duration-300 space-y-2 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -507,7 +506,7 @@ export default function DriversDirectoryPage() {
             </p>
           </div>
 
-          <div className="p-5 sm:p-6 rounded-[24px] bg-white/75 dark:bg-slate-900/80 text-slate-900 dark:text-white border border-white/90 dark:border-white/10 backdrop-blur-xl shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:border-yellow-400/60 hover:shadow-[0_15px_35px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 transition-all space-y-2 relative overflow-hidden group">
+          <div className="p-5 sm:p-6 rounded-[24px] bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-800 shadow-[0_14px_35px_rgba(15,23,42,0.08),0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_22px_45px_rgba(15,23,42,0.13)] hover:-translate-y-1 transition-all duration-300 space-y-2 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
@@ -584,12 +583,12 @@ export default function DriversDirectoryPage() {
         </div>
 
         {/* Search & Filter Bar (White Glass Effect) */}
-        <div className="p-5 rounded-[24px] bg-white/75 dark:bg-slate-900/80 text-slate-900 dark:text-white border border-white/90 dark:border-white/10 backdrop-blur-2xl shadow-[0_16px_40px_rgba(0,0,0,0.04)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative overflow-hidden">
+        <div className="p-6 sm:p-7 rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 shadow-2xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative overflow-hidden text-left">
           <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
           
           {/* District Select */}
           <div className="space-y-1.5 relative z-10">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            <label className="text-[11px] font-black uppercase tracking-wider text-[#FFC928]">
               District
             </label>
             <select
@@ -598,11 +597,11 @@ export default function DriversDirectoryPage() {
                 setDistrict(e.target.value);
                 setSchoolId('');
               }}
-              className="flex h-11 w-full rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 px-3 text-xs text-slate-900 dark:text-white shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+              className="flex h-11 w-full rounded-xl border border-white/15 bg-white/10 text-white placeholder:text-slate-400 px-3.5 text-xs shadow-inner focus:outline-none focus:ring-2 focus:ring-[#FFC928] focus:border-[#FFC928]"
             >
-              <option value="" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">All 25 Sri Lankan Districts</option>
+              <option value="" className="bg-[#0B1528] text-white">All 25 Sri Lankan Districts</option>
               {SRI_LANKAN_DISTRICTS.map((d) => (
-                <option key={d.name} value={d.name} className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+                <option key={d.name} value={d.name} className="bg-[#0B1528] text-white">
                   {d.name} ({d.province} Province)
                 </option>
               ))}
@@ -611,17 +610,17 @@ export default function DriversDirectoryPage() {
 
           {/* School Select */}
           <div className="space-y-1.5 relative z-10">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            <label className="text-[11px] font-black uppercase tracking-wider text-[#FFC928]">
               School Served
             </label>
             <select
               value={schoolId}
               onChange={(e) => setSchoolId(e.target.value)}
-              className="flex h-11 w-full rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 px-3 text-xs text-slate-900 dark:text-white shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+              className="flex h-11 w-full rounded-xl border border-white/15 bg-white/10 text-white placeholder:text-slate-400 px-3.5 text-xs shadow-inner focus:outline-none focus:ring-2 focus:ring-[#FFC928] focus:border-[#FFC928]"
             >
-              <option value="" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">All Schools</option>
+              <option value="" className="bg-[#0B1528] text-white">All Schools</option>
               {filteredSchools.map((s) => (
-                <option key={s.id} value={s.id} className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">
+                <option key={s.id} value={s.id} className="bg-[#0B1528] text-white">
                   {s.name} ({s.city})
                 </option>
               ))}
@@ -630,24 +629,24 @@ export default function DriversDirectoryPage() {
 
           {/* Vehicle Type */}
           <div className="space-y-1.5 relative z-10">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            <label className="text-[11px] font-black uppercase tracking-wider text-[#FFC928]">
               Vehicle Type
             </label>
             <select
               value={vehicleType}
               onChange={(e) => setVehicleType(e.target.value)}
-              className="flex h-11 w-full rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white/90 dark:bg-slate-800/90 px-3 text-xs text-slate-900 dark:text-white shadow-2xs focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+              className="flex h-11 w-full rounded-xl border border-white/15 bg-white/10 text-white placeholder:text-slate-400 px-3.5 text-xs shadow-inner focus:outline-none focus:ring-2 focus:ring-[#FFC928] focus:border-[#FFC928]"
             >
-              <option value="" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">All Vehicle Categories</option>
-              <option value="VAN" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Standard Van (HiAce, NV350 Caravan)</option>
-              <option value="MINI_BUS" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Mini Bus (Toyota Coaster, Rosa)</option>
-              <option value="CAR" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Car / Station Wagon</option>
+              <option value="" className="bg-[#0B1528] text-white">All Vehicle Categories</option>
+              <option value="VAN" className="bg-[#0B1528] text-white">Standard Van (HiAce, NV350 Caravan)</option>
+              <option value="MINI_BUS" className="bg-[#0B1528] text-white">Mini Bus (Toyota Coaster, Rosa)</option>
+              <option value="CAR" className="bg-[#0B1528] text-white">Car / Station Wagon</option>
             </select>
           </div>
 
           {/* Search Input */}
           <div className="space-y-1.5 relative z-10">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+            <label className="text-[11px] font-black uppercase tracking-wider text-[#FFC928]">
               Search Operator or Suburb
             </label>
             <div className="relative">
@@ -885,18 +884,18 @@ export default function DriversDirectoryPage() {
                         onChange={(e) => setInquiryData({ ...inquiryData, grade: e.target.value })}
                         className="w-full h-10 px-3 text-xs sm:text-sm rounded-xl border border-slate-200/90 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                       >
-                        <option value="Grade 1" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 1</option>
-                        <option value="Grade 2" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 2</option>
-                        <option value="Grade 3" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 3</option>
-                        <option value="Grade 4" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 4</option>
-                        <option value="Grade 5" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 5</option>
-                        <option value="Grade 6" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 6</option>
-                        <option value="Grade 7" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 7</option>
-                        <option value="Grade 8" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 8</option>
-                        <option value="Grade 9" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 9</option>
-                        <option value="Grade 10" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 10</option>
-                        <option value="Grade 11" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 11 (O/L)</option>
-                        <option value="Grade 12" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">Grade 12 (A/L)</option>
+                        <option value="Grade 1" className="bg-[#0B1528] text-white">Grade 1</option>
+                        <option value="Grade 2" className="bg-[#0B1528] text-white">Grade 2</option>
+                        <option value="Grade 3" className="bg-[#0B1528] text-white">Grade 3</option>
+                        <option value="Grade 4" className="bg-[#0B1528] text-white">Grade 4</option>
+                        <option value="Grade 5" className="bg-[#0B1528] text-white">Grade 5</option>
+                        <option value="Grade 6" className="bg-[#0B1528] text-white">Grade 6</option>
+                        <option value="Grade 7" className="bg-[#0B1528] text-white">Grade 7</option>
+                        <option value="Grade 8" className="bg-[#0B1528] text-white">Grade 8</option>
+                        <option value="Grade 9" className="bg-[#0B1528] text-white">Grade 9</option>
+                        <option value="Grade 10" className="bg-[#0B1528] text-white">Grade 10</option>
+                        <option value="Grade 11" className="bg-[#0B1528] text-white">Grade 11 (O/L)</option>
+                        <option value="Grade 12" className="bg-[#0B1528] text-white">Grade 12 (A/L)</option>
                       </select>
                     </div>
 
@@ -972,29 +971,32 @@ export default function DriversDirectoryPage() {
           )}
         </AnimatePresence>
 
-        {/* Safety & Charter Banner matching Home Page Clean Glass */}
-        <div className="rounded-[28px] bg-white/80 dark:bg-slate-900 text-slate-900 dark:text-white border border-white/90 dark:border-slate-800 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl backdrop-blur-xl relative overflow-hidden">
-          <div className="space-y-2 max-w-xl text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FEFCE8] dark:bg-yellow-950/40 text-[#854D0E] dark:text-[#FACC15] text-[11px] font-black uppercase tracking-wider border border-[#FEF08A] dark:border-yellow-700/50">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#CA8A04] dark:text-[#FACC15]" />
+        {/* Safety & Charter Banner: Dark Navy Blue Card */}
+        <div className="rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden">
+          <div className="absolute -top-16 -right-16 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-16 -left-16 w-60 h-60 bg-[#FFC928]/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 space-y-2 max-w-xl text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[#FFC928] text-[11px] font-black uppercase tracking-wider border border-white/20 backdrop-blur-md">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#FFC928]" />
               <span>Sri Lanka Child Transport Safety Standard</span>
             </div>
-            <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-              Every driver is vetted, <span className="text-[#CA8A04] dark:text-[#FACC15]">every trip is tracked</span>
+            <h3 className="text-xl sm:text-2xl font-black text-white">
+              Every driver is vetted, <span className="text-[#FFC928]">every trip is tracked</span>
             </h3>
-            <p className="text-slate-600 dark:text-slate-300 text-xs sm:text-sm leading-relaxed">
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
               SchoolRide.lk enforces mandatory police criminal clearance, annual vehicle mechanical testing, and satellite GPS monitoring for all school transport operators in Sri Lanka.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 shrink-0">
+          <div className="relative z-10 flex flex-wrap items-center gap-3 shrink-0">
             <Link href="/parent/rides/live">
-              <button className="px-6 py-3.5 rounded-full bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-[0_3px_0_#B45309,0_8px_16px_rgba(250,204,21,0.3)] hover:shadow-[0_4px_0_#B45309] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer">
+              <button className="btn-glass-yellow-3d px-6 py-3.5 text-xs sm:text-sm font-black shadow-lg">
                 Track Live Ride
               </button>
             </Link>
             <Link href="/parent/children">
-              <button className="px-5 py-3.5 rounded-full border border-slate-200 dark:border-slate-700 hover:border-slate-400 text-slate-700 dark:text-slate-200 text-xs sm:text-sm font-bold transition-all cursor-pointer bg-white/70 dark:bg-slate-800/70 shadow-2xs">
+              <button className="px-5 py-3.5 rounded-full border border-white/20 hover:border-white/30 text-white text-xs sm:text-sm font-bold transition-all cursor-pointer bg-white/10 hover:bg-white/15 shadow-sm">
                 Manage Children
               </button>
             </Link>

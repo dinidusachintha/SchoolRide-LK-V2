@@ -307,7 +307,7 @@ export function Navbar() {
                 </button>
               </Link>
               <Link href="/drivers">
-                <button className="px-5 sm:px-6 py-2.5 text-sm font-black text-[#14532D] bg-[#FACC15] hover:bg-[#EAB308] rounded-full shadow-md hover:shadow-lg transition-all duration-150 flex items-center gap-1.5 cursor-pointer">
+                <button className="btn-glass-yellow-3d px-5 sm:px-6 py-2.5 text-sm">
                   Book a Ride
                 </button>
               </Link>
@@ -435,7 +435,7 @@ export function Navbar() {
                   </button>
                 </Link>
                 <Link href="/drivers" className="w-1/2" onClick={() => setMobileMenuOpen(false)}>
-                  <button className="w-full py-2.5 rounded-full bg-[#FACC15] text-[#14532D] font-black text-sm hover:bg-[#EAB308] transition-colors shadow-md">
+                  <button className="btn-glass-yellow-3d w-full py-2.5 text-sm">
                     Book a Ride
                   </button>
                 </Link>

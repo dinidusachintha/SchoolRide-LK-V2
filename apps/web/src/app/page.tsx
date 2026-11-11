@@ -38,74 +38,95 @@ import {
   ThumbsUp
 } from 'lucide-react';
 
-// Animation Variants
+// Animation Variants (Ultra-Smooth Spring Easing)
+const emilSpring = [0.16, 1, 0.3, 1] as const;
+
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1,
+      staggerChildren: 0.12,
       delayChildren: 0.1,
     },
   },
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: { opacity: 0, y: 30 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
 const badgeVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.9 },
+  hidden: { opacity: 0, scale: 0.9, y: -12 },
   visible: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.4, ease: 'easeOut' },
+    y: 0,
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
 const visualVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.95, x: 25 },
+  hidden: { opacity: 0, scale: 0.93, x: 40, y: 15 },
   visible: {
     opacity: 1,
     scale: 1,
     x: 0,
-    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+    y: 0,
+    transition: { duration: 0.9, delay: 0.18, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
 const cardsContainerVariants: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    y: 0,
     transition: {
-      duration: 0.6,
-      staggerChildren: 0.08,
-      delayChildren: 0.3,
+      staggerChildren: 0.16,
+      delayChildren: 0.08,
     },
   },
 };
 
 const cardItemVariants: Variants = {
-  hidden: { opacity: 0, y: 16 },
+  hidden: { opacity: 0, y: 36, scale: 0.97 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.45, ease: 'easeOut' },
+    scale: 1,
+    transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
 const sectionFadeUp: Variants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 36 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
+const fadeInLeft: Variants = {
+  hidden: { opacity: 0, x: -36 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
+const fadeInRight: Variants = {
+  hidden: { opacity: 0, x: 36 },
+  visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] },
   },
 };
 
@@ -363,6 +384,32 @@ const fleetTabsData = {
   },
 };
 
+
+function LiveSpeedBadge() {
+  const [speed, setSpeed] = React.useState(38);
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setSpeed((prev) => {
+        const delta = Math.floor(Math.random() * 5) - 2;
+        const newSpeed = prev + delta;
+        return newSpeed >= 32 && newSpeed <= 42 ? newSpeed : 38;
+      });
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="text-center px-4 py-2 rounded-2xl bg-yellow-50 dark:bg-yellow-950/60 border border-yellow-300 dark:border-yellow-700/80 shadow-xs">
+      <span className="block text-[10px] font-black text-[#713F12] dark:text-yellow-300 uppercase tracking-wider">
+        Van Speed
+      </span>
+      <span className="font-mono text-base font-black text-[#CA8A04] dark:text-[#FACC15]">
+        {speed} km/h
+      </span>
+    </div>
+  );
+}
+
 export default function HomePage() {
   const [selectedDistrict, setSelectedDistrict] = React.useState('All');
   const [schoolSearchQuery, setSchoolSearchQuery] = React.useState('');
@@ -370,7 +417,6 @@ export default function HomePage() {
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(0);
   const [isSchoolsDropdownOpen, setIsSchoolsDropdownOpen] = React.useState(false);
   const [activeSafetyTab, setActiveSafetyTab] = React.useState<'driver' | 'vehicle' | 'telemetry' | 'attendance'>('attendance');
-  const [fleetActiveTab, setFleetActiveTab] = React.useState<'mission' | 'vision' | 'history'>('mission');
 
   // Feedback & Parent Reviews states
   const [feedbackCategory, setFeedbackCategory] = React.useState<string>('All');
@@ -444,9 +490,7 @@ export default function HomePage() {
     setSchoolSearchQuery(val);
     setTimeout(() => setIsFiltering(false), 200);
   };
-  const [simulatedLiveSpeed, setSimulatedLiveSpeed] = React.useState(38);
-
-  // Parent Reviews Carousel states & controls
+    // Parent Reviews Carousel states & controls
   const reviewsCarouselRef = React.useRef<HTMLDivElement>(null);
   const [expandedReviewId, setExpandedReviewId] = React.useState<number | null>(null);
   const [isCarouselHovered, setIsCarouselHovered] = React.useState(false);
@@ -489,19 +533,7 @@ export default function HomePage() {
     setOpenFaqIndex(openFaqIndex === index ? null : index);
   };
 
-  // Speed simulator ticker effect
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setSimulatedLiveSpeed((prev) => {
-        const delta = Math.floor(Math.random() * 5) - 2;
-        const newSpeed = prev + delta;
-        return newSpeed >= 32 && newSpeed <= 42 ? newSpeed : 38;
-      });
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
-
-  const schoolsData = [
+    const schoolsData = [
     {
       id: 1,
       name: 'Royal College',
@@ -710,7 +742,7 @@ export default function HomePage() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/drivers">
-              <button className="px-4 py-1.5 rounded-full bg-slate-950 text-white hover:bg-slate-800 text-xs font-black transition-colors cursor-pointer shadow-sm">
+              <button className="btn-glass-yellow-3d px-4 py-1.5 text-xs">
                 School Van
               </button>
             </Link>
@@ -833,16 +865,15 @@ export default function HomePage() {
               animate="visible"
               className="lg:col-span-7 xl:col-span-7 relative w-full flex items-center justify-center lg:justify-end min-h-[420px] sm:min-h-[500px] lg:min-h-[580px] xl:min-h-[640px]"
             >
-              <div className="relative w-full max-w-[680px] sm:max-w-[760px] lg:max-w-[880px] xl:max-w-[980px] 2xl:max-w-[1060px] aspect-[925/547]">
+              <motion.div animate={{ y: [0, -7, 0] }} transition={{ repeat: Infinity, duration: 5.5, ease: "easeInOut" }} className="relative w-full max-w-[680px] sm:max-w-[760px] lg:max-w-[880px] xl:max-w-[980px] 2xl:max-w-[1060px] aspect-[925/547]">
                 <Image
                   src="/images/hero-school-van-kids-trans-hd.png"
                   alt="SchoolRide LK Safe School Commuter Van with Sri Lankan Students"
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 60vw"
-                  className="object-contain object-center lg:object-right-bottom scale-100 sm:scale-105 lg:scale-110 xl:scale-115 transition-transform duration-500 drop-shadow-xl transform-gpu"
-                />
-              </div>
+                  className="object-contain object-center lg:object-right-bottom scale-100 sm:scale-105 lg:scale-110 xl:scale-115 transition-transform duration-500 drop-shadow-xl transform-gpu" />
+              </motion.div>
             </motion.div>
 
           </div>
@@ -940,7 +971,7 @@ export default function HomePage() {
               {/* Action Button */}
               <div className="pt-2 lg:pt-0 shrink-0">
                 <Link href="/drivers">
-                  <button className="w-full lg:w-auto px-7 py-3.5 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-sm sm:text-base shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer">
+                  <button className="btn-glass-yellow-3d w-full lg:w-auto px-8 py-3.5 text-sm sm:text-base">
                     <Search className="h-4 w-4 stroke-[2.5]" />
                     <span>Search Verified Fleet</span>
                   </button>
@@ -992,7 +1023,7 @@ export default function HomePage() {
                 <div className="flex flex-wrap items-center gap-3.5 pt-2">
                   {/* Button 1: Solid Black Pill (Book a School Ride Now) */}
                   <Link href="/drivers">
-                    <button className="inline-flex items-center gap-2.5 px-7 sm:px-8 py-3.5 rounded-full bg-slate-950 hover:bg-slate-800 text-white font-black text-xs sm:text-sm md:text-base shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer">
+                    <button className="btn-glass-yellow-3d px-7 sm:px-8 py-3.5 text-xs sm:text-sm md:text-base">
                       <CalendarDays className="h-4 w-4" />
                       <span>Book a School Ride Now</span>
                     </button>
@@ -1000,7 +1031,7 @@ export default function HomePage() {
 
                   {/* Button 2: Outline Pill (Register as Van Driver) */}
                   <Link href="/register?role=DRIVER">
-                    <button className="inline-flex items-center gap-2.5 px-7 sm:px-8 py-3.5 rounded-full border-2 border-slate-950 hover:bg-slate-950 hover:text-white text-slate-950 font-black text-xs sm:text-sm md:text-base transition-all duration-200 cursor-pointer">
+                    <button className="btn-glass-yellow-3d px-7 sm:px-8 py-3.5 text-xs sm:text-sm md:text-base">
                       <Bus className="h-4 w-4" />
                       <span>Register as Van Driver</span>
                     </button>
@@ -1009,7 +1040,7 @@ export default function HomePage() {
                   {/* Button 3: Call Hotline Pill */}
                   <a
                     href="tel:+94112345678"
-                    className="inline-flex items-center gap-2 px-5 py-3.5 rounded-full border border-slate-950/20 bg-yellow-400/80 hover:bg-yellow-400 text-slate-950 font-bold text-xs sm:text-sm transition-all duration-200"
+                    className="btn-glass-yellow-3d px-5 py-3.5 text-xs sm:text-sm"
                   >
                     <Phone className="h-4 w-4" />
                     <span>Call (+94) 11 234 5678</span>
@@ -1188,15 +1219,10 @@ export default function HomePage() {
           </div>
 
           {/* 3-Column Services Glass Grid: Matching Uploaded Glass Card Template */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
+          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={cardsContainerVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
             
             {/* Card 1: Daily School Commute */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
-              variants={cardItemVariants}
-              className="group relative flex flex-col justify-between rounded-[32px] sm:rounded-[36px] overflow-hidden bg-gradient-to-b from-blue-50/30 via-white/60 to-white/85 dark:from-slate-900/40 dark:via-slate-900/60 dark:to-slate-950/85 backdrop-blur-xl border border-white/60 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.1)] hover:-translate-y-1.5 transition-all duration-500"
+            <motion.div variants={cardItemVariants} whileHover={{ y: -7, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] } }} className="group relative flex flex-col justify-between rounded-[32px] sm:rounded-[36px] overflow-hidden bg-gradient-to-b from-blue-50/30 via-white/60 to-white/85 dark:from-slate-900/40 dark:via-slate-900/60 dark:to-slate-950/85 backdrop-blur-xl border border-white/60 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.1)] transition-all duration-500"
             >
               {/* Top Specular Rim */}
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white dark:via-white/20 to-transparent pointer-events-none" />
@@ -1229,7 +1255,7 @@ export default function HomePage() {
                 {/* Minimalist Explore Link matching template */}
                 <Link
                   href="/drivers"
-                  className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/link mt-auto"
+                  className="btn-glass-yellow-3d px-5 py-2 text-xs sm:text-sm font-bold w-fit mt-auto"
                 >
                   <span>Explore</span>
                   <span className="transition-transform duration-200 group-hover/link:translate-x-1">→</span>
@@ -1238,12 +1264,7 @@ export default function HomePage() {
             </motion.div>
 
             {/* Card 2: City & Activity Rides */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
-              variants={cardItemVariants}
-              className="group relative flex flex-col justify-between rounded-[32px] sm:rounded-[36px] overflow-hidden bg-gradient-to-b from-blue-50/30 via-white/60 to-white/85 dark:from-slate-900/40 dark:via-slate-900/60 dark:to-slate-950/85 backdrop-blur-xl border border-white/60 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.1)] hover:-translate-y-1.5 transition-all duration-500"
+            <motion.div variants={cardItemVariants} whileHover={{ y: -7, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] } }} className="group relative flex flex-col justify-between rounded-[32px] sm:rounded-[36px] overflow-hidden bg-gradient-to-b from-blue-50/30 via-white/60 to-white/85 dark:from-slate-900/40 dark:via-slate-900/60 dark:to-slate-950/85 backdrop-blur-xl border border-white/60 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.1)] transition-all duration-500"
             >
               {/* Top Specular Rim */}
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white dark:via-white/20 to-transparent pointer-events-none" />
@@ -1275,7 +1296,7 @@ export default function HomePage() {
                 {/* Minimalist Explore Link matching template */}
                 <Link
                   href="/drivers"
-                  className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/link mt-auto"
+                  className="btn-glass-yellow-3d px-5 py-2 text-xs sm:text-sm font-bold w-fit mt-auto"
                 >
                   <span>Explore</span>
                   <span className="transition-transform duration-200 group-hover/link:translate-x-1">→</span>
@@ -1284,12 +1305,7 @@ export default function HomePage() {
             </motion.div>
 
             {/* Card 3: Dedicated Term Pass & Child Safety */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: '-40px' }}
-              variants={cardItemVariants}
-              className="group relative flex flex-col justify-between rounded-[32px] sm:rounded-[36px] overflow-hidden bg-gradient-to-b from-blue-50/30 via-white/60 to-white/85 dark:from-slate-900/40 dark:via-slate-900/60 dark:to-slate-950/85 backdrop-blur-xl border border-white/60 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.1)] hover:-translate-y-1.5 transition-all duration-500"
+            <motion.div variants={cardItemVariants} whileHover={{ y: -7, transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] } }} className="group relative flex flex-col justify-between rounded-[32px] sm:rounded-[36px] overflow-hidden bg-gradient-to-b from-blue-50/30 via-white/60 to-white/85 dark:from-slate-900/40 dark:via-slate-900/60 dark:to-slate-950/85 backdrop-blur-xl border border-white/60 dark:border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(37,99,235,0.1)] transition-all duration-500"
             >
               {/* Top Specular Rim */}
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white dark:via-white/20 to-transparent pointer-events-none" />
@@ -1321,16 +1337,14 @@ export default function HomePage() {
                 {/* Minimalist Explore Link matching template */}
                 <Link
                   href="/drivers"
-                  className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors group/link mt-auto"
+                  className="btn-glass-yellow-3d px-5 py-2 text-xs sm:text-sm font-bold w-fit mt-auto"
                 >
                   <span>Explore</span>
                   <span className="transition-transform duration-200 group-hover/link:translate-x-1">→</span>
                 </Link>
               </div>
             </motion.div>
-
-          </div>
-
+          </motion.div>
         </div>
       </section>
 
@@ -1386,7 +1400,7 @@ export default function HomePage() {
                       onClick={() => setActiveSafetyTab('driver')}
                       className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer ${
                         activeSafetyTab === 'driver'
-                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80 -translate-y-0.5'
+                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_1.5px_0_#CA8A04,0_4px_10px_rgba(250,204,21,0.22)] border border-yellow-200/80 -translate-y-0.5'
                           : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300'
                       }`}
                     >
@@ -1397,7 +1411,7 @@ export default function HomePage() {
                       onClick={() => setActiveSafetyTab('vehicle')}
                       className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer ${
                         activeSafetyTab === 'vehicle'
-                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80 -translate-y-0.5'
+                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_1.5px_0_#CA8A04,0_4px_10px_rgba(250,204,21,0.22)] border border-yellow-200/80 -translate-y-0.5'
                           : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300'
                       }`}
                     >
@@ -1408,7 +1422,7 @@ export default function HomePage() {
                       onClick={() => setActiveSafetyTab('telemetry')}
                       className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer ${
                         activeSafetyTab === 'telemetry'
-                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80 -translate-y-0.5'
+                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_1.5px_0_#CA8A04,0_4px_10px_rgba(250,204,21,0.22)] border border-yellow-200/80 -translate-y-0.5'
                           : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300'
                       }`}
                     >
@@ -1419,7 +1433,7 @@ export default function HomePage() {
                       onClick={() => setActiveSafetyTab('attendance')}
                       className={`px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer ${
                         activeSafetyTab === 'attendance'
-                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80 -translate-y-0.5'
+                          ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_1.5px_0_#CA8A04,0_4px_10px_rgba(250,204,21,0.22)] border border-yellow-200/80 -translate-y-0.5'
                           : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300'
                       }`}
                     >
@@ -1513,7 +1527,7 @@ export default function HomePage() {
                 <div className="flex flex-wrap items-center justify-between gap-4 pt-3 border-t border-slate-100 dark:border-slate-800/80">
                   {/* 3D Yellow Glass Button matching Image 2 */}
                   <Link href="/safety">
-                    <button className="relative group overflow-hidden px-6 py-3.5 rounded-full bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black text-xs sm:text-sm tracking-tight border border-yellow-200/80 shadow-[0_4px_0_#B45309,0_10px_20px_rgba(250,204,21,0.3)] hover:shadow-[0_5px_0_#B45309,0_14px_24px_rgba(250,204,21,0.4)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_2px_0_#B45309] transition-all cursor-pointer inline-flex items-center gap-2.5">
+                    <button className="btn-glass-yellow-3d px-6 py-3.5 text-xs sm:text-sm tracking-tight">
                       <div className="absolute inset-x-2 top-0.5 h-[44%] rounded-full bg-gradient-to-b from-white/70 via-white/20 to-transparent pointer-events-none" />
                       <span className="relative z-10">View Complete Safety Protocol</span>
                       <ArrowRight className="relative z-10 h-4 w-4 text-slate-950 group-hover:translate-x-0.5 transition-transform" />
@@ -1691,7 +1705,7 @@ export default function HomePage() {
             transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
             className="space-y-8"
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={cardsContainerVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {isFiltering ? (
                 <>
                   <SchoolCardSkeleton />
@@ -1704,13 +1718,7 @@ export default function HomePage() {
                 </div>
               ) : (
                 visibleSchools.map((school) => (
-                  <motion.div
-                    key={school.id}
-                    initial="hidden"
-                    whileInView="visible"
-                    viewport={{ once: true, margin: '-40px' }}
-                    variants={sectionFadeUp}
-                    className="p-6 rounded-[26px] bg-white/[0.06] backdrop-blur-xl border border-white/[0.14] text-white shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:shadow-xl hover:border-white/30 hover:-translate-y-1 transition-all duration-300 space-y-4 flex flex-col justify-between"
+                  <motion.div key={school.id} variants={cardItemVariants} whileHover={{ y: -6, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] } }} className="p-6 rounded-[26px] bg-white/[0.06] backdrop-blur-xl border border-white/[0.14] text-white shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:shadow-xl hover:border-white/30 transition-all duration-300 space-y-4 flex flex-col justify-between"
                   >
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
@@ -1748,7 +1756,7 @@ export default function HomePage() {
                         <span className="text-xs font-black text-[#FACC15]">{school.monthlyRate}</span>
                       </div>
                       <Link href="/drivers">
-                        <button className="px-4 py-2 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 text-xs font-black transition-colors cursor-pointer">
+                        <button className="btn-glass-yellow-3d px-4 py-1.5 text-xs font-black">
                           View Vans
                         </button>
                       </Link>
@@ -1756,14 +1764,14 @@ export default function HomePage() {
                   </motion.div>
                 ))
               )}
-            </div>
+            </motion.div>
 
             {/* Dropdown Toggle Button below the 3 cards */}
             {!isFiltering && dropdownSchools.length > 0 && (
               <div className="flex flex-col items-center justify-center pt-2">
                 <button
                   onClick={() => setIsSchoolsDropdownOpen(!isSchoolsDropdownOpen)}
-                  className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full bg-white/10 hover:bg-white/20 border-2 border-[#FACC15]/40 text-[#FACC15] font-bold text-xs sm:text-sm transition-all duration-200 shadow-md cursor-pointer group"
+                  className="btn-glass-yellow-3d px-8 py-3.5 text-xs sm:text-sm"
                   aria-expanded={isSchoolsDropdownOpen}
                 >
                   <School className="h-4 w-4 text-[#FACC15] group-hover:scale-110 transition-transform" />
@@ -1846,7 +1854,7 @@ export default function HomePage() {
                             <span className="text-xs font-black text-[#FACC15]">{school.monthlyRate}</span>
                           </div>
                           <Link href="/drivers">
-                            <button className="px-4 py-2 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 text-xs font-black transition-colors cursor-pointer">
+                            <button className="btn-glass-yellow-3d px-4 py-1.5 text-xs font-black">
                               View Vans
                             </button>
                           </Link>
@@ -1918,14 +1926,7 @@ export default function HomePage() {
 
                   <div className="flex items-center gap-3 shrink-0">
                     {/* Live Speed readout in Yellow */}
-                    <div className="text-center px-4 py-2 rounded-2xl bg-yellow-50 dark:bg-yellow-950/60 border border-yellow-300 dark:border-yellow-700/80 shadow-xs">
-                      <span className="block text-[10px] font-black text-[#713F12] dark:text-yellow-300 uppercase tracking-wider">
-                        Van Speed
-                      </span>
-                      <span className="font-mono text-base font-black text-[#CA8A04] dark:text-[#FACC15]">
-                        {simulatedLiveSpeed} km/h
-                      </span>
-                    </div>
+                    <LiveSpeedBadge />
 
                     {/* Gate ETA readout */}
                     <div className="text-center px-4 py-2 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-700/80 shadow-xs">
@@ -2013,7 +2014,7 @@ export default function HomePage() {
               {/* Yellow Primary Action Button */}
               <div className="pt-2">
                 <Link href="/parent/rides/live">
-                  <button className="inline-flex items-center gap-2.5 px-8 py-3.5 sm:py-4 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm md:text-base shadow-md hover:shadow-xl hover:-translate-y-0.5 transition-all cursor-pointer">
+                  <button className="btn-glass-yellow-3d px-8 py-3.5 sm:py-4 text-xs sm:text-sm md:text-base">
                     <span>Launch Interactive Live Ride Demo</span>
                     <ArrowRight className="h-4 w-4" />
                   </button>
@@ -2057,14 +2058,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-4 flex-shrink-0">
-                <Link href="/drivers">
-                  <button className="inline-flex items-center gap-2 px-7 py-3 rounded-full border border-white/50 hover:border-[#FACC15] bg-[#FACC15] text-slate-950 hover:bg-[#EAB308] text-sm md:text-base font-bold transition-all duration-200 shadow-md group cursor-pointer">
-                    <span>Book Your Ride</span>
-                    <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                  </button>
-                </Link>
-              </div>
+              
             </div>
 
             {/* School Van Vehicle graphic on the right edge */}
@@ -2392,9 +2386,7 @@ export default function HomePage() {
                     </div>
 
                     {/* Submit Button */}
-                    <button
-                      type="submit"
-                      className="w-full py-3.5 rounded-xl bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-sm shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    <button type="submit" className="btn-glass-yellow-3d w-full py-3.5 text-sm"
                     >
                       <Send className="w-4 h-4" />
                       <span>Submit Verified Feedback</span>
@@ -2413,222 +2405,210 @@ export default function HomePage() {
       {/* ======================================================== */}
       {/* ======================================================== */}
       {/* VERIFIED SCHOOL FLEET (PREVIOUS SECTION TEMPLATE)        */}
+            {/* ======================================================== */}
+      {/* 11. VERIFIED SCHOOL FLEET / WHO WE ARE (DRIVER ROSTER)   */}
       {/* ======================================================== */}
       <section id="fleet" className="py-16 sm:py-20 lg:py-24 border-b border-slate-200/90 dark:border-slate-800 bg-[#FFFFFF] dark:bg-slate-950 text-slate-900 dark:text-slate-100 relative overflow-hidden">
         
-        {/* Subtle Ambient Radial Texture & Soft Blue Accent */}
+        {/* Subtle Ambient Radial Lighting */}
         <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-40 dark:opacity-10 pointer-events-none" />
-        <div className="absolute -top-24 right-1/4 w-96 h-96 bg-blue-500/5 dark:bg-blue-600/5 blur-3xl rounded-full pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-80 h-80 bg-indigo-500/5 dark:bg-indigo-600/5 blur-3xl rounded-full pointer-events-none" />
 
-        {/* Decorative Faint Gear Watermark matching Template */}
-        <svg
-          className="absolute -right-24 top-1/2 -translate-y-1/2 w-[460px] h-[460px] text-slate-900/[0.03] dark:text-white/[0.02] pointer-events-none"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="0.8"
-        >
-          <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
-        </svg>
-
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 relative z-10">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-10 sm:space-y-12">
           
-          <div className="grid grid-cols-1 lg:grid-cols-12 items-center gap-10 lg:gap-14 xl:gap-16">
+          {/* Header Row: Title & Eyebrow on Left (3rd image button removed as requested) */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-3 max-w-2xl text-left">
+              <div className="inline-block">
+                <span className="px-3.5 py-1 rounded-full border border-yellow-400/40 text-yellow-800 dark:text-[#FFC928] text-xs font-bold tracking-wider uppercase bg-yellow-50/90 dark:bg-yellow-950/40 shadow-2xs inline-flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#CA8A04] dark:text-[#FFC928]" />
+                  Verified School Fleet
+                </span>
+              </div>
+
+              <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-black tracking-tight leading-[1.15] text-slate-950 dark:text-white">
+                Meet Sri Lanka&apos;s <span className="text-[#CA8A04] dark:text-[#FFC928]">Most Trusted</span>
+                <br />
+                <span className="text-[#CA8A04] dark:text-[#FFC928]">Drivers</span>
+              </h2>
+
+              <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed max-w-xl">
+                Vetted professionals with stellar safety records, licensed passenger vehicles, and genuine parental endorsements.
+              </p>
+            </div>
+          </div>
+
+          {/* Cards Grid: Left Featured Card + Right 2 Cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
             
-            {/* LEFT COLUMN: Stepped Custom Notched Silhouette Visual */}
+            {/* Left Column (Featured Driver - Sunil Wickramasinghe) */}
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: '-40px' }}
               variants={sectionFadeUp}
-              className="lg:col-span-6 relative w-full flex items-center justify-center"
+              className="lg:col-span-6 rounded-3xl bg-[#0B1528] border border-blue-900/40 p-5 sm:p-6 shadow-2xl space-y-4 text-left"
             >
-              {/* SVG Definition for Stepped Silhouette Mask */}
-              <svg className="absolute w-0 h-0 pointer-events-none" aria-hidden="true">
-                <defs>
-                  <clipPath id="steppedSilhouette" clipPathUnits="objectBoundingBox">
-                    <path d="M 0,0.18 
-                             C 0,0.12 0.04,0.11 0.08,0.11 
-                             L 0.30,0.11 
-                             C 0.35,0.11 0.37,0.08 0.38,0.04 
-                             C 0.39,0.01 0.41,0 0.45,0 
-                             L 0.92,0 
-                             C 0.97,0 1,0.03 1,0.08 
-                             L 1,0.85 
-                             C 1,0.89 0.97,0.91 0.92,0.91 
-                             L 0.52,0.91 
-                             C 0.47,0.91 0.45,0.94 0.44,0.97 
-                             C 0.43,0.99 0.41,1 0.37,1 
-                             L 0.08,1 
-                             C 0.03,1 0,0.97 0,0.92 
-                             Z" />
-                  </clipPath>
-                </defs>
-              </svg>
-
-              {/* Stepped Frame Container */}
-              <div className="relative w-full max-w-[540px] h-[400px] sm:h-[480px] lg:h-[530px] xl:h-[560px] group">
-                {/* Ambient Glow behind the stepped shape */}
-                <div className="absolute -inset-4 bg-gradient-to-tr from-blue-500/10 via-indigo-500/5 to-transparent rounded-[40px] blur-2xl pointer-events-none" />
-
-                {/* Clipped Image Wrapper */}
-                <div 
-                  className="relative w-full h-full overflow-hidden bg-slate-900 shadow-2xl transition-transform duration-500 group-hover:scale-[1.01]"
-                  style={{ clipPath: 'url(#steppedSilhouette)', WebkitClipPath: 'url(#steppedSilhouette)' }}
-                >
-                  <Image
-                    src={fleetTabsData[fleetActiveTab].image}
-                    alt="SchoolRide LK Standardized Verified Toyota HiAce School Fleet"
-                    fill
-                    priority
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
-                  />
-                  
-                  {/* Subtle Cinematic Vignette */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-black/20 pointer-events-none" />
-
-                  {/* Floating Live Fleet Active Badge */}
-                  <div className="absolute bottom-6 left-6 z-10">
-                    <div className="backdrop-blur-md bg-slate-950/80 border border-white/20 px-4 py-2 rounded-2xl shadow-lg flex items-center gap-3">
-                      <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-ping" />
-                      <div>
-                        <span className="text-xs font-black text-white block">450+ Verified Vans</span>
-                        <span className="text-[10px] text-slate-300 font-medium">Daily Active Fleet</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Rating Top Badge */}
-                  <div className="absolute top-6 right-6 z-10">
-                    <div className="backdrop-blur-md bg-slate-950/70 border border-white/20 px-3 py-1.5 rounded-xl shadow-md flex items-center gap-1.5 text-white">
-                      <Star className="w-3.5 h-3.5 fill-[#FACC15] text-[#FACC15]" />
-                      <span className="text-xs font-black">4.95 Rating</span>
-                    </div>
+              {/* Photo Showcase Container */}
+              <div className="relative w-full h-72 sm:h-84 rounded-2xl overflow-hidden bg-slate-900 border border-white/10">
+                <Image
+                  src="/images/driver-sunil-van.jpg"
+                  alt="Sunil Wickramasinghe - SchoolRide LK Verified Driver"
+                  fill
+                  priority
+                  className="object-cover object-center"
+                />
+                
+                {/* Top-Left Top Rated Driver Badge */}
+                <div className="absolute top-3.5 left-3.5 z-10">
+                  <div className="backdrop-blur-md bg-emerald-950/80 border border-emerald-500/40 px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 text-emerald-300 text-xs font-bold">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Top Rated Driver</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Driver Details Row */}
+              <div className="flex items-center justify-between gap-4 pt-1">
+                <div>
+                  <h3 className="text-xl font-bold text-white tracking-tight">Sunil Wickramasinghe</h3>
+                  <p className="text-xs text-slate-400 font-medium mt-0.5">14 Years Safe Commute · Colombo Routes</p>
+                </div>
+
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#78350F]/50 border border-[#F59E0B]/40 text-[#FBBF24] text-xs font-bold shrink-0">
+                  <Star className="w-3.5 h-3.5 fill-[#FBBF24]" />
+                  <span>4.98 (142)</span>
+                </div>
+              </div>
+
+              {/* Two Spec Boxes: Vehicle & Monthly Rate */}
+              <div className="grid grid-cols-2 gap-3 pt-1">
+                <div className="p-3 rounded-xl bg-white/5 border border-white/10">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">VEHICLE</span>
+                  <span className="text-xs sm:text-sm font-bold text-white block mt-0.5 truncate">
+                    Toyota HiAce GL (14-Seat AC)
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-white/5 border border-white/10">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">MONTHLY RATE</span>
+                  <span className="text-xs sm:text-sm font-extrabold text-[#FFC928] block mt-0.5">
+                    LKR 8,500 / month
+                  </span>
+                </div>
+              </div>
+
+              {/* 3 Verification Badges */}
+              <div className="flex flex-wrap items-center gap-2 pt-1">
+                <span className="px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold flex items-center gap-1">
+                  <Check className="w-3 h-3 stroke-[3]" /> Police Clearance
+                </span>
+                <span className="px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold flex items-center gap-1">
+                  <Check className="w-3 h-3 stroke-[3]" /> Revenue License 2026
+                </span>
+                <span className="px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold flex items-center gap-1">
+                  <Check className="w-3 h-3 stroke-[3]" /> GPS Live Telemetry
+                </span>
+              </div>
+
+              {/* Bottom Yellow CTA Button */}
+              <div className="pt-2">
+                <Link href="/drivers" className="w-full block">
+                  <button className="btn-glass-yellow-3d w-full py-3.5 text-sm font-bold justify-center shadow-lg">
+                    <span>Book Seat with Driver Sunil</span>
+                  </button>
+                </Link>
               </div>
             </motion.div>
 
-            {/* RIGHT COLUMN: Matching Template Content & Interactive Switcher */}
+            {/* Right Column (2 Horizontal Stacked Driver Cards) */}
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: '-40px' }}
               variants={sectionFadeUp}
-              className="lg:col-span-6 space-y-6 text-left"
+              className="lg:col-span-6 flex flex-col gap-5 sm:gap-6 text-left"
             >
-              {/* Eyebrow Pill */}
-              <div className="inline-block">
-                <span className="px-3.5 py-1 rounded-full border border-blue-500/30 text-blue-600 dark:text-blue-400 text-xs font-bold tracking-wider uppercase bg-blue-50/50 dark:bg-blue-950/40 shadow-2xs">
-                  {fleetTabsData[fleetActiveTab].eyebrow}
-                </span>
-              </div>
+              {/* Driver 1: Gamini Fernando */}
+              <div className="rounded-2xl bg-[#0B1528] border border-blue-900/40 p-5 sm:p-6 space-y-4 shadow-xl hover:border-blue-700/50 transition-all">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-base sm:text-lg font-bold text-white">Gamini Fernando</h4>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
+                        Verified
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">9 Years Safe Driving · Kandy City &amp; Peradeniya</p>
+                  </div>
 
-              {/* Main Headline */}
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-[42px] font-black text-slate-950 dark:text-white tracking-tight leading-[1.15]">
-                {fleetTabsData[fleetActiveTab].headlineMain}{' '}
-                <span className="text-[#CA8A04] dark:text-[#FACC15]">
-                  {fleetTabsData[fleetActiveTab].headlineAccent}
-                </span>
-                <br />
-                <span className="text-slate-900 dark:text-slate-100">
-                  {fleetTabsData[fleetActiveTab].headlineSub}
-                </span>
-              </h2>
+                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#78350F]/50 border border-[#F59E0B]/40 text-[#FBBF24] text-xs font-bold shrink-0">
+                    <Star className="w-3.5 h-3.5 fill-[#FBBF24]" />
+                    <span>4.95</span>
+                  </div>
+                </div>
 
-              {/* Pill Tab Switcher: [ OUR MISSION ] [ OUR VISION ] [ OUR HISTORY ] */}
-              <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-1">
-                {(['mission', 'vision', 'history'] as const).map((tabKey) => {
-                  const isActive = fleetActiveTab === tabKey;
-                  const tabInfo = fleetTabsData[tabKey];
-                  return (
-                    <button
-                      key={tabKey}
-                      type="button"
-                      onClick={() => setFleetActiveTab(tabKey)}
-                      className={`px-5 sm:px-6 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold tracking-wide transition-all duration-200 cursor-pointer ${
-                        isActive
-                          ? 'bg-[#0B1528] text-white shadow-md border border-blue-900/60'
-                          : 'bg-transparent text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white border border-slate-300 dark:border-slate-700 hover:border-slate-400'
-                      }`}
-                    >
-                      {tabInfo.tabLabel}
+                <div className="grid grid-cols-2 gap-4 pt-1">
+                  <div>
+                    <span className="text-[11px] text-slate-400 block font-medium">Vehicle:</span>
+                    <span className="text-xs sm:text-sm font-semibold text-white">Nissan Caravan High-Roof</span>
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-slate-400 block font-medium">Plate:</span>
+                    <span className="text-xs sm:text-sm font-mono font-semibold text-white">CP NA-3901</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                  <span className="text-sm sm:text-base font-extrabold text-[#FFC928]">
+                    LKR 7,800 / month
+                  </span>
+                  <Link href="/drivers">
+                    <button className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold transition-all cursor-pointer">
+                      Check Availability
                     </button>
-                  );
-                })}
-              </div>
-
-              {/* Middle Content Sub-block: Split Photo Card + Paragraph & Bullets */}
-              <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 sm:gap-6 items-center pt-2">
-                {/* Left Secondary Photo Card */}
-                <div className="sm:col-span-5 relative w-full h-44 sm:h-48 rounded-2xl overflow-hidden shadow-md border border-slate-200/90 dark:border-slate-800 bg-slate-100 dark:bg-slate-900 group/sub">
-                  <Image
-                    src={fleetTabsData[fleetActiveTab].secondaryImage}
-                    alt={fleetTabsData[fleetActiveTab].secondaryAlt}
-                    fill
-                    sizes="(max-width: 640px) 100vw, 220px"
-                    className="object-cover object-center group-hover/sub:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-transparent to-transparent pointer-events-none" />
-                  <div className="absolute bottom-2.5 left-2.5 right-2.5">
-                    <span className="block text-[11px] font-black text-white truncate">
-                      {fleetTabsData[fleetActiveTab].badgeTitle}
-                    </span>
-                    <span className="block text-[10px] text-slate-200 font-medium truncate">
-                      {fleetTabsData[fleetActiveTab].badgeSub}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Right Paragraph & 3 Bullets */}
-                <div className="sm:col-span-7 space-y-3.5">
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 font-normal leading-relaxed">
-                    {fleetTabsData[fleetActiveTab].description}
-                  </p>
-
-                  {/* 3 Bullets with Circular Checkmarks */}
-                  <ul className="space-y-2 pt-1">
-                    {fleetTabsData[fleetActiveTab].bullets.map((bullet, idx) => (
-                      <li key={idx} className="flex items-center gap-2.5 text-xs sm:text-[13px] font-semibold text-slate-800 dark:text-slate-200">
-                        <span className="flex h-4 w-4 rounded-full bg-[#0B1528] text-[#FACC15] items-center justify-center shrink-0 shadow-2xs">
-                          <Check className="h-2.5 w-2.5 stroke-[3]" />
-                        </span>
-                        <span>{bullet}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  </Link>
                 </div>
               </div>
 
-              {/* Bottom Row: [ Know More ↗ ] + Hotline Widget */}
-              <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-200/80 dark:border-slate-800">
-                <Link href="/drivers">
-                  <button className="group inline-flex items-center justify-between gap-3.5 px-5 sm:px-6 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:border-slate-900 text-slate-800 dark:text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-md transition-all cursor-pointer">
-                    <span>Know More</span>
-                    <span className="flex h-6 w-6 rounded-full bg-[#0B1528] text-white items-center justify-center group-hover:scale-110 transition-transform">
-                      <ArrowUpRight className="h-3.5 w-3.5" />
-                    </span>
-                  </button>
-                </Link>
+              {/* Driver 2: Pradeep Kumara */}
+              <div className="rounded-2xl bg-[#0B1528] border border-blue-900/40 p-5 sm:p-6 space-y-4 shadow-xl hover:border-blue-700/50 transition-all">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-base sm:text-lg font-bold text-white">Pradeep Kumara</h4>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
+                        Verified
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-1">11 Years Safe Driving · Gampaha &amp; Colombo North</p>
+                  </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 rounded-full bg-slate-950 dark:bg-white text-white dark:text-slate-950 items-center justify-center shadow-xs shrink-0">
-                    <Phone className="h-4 w-4" />
+                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#78350F]/50 border border-[#F59E0B]/40 text-[#FBBF24] text-xs font-bold shrink-0">
+                    <Star className="w-3.5 h-3.5 fill-[#FBBF24]" />
+                    <span>4.99</span>
                   </div>
-                  <div className="text-left">
-                    <span className="block text-[11px] font-bold text-slate-500 dark:text-slate-400 leading-tight">
-                      Have question?
-                    </span>
-                    <a
-                      href="tel:+94112345678"
-                      className="text-xs sm:text-sm font-black text-slate-900 dark:text-white hover:text-blue-600 transition-colors leading-tight"
-                    >
-                      Call Us 0-800-433-5788
-                    </a>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 pt-1">
+                  <div>
+                    <span className="text-[11px] text-slate-400 block font-medium">Vehicle:</span>
+                    <span className="text-xs sm:text-sm font-semibold text-white">Toyota Commuter Bus</span>
                   </div>
+                  <div>
+                    <span className="text-[11px] text-slate-400 block font-medium">Plate:</span>
+                    <span className="text-xs sm:text-sm font-mono font-semibold text-white">WP NB-7140</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                  <span className="text-sm sm:text-base font-extrabold text-[#FFC928]">
+                    LKR 9,200 / month
+                  </span>
+                  <Link href="/drivers">
+                    <button className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold transition-all cursor-pointer">
+                      Check Availability
+                    </button>
+                  </Link>
                 </div>
               </div>
 
@@ -2639,10 +2619,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ======================================================== */}
-      {/* FREQUENTLY ASKED QUESTIONS (HIGH-QUALITY PHOTO BACKGROUND) */}
-      {/* ======================================================== */}
-      <section id="faq" className="relative w-full py-16 sm:py-20 lg:py-24 overflow-hidden bg-white dark:bg-slate-950 border-b border-slate-200/90 dark:border-slate-800">
+
+<section id="faq" className="relative w-full py-16 sm:py-20 lg:py-24 overflow-hidden bg-white dark:bg-slate-950 border-b border-slate-200/90 dark:border-slate-800">
         
         {/* Background Artwork Layer (Ultra-HD School Van & Students Photo) */}
         <div className="absolute inset-0 z-0">
@@ -2738,7 +2716,7 @@ export default function HomePage() {
                 </a>
 
                 <Link href="/drivers">
-                  <button className="inline-flex items-center justify-center px-7 sm:px-8 py-2.5 sm:py-3 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition-all cursor-pointer">
+                  <button className="btn-glass-yellow-3d px-8 py-3 text-xs sm:text-sm">
                     Book Your Ride
                   </button>
                 </Link>

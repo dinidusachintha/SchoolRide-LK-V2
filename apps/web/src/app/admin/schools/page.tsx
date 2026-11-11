@@ -129,49 +129,54 @@ export default function AdminSchoolsPage() {
 
   return (
     <div className="space-y-8 w-full text-left">
-      {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-emerald-100 pb-5">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Link href="/admin/dashboard" className="text-[#4E6258] hover:text-[#094718] transition-colors mr-1">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <h1 className="text-2xl font-black text-[#0B2C22] tracking-tight">
-              School Campus <span className="text-[#16A34A]">&amp; Route Directory</span>
-            </h1>
-          </div>
-          <p className="text-xs sm:text-sm text-[#4E6258]">
-            Configure verified dropoff gates, GPS coordinates, and van operator route mappings across Sri Lanka.
-          </p>
-        </div>
+      {/* 2nd Section: Top Banner Card (Dark Navy Blue Background) */}
+      <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0B1528] text-white p-6 sm:p-8 border border-[#0B1528] shadow-md overflow-hidden">
+        <div className="absolute -top-20 -right-20 w-72 h-72 bg-blue-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-[#FFC928]/10 rounded-full blur-3xl pointer-events-none" />
 
-        <button
-          onClick={handleOpenAdd}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#094718] hover:bg-[#073713] text-white font-bold text-xs shadow-sm transition-colors cursor-pointer shrink-0"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Register New School</span>
-        </button>
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1.5">
+            <div className="flex items-center gap-2">
+              <Link href="/admin/dashboard" className="text-slate-400 hover:text-white transition-colors mr-1">
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                School Campus <span className="text-[#FFC928]">&amp; Route Directory</span>
+              </h1>
+            </div>
+            <p className="text-xs sm:text-sm text-blue-100/80 max-w-2xl leading-relaxed">
+              Configure verified dropoff gates, GPS coordinates, and van operator route mappings across Sri Lanka.
+            </p>
+          </div>
+
+          <button
+            onClick={handleOpenAdd}
+            className="btn-glass-yellow-3d px-5 py-2.5 text-xs font-black shadow-lg flex items-center gap-2 shrink-0"
+          >
+            <Plus className="h-4 w-4 stroke-[2.5]" />
+            <span>Register New School</span>
+          </button>
+        </div>
       </div>
 
-      {/* Filter Toolbar: White Card */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-white border border-emerald-950/[0.08] shadow-[0_4px_20px_rgba(0,0,0,0.03)] grid grid-cols-1 sm:grid-cols-3 gap-3 items-center">
+      {/* Search & Filter Toolbar: White Gray Glass Effect Background */}
+      <div className="glass-search-bar p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-3 gap-3 items-center relative overflow-hidden">
         <div className="sm:col-span-2 relative">
           <input
             type="text"
             placeholder="Search school by campus name or city..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs text-[#0B2C22] placeholder:text-[#709080] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+            className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300/80 bg-white/95 text-xs text-[#0B2345] font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FFC928] shadow-xs"
           />
-          <Search className="absolute left-3 top-3 h-4 w-4 text-[#709080]" />
+          <Search className="absolute left-3 top-3 h-4 w-4 text-[#0B2345]" />
         </div>
 
         <div>
           <select
             value={districtFilter}
             onChange={(e) => setDistrictFilter(e.target.value)}
-            className="w-full px-3 py-2.5 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs font-semibold text-[#0B2C22] focus:outline-none focus:ring-2 focus:ring-[#16A34A]"
+            className="w-full px-3 py-2.5 rounded-xl border border-slate-300/80 bg-white/95 text-xs font-bold text-[#0B2345] focus:outline-none focus:ring-2 focus:ring-[#FFC928] cursor-pointer shadow-xs"
           >
             <option value="">All Districts ({SRI_LANKAN_DISTRICTS.length})</option>
             {SRI_LANKAN_DISTRICTS.map((d) => (
@@ -183,55 +188,55 @@ export default function AdminSchoolsPage() {
         </div>
       </div>
 
-      {/* Schools Cards Grid: White Cards with Green Headers */}
+      {/* Schools Cards Grid: Premium White Glass Cards */}
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Skeleton className="h-44 rounded-2xl bg-white border border-emerald-100" />
-          <Skeleton className="h-44 rounded-2xl bg-white border border-emerald-100" />
-          <Skeleton className="h-44 rounded-2xl bg-white border border-emerald-100" />
+          <Skeleton className="h-44 rounded-3xl bg-slate-200/60" />
+          <Skeleton className="h-44 rounded-3xl bg-slate-200/60" />
+          <Skeleton className="h-44 rounded-3xl bg-slate-200/60" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="p-12 text-center text-xs text-[#4E6258] bg-white rounded-2xl border border-emerald-950/[0.08]">
+        <div className="glass-card-white p-12 text-center text-xs text-slate-500 rounded-3xl">
           No schools found matching search criteria.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filtered.map((school) => (
             <div
               key={school.id}
-              className="p-5 rounded-2xl bg-white border border-emerald-950/[0.08] hover:border-emerald-300 hover:shadow-md transition-all space-y-3 flex flex-col justify-between shadow-[0_4px_20px_rgba(0,0,0,0.03)]"
+              className="glass-card-white glass-card-white-hover p-6 rounded-3xl space-y-3.5 flex flex-col justify-between shadow-md"
             >
-              <div className="space-y-2">
+              <div className="space-y-2.5">
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#EAF6ED] text-[#094718] border border-[#CDE9D3] shrink-0">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-[#0B2345] border border-blue-100 shadow-xs shrink-0">
                       <GraduationCap className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-[#0B2C22] leading-snug">{school.name}</h3>
-                      <p className="text-[11px] text-[#4E6258] flex items-center gap-1 mt-0.5">
-                        <MapPin className="h-3 w-3 text-[#16A34A]" /> {school.city}, {school.district}
+                      <h3 className="text-sm font-black text-[#0B2345] leading-snug">{school.name}</h3>
+                      <p className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
+                        <MapPin className="h-3 w-3 text-[#FFC928]" /> {school.city}, {school.district}
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => handleOpenEdit(school)}
-                    className="p-1.5 rounded-lg text-[#709080] hover:text-[#094718] hover:bg-[#EAF6ED] transition-colors"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-[#0B2345] hover:bg-slate-100 transition-colors"
                   >
                     <Edit className="h-3.5 w-3.5" />
                   </button>
                 </div>
 
-                <p className="text-xs text-[#4E6258] leading-relaxed line-clamp-2">
+                <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
                   {school.address}
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-emerald-100 flex items-center justify-between text-[11px]">
-                <span className="font-mono text-[#16A34A] font-semibold">
+              <div className="pt-3 border-t border-slate-200/80 flex items-center justify-between text-[11px]">
+                <span className="font-mono text-[#0B2345]/80 font-bold">
                   {school.latitude.toFixed(4)}° N, {school.longitude.toFixed(4)}° E
                 </span>
-                <span className="px-2 py-0.5 rounded-full font-bold bg-[#EAF6ED] text-[#094718] border border-[#BCE6C9]">
+                <span className="px-2.5 py-0.5 rounded-full font-bold bg-slate-100 text-[#0B2345] border border-slate-200">
                   {school.district}
                 </span>
               </div>
@@ -242,30 +247,30 @@ export default function AdminSchoolsPage() {
 
       {/* Add / Edit Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-md bg-white border border-emerald-100 text-[#0B2C22]">
+        <DialogContent className="sm:max-w-md bg-white border border-slate-200 text-[#0B2345] rounded-3xl shadow-2xl">
           <DialogHeader>
-            <DialogTitle className="text-base font-bold text-[#0B2C22]">
+            <DialogTitle className="text-base font-black text-[#0B2345]">
               {editingSchoolId ? 'Edit School Details' : 'Register New School Campus'}
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 pt-2">
             <div>
-              <label className="block text-xs font-bold text-[#0B2C22] mb-1">School Name</label>
+              <label className="block text-xs font-bold text-[#0B2345] mb-1">School Name</label>
               <Input
                 placeholder="e.g. Royal College"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="bg-[#FAFDF9] border-emerald-200 text-[#0B2C22] text-xs"
+                className="bg-slate-50 border-slate-200 text-[#0B2345] text-xs focus:ring-2 focus:ring-[#FFC928]"
                 required
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-[#0B2C22] mb-1">District</label>
+                <label className="block text-xs font-bold text-[#0B2345] mb-1">District</label>
                 <select
                   value={formData.district}
                   onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                  className="w-full px-3 py-2 rounded-xl border border-emerald-200 bg-[#FAFDF9] text-xs font-semibold text-[#0B2C22]"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-[#0B2345] focus:ring-2 focus:ring-[#FFC928]"
                 >
                   {SRI_LANKAN_DISTRICTS.map((d) => (
                     <option key={d.id} value={d.name}>
@@ -275,46 +280,46 @@ export default function AdminSchoolsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#0B2C22] mb-1">City / Town</label>
+                <label className="block text-xs font-bold text-[#0B2345] mb-1">City / Town</label>
                 <Input
                   placeholder="e.g. Colombo 07"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  className="bg-[#FAFDF9] border-emerald-200 text-[#0B2C22] text-xs"
+                  className="bg-slate-50 border-slate-200 text-[#0B2345] text-xs focus:ring-2 focus:ring-[#FFC928]"
                   required
                 />
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold text-[#0B2C22] mb-1">Street Address</label>
+              <label className="block text-xs font-bold text-[#0B2345] mb-1">Street Address</label>
               <Input
                 placeholder="e.g. Reid Avenue, Colombo 00700"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="bg-[#FAFDF9] border-emerald-200 text-[#0B2C22] text-xs"
+                className="bg-slate-50 border-slate-200 text-[#0B2345] text-xs focus:ring-2 focus:ring-[#FFC928]"
                 required
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-[#0B2C22] mb-1">Gate Latitude</label>
+                <label className="block text-xs font-bold text-[#0B2345] mb-1">Gate Latitude</label>
                 <Input
                   type="number"
                   step="any"
                   value={formData.latitude}
                   onChange={(e) => setFormData({ ...formData, latitude: parseFloat(e.target.value) || 0 })}
-                  className="bg-[#FAFDF9] border-emerald-200 text-[#0B2C22] text-xs font-mono"
+                  className="bg-slate-50 border-slate-200 text-[#0B2345] text-xs font-mono focus:ring-2 focus:ring-[#FFC928]"
                   required
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#0B2C22] mb-1">Gate Longitude</label>
+                <label className="block text-xs font-bold text-[#0B2345] mb-1">Gate Longitude</label>
                 <Input
                   type="number"
                   step="any"
                   value={formData.longitude}
                   onChange={(e) => setFormData({ ...formData, longitude: parseFloat(e.target.value) || 0 })}
-                  className="bg-[#FAFDF9] border-emerald-200 text-[#0B2C22] text-xs font-mono"
+                  className="bg-slate-50 border-slate-200 text-[#0B2345] text-xs font-mono focus:ring-2 focus:ring-[#FFC928]"
                   required
                 />
               </div>
@@ -324,17 +329,17 @@ export default function AdminSchoolsPage() {
                 type="button"
                 variant="outline"
                 onClick={() => setIsDialogOpen(false)}
-                className="bg-white text-[#4E6258] border-slate-200"
+                className="bg-white text-slate-700 border-slate-200"
               >
                 Cancel
               </Button>
-              <Button
+              <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-[#094718] hover:bg-[#073713] text-white font-bold text-xs"
+                className="btn-glass-yellow-3d px-5 py-2 text-xs font-black shadow-md cursor-pointer"
               >
                 {isSubmitting ? 'Saving...' : editingSchoolId ? 'Update Campus' : 'Register School'}
-              </Button>
+              </button>
             </DialogFooter>
           </form>
         </DialogContent>
