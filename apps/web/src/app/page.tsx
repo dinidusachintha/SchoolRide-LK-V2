@@ -1204,7 +1204,7 @@ export default function HomePage() {
               {/* Card Upper Image with Minimized Soft Bleed */}
               <div className="relative w-full h-60 sm:h-64 overflow-hidden rounded-t-[32px] sm:rounded-t-[36px] bg-slate-100 dark:bg-slate-800">
                 <Image
-                  src="/images/service-daily-commute.jpg"
+                  src="/images/schoolkids.png"
                   alt="Daily School Commute"
                   fill
                   priority
