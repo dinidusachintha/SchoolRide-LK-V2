@@ -237,16 +237,12 @@ export default function DriverSettingsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white relative overflow-hidden select-none pb-24">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-24">
       
-      {/* Background Soft Texture matching Home Page */}
-      <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-40 dark:opacity-10 pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[850px] h-[320px] bg-gradient-to-b from-yellow-100/35 via-emerald-50/20 to-transparent blur-3xl pointer-events-none" />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Unified Driver Sub-Navigation Bar matching Onboarding & Console */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-slate-200/80 dark:border-slate-800">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
           <Link href="/driver/dashboard">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
               Overview
