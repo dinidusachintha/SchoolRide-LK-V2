@@ -2297,7 +2297,7 @@ export default function HomePage() {
               <div className="absolute inset-y-0 left-0 w-28 bg-gradient-to-r from-[#0B1528] via-[#0B1528]/85 to-transparent z-10" />
               <div className="relative w-full h-full">
                 <Image
-                  src="/images/banner-school-van-dark.jpg"
+                  src="/images/fleet-van-wide.jpg"
                   alt="SchoolRide LK Yellow School Van"
                   fill
                   sizes="(max-width: 1024px) 50vw, 40vw"
