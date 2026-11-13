@@ -249,84 +249,85 @@ export default function DriverSettingsPage() {
         <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-slate-200/80 dark:border-slate-800">
           <Link href="/driver/dashboard">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              📌 Overview
+              Overview
             </button>
           </Link>
           <Link href="/driver/console">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
               <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>📡 Active GPS Console</span>
+              <span>Active GPS Console</span>
             </button>
           </Link>
           <Link href="/driver/bookings">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              📋 Bookings &amp; Manifest
+              Bookings &amp; Manifest
             </button>
           </Link>
           <Link href="/driver/vehicles">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              🚐 Fleet Vehicles
+              Fleet Vehicles
             </button>
           </Link>
           <Link href="/driver/onboarding">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              🛡️ Compliance &amp; Onboarding
+              Compliance &amp; Onboarding
             </button>
           </Link>
           <Link href="/driver/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap flex items-center gap-1.5">
-              <span>⚙️ Operator Settings</span>
-              <span className="h-1.5 w-1.5 rounded-full bg-slate-950" />
+            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
+              Operator Settings
             </button>
           </Link>
         </div>
 
-        {/* Hero Welcome Showcase Card matching Home Page Theme */}
+        {/* Hero Welcome Showcase Card - Dark Navy Blue */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden"
+          className="rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 shadow-xl p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden"
         >
-          {/* Decorative glow matching home page */}
-          <div className="absolute right-0 top-0 w-80 h-80 bg-gradient-to-br from-yellow-100/40 via-emerald-100/20 to-transparent blur-3xl pointer-events-none rounded-full" />
+          {/* Subtle Ambient Glow */}
+          <div className="absolute right-0 top-0 w-80 h-80 bg-gradient-to-br from-yellow-500/10 via-blue-500/10 to-transparent blur-3xl pointer-events-none rounded-full" />
 
           <div className="space-y-3 max-w-2xl relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FEF08A] text-[#713F12] border border-yellow-300 text-xs font-bold shadow-xs">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#CA8A04]" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#78350F]/50 text-[#FFC928] border border-[#F59E0B]/40 text-xs font-bold shadow-xs">
               <span>5-Tier Police &amp; NTCA Verified Van Operator</span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-950 dark:text-white tracking-tight">
-              Operator Profile &amp; <span className="text-[#CA8A04] dark:text-[#FACC15] underline decoration-[#FACC15]/40 underline-offset-8">Route Settings</span> ⚙️🚐
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
+              Operator Profile &amp; <span className="text-[#FFC928]">Route Settings</span>
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
               Manage your legal operator identity, public discovery biography, served school corridors, standard monthly seat rates, and direct bank payouts.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 relative z-10 shrink-0">
-            <div className="px-5 py-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-1.5 text-left">
+            <div className="px-5 py-3.5 rounded-2xl bg-white/10 border border-white/20 space-y-1.5 text-left">
               <div className="flex items-center gap-2">
-                <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-xs font-black text-slate-900 dark:text-white">ACTIVE OPERATOR</span>
-                <span className="px-2 py-0.5 rounded bg-yellow-100 text-[#713F12] text-[10px] font-bold flex items-center gap-0.5">
+                <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-xs font-black text-white">ACTIVE OPERATOR</span>
+                <span className="px-2 py-0.5 rounded bg-yellow-400/20 text-[#FFC928] border border-yellow-400/30 text-[10px] font-bold flex items-center gap-0.5">
                   <Star className="h-2.5 w-2.5 fill-current" /> 4.9
                 </span>
               </div>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+              <p className="text-[11px] text-slate-300">
                 Service ID: DRV-LK-8422 • {profileData.experienceYears} Years Safe Transit
               </p>
             </div>
             <Link href="/driver/console">
-              <button className="px-5 py-3 rounded-full bg-[#14532D] hover:bg-[#166534] text-[#FACC15] font-bold text-xs sm:text-sm transition-all shadow-sm flex items-center gap-1.5 cursor-pointer">
+              <button className="px-6 py-3 rounded-full bg-[#FFC928] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm transition-all shadow-md flex items-center gap-1.5 cursor-pointer">
                 <span>Console</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             </Link>
           </div>
         </motion.div>
+
+        {/* Master White Background Container Card with Soft Shadow (Excludes the Header) */}
+        <div className="rounded-[32px] sm:rounded-[40px] bg-white dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 shadow-[0_20px_60px_-15px_rgba(11,21,40,0.06)] p-6 sm:p-8 lg:p-10 space-y-8 relative z-10 text-left">
 
         {/* 4 Summary KPI Cards matching Home Page Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
@@ -409,8 +410,8 @@ export default function DriverSettingsPage() {
             onClick={() => setActiveTab('PROFILE')}
             className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'PROFILE'
-                ? 'bg-[#14532D] text-[#FACC15] shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
+                ? 'bg-[#0B1528] text-[#FFC928] border border-blue-900/50 shadow-sm font-black'
+                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
             }`}
           >
             <User className="h-4 w-4" />
@@ -421,8 +422,8 @@ export default function DriverSettingsPage() {
             onClick={() => setActiveTab('COVERAGE')}
             className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'COVERAGE'
-                ? 'bg-[#14532D] text-[#FACC15] shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
+                ? 'bg-[#0B1528] text-[#FFC928] border border-blue-900/50 shadow-sm font-black'
+                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
             }`}
           >
             <School className="h-4 w-4" />
@@ -433,8 +434,8 @@ export default function DriverSettingsPage() {
             onClick={() => setActiveTab('CREDENTIALS')}
             className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'CREDENTIALS'
-                ? 'bg-[#14532D] text-[#FACC15] shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
+                ? 'bg-[#0B1528] text-[#FFC928] border border-blue-900/50 shadow-sm font-black'
+                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
             }`}
           >
             <ShieldCheck className="h-4 w-4" />
@@ -445,8 +446,8 @@ export default function DriverSettingsPage() {
             onClick={() => setActiveTab('PAYOUT')}
             className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'PAYOUT'
-                ? 'bg-[#14532D] text-[#FACC15] shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
+                ? 'bg-[#0B1528] text-[#FFC928] border border-blue-900/50 shadow-sm font-black'
+                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
             }`}
           >
             <CreditCard className="h-4 w-4" />
@@ -457,8 +458,8 @@ export default function DriverSettingsPage() {
             onClick={() => setActiveTab('NOTIFICATIONS')}
             className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all flex items-center gap-2 cursor-pointer ${
               activeTab === 'NOTIFICATIONS'
-                ? 'bg-[#14532D] text-[#FACC15] shadow-xs'
-                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800'
+                ? 'bg-[#0B1528] text-[#FFC928] border border-blue-900/50 shadow-sm font-black'
+                : 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
             }`}
           >
             <Bell className="h-4 w-4" />
@@ -1344,14 +1345,14 @@ export default function DriverSettingsPage() {
         )}
 
         {/* Safety & Verification Charter Banner matching Home Page */}
-        <div className="rounded-[28px] bg-slate-950 text-white p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+        <div className="rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
           <div className="space-y-2 max-w-xl text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/20 text-[#FACC15] text-[11px] font-black uppercase tracking-wider border border-yellow-400/30">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#FACC15]" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#78350F]/50 text-[#FFC928] border border-[#F59E0B]/40 text-[11px] font-black uppercase tracking-wider">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#FFC928]" />
               <span>Operator Protection &amp; Support Charter</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-white">
-              Guaranteed monthly payouts, <span className="text-[#FACC15]">zero commission deductions</span>
+              Guaranteed monthly payouts, <span className="text-[#FFC928]">zero commission deductions</span>
             </h3>
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
               SchoolRide.lk supports verified van owners with automated digital seat booking collection, emergency road breakdown dispatch, and parent dispute resolution across Sri Lanka.
@@ -1360,17 +1361,19 @@ export default function DriverSettingsPage() {
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <Link href="/driver/console">
-              <button className="px-6 py-3 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer">
+              <button className="px-6 py-3 rounded-full bg-[#FFC928] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer">
                 Launch Driving Console
               </button>
             </Link>
             <Link href="/driver/vehicles">
-              <button className="px-5 py-3 rounded-full border border-slate-700 hover:border-slate-500 text-slate-200 text-xs sm:text-sm font-bold transition-all cursor-pointer">
+              <button className="px-5 py-3 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-bold transition-all cursor-pointer">
                 Manage Vehicles
               </button>
             </Link>
           </div>
         </div>
+
+        </div> {/* End Master White Container Card */}
 
       </div>
 

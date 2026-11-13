@@ -353,6 +353,19 @@
 }
 
 /* ========================================================
+   DASHBOARD NAVY BLUE & YELLOW MIXED ATMOSPHERIC BACKGROUND
+   ======================================================== */
+.dashboard-navy-yellow-bg {
+  background-color: #16293d;
+  background-image:
+    radial-gradient(ellipse 68% 85% at 92% 45%, rgba(218, 168, 58, 0.54) 0%, rgba(176, 132, 46, 0.28) 45%, transparent 76%),
+    radial-gradient(ellipse 72% 72% at 12% 14%, rgba(86, 120, 134, 0.56) 0%, rgba(52, 82, 102, 0.26) 52%, transparent 78%),
+    radial-gradient(ellipse 85% 75% at 50% 90%, rgba(15, 34, 56, 0.92) 0%, transparent 72%),
+    linear-gradient(120deg, #294356 0%, #1b3146 42%, #243949 72%, #5c533c 100%);
+  background-attachment: fixed;
+}
+
+/* ========================================================
    DM SANS TYPOGRAPHY FOR ALL DASHBOARDS
    ======================================================== */
 .dashboard-root,

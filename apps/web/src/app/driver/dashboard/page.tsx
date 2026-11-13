@@ -229,11 +229,10 @@ export default function DriverDashboardPage() {
 
           <div className="space-y-3 max-w-2xl relative z-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#78350F]/50 text-[#FFC928] border border-[#F59E0B]/40 text-xs font-bold shadow-xs">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#CA8A04]" />
               <span>5-Tier Police &amp; NTCA Verified Van Operator</span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-950 dark:text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
               Welcome back, <span className="text-[#FFC928]">{user?.fullName || 'Driver Sunil'}</span>
             </h1>
 
@@ -244,8 +243,8 @@ export default function DriverDashboardPage() {
 
           <div className="flex flex-wrap items-center gap-3 relative z-10 shrink-0">
             <Link href="/driver/console">
-              <button className="btn-glass-yellow-3d px-5 sm:px-6 py-3 text-xs sm:text-sm font-black justify-center shadow-md">
-                <Radio className="h-4 w-4 text-[#14532D] animate-pulse" />
+              <button className="px-6 py-3 rounded-full bg-[#FFC928] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all flex items-center gap-2 cursor-pointer">
+                <Radio className="h-4 w-4 text-slate-950 animate-pulse" />
                 <span>Launch GPS Console</span>
                 <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
               </button>
@@ -253,12 +252,15 @@ export default function DriverDashboardPage() {
 
             <Link href="/driver/vehicles">
               <button className="px-5 py-3 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center gap-2 cursor-pointer">
-                <Car className="h-4 w-4 text-[#16A34A]" />
+                <Car className="h-4 w-4 text-[#FFC928]" />
                 <span>Fleet Vehicles</span>
               </button>
             </Link>
           </div>
         </motion.div>
+
+        {/* Master White Background Container Card with Soft Shadow (Excludes the Header) */}
+        <div className="rounded-[32px] sm:rounded-[40px] bg-white dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 shadow-[0_20px_60px_-15px_rgba(11,21,40,0.06)] p-6 sm:p-8 lg:p-10 space-y-8 relative z-10 text-left">
 
         {/* Active Route Telemetry In-Progress Card */}
         {activeRide && (
@@ -592,14 +594,14 @@ export default function DriverDashboardPage() {
         </div>
 
         {/* Operator Protection Charter Banner matching Home Page */}
-        <div className="rounded-[28px] bg-slate-950 text-white p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+        <div className="rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
           <div className="space-y-2 max-w-xl text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/20 text-[#FACC15] text-[11px] font-black uppercase tracking-wider border border-yellow-400/30">
-              <ShieldCheck className="h-3.5 w-3.5 text-[#FACC15]" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#78350F]/50 text-[#FFC928] border border-[#F59E0B]/40 text-[11px] font-black uppercase tracking-wider">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#FFC928]" />
               <span>Operator Protection &amp; Support</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-white">
-              Guaranteed monthly payouts, <span className="text-[#FACC15]">zero commission fees</span>
+              Guaranteed monthly payouts, <span className="text-[#FFC928]">zero commission fees</span>
             </h3>
             <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
               SchoolRide.lk supports verified van owners with automated digital seat booking collection, emergency road breakdown dispatch, and parent dispute resolution across Sri Lanka.
@@ -608,17 +610,19 @@ export default function DriverDashboardPage() {
 
           <div className="flex flex-wrap items-center gap-3 shrink-0">
             <Link href="/driver/console">
-              <button className="px-6 py-3 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer">
+              <button className="px-6 py-3 rounded-full bg-[#FFC928] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer">
                 Launch Driving Console
               </button>
             </Link>
             <Link href="/driver/settings">
-              <button className="px-5 py-3 rounded-full border border-slate-700 hover:border-slate-500 text-slate-200 text-xs sm:text-sm font-bold transition-all cursor-pointer">
+              <button className="px-5 py-3 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-bold transition-all cursor-pointer">
                 Operator Settings
               </button>
             </Link>
           </div>
         </div>
+
+        </div> {/* End Master White Container Card */}
 
       </div>
 

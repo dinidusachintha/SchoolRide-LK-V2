@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { api } from '@/lib/api-client';
 import { Skeleton, DriverCardSkeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -456,7 +457,8 @@ export default function DriversDirectoryPage() {
           {/* 4 Summary KPIs with Clean White Glass Translucency */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           <div className="p-5 sm:p-6 rounded-[24px] bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-800 shadow-[0_14px_35px_rgba(15,23,42,0.08),0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_22px_45px_rgba(15,23,42,0.13)] hover:-translate-y-1 transition-all duration-300 space-y-2 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Active Fleet
@@ -587,7 +589,6 @@ export default function DriversDirectoryPage() {
 
         {/* Search & Filter Bar (White Glass Effect) */}
         <div className="p-6 sm:p-7 rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 shadow-2xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative overflow-hidden text-left">
-          <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
           
           {/* District Select */}
           <div className="space-y-1.5 relative z-10">
@@ -694,9 +695,8 @@ export default function DriversDirectoryPage() {
                   transition={{ duration: 0.3 }}
                   className="rounded-[28px] bg-white border border-slate-200/90 shadow-[0_10px_30px_rgba(11,21,40,0.06)] hover:shadow-[0_20px_50px_rgba(11,21,40,0.12)] hover:border-[#FFC928] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden relative group text-[#0B1528]"
                 >
-                  <div className="p-6 space-y-4 relative z-10 text-left">
-                    
-                    {/* Driver Top Row */}
+                  {/* Card Header: Dark Navy Blue Background */}
+                  <div className="p-5 sm:p-6 bg-[#0B1528] text-white border-b border-blue-900/40 rounded-t-[28px] relative z-10 text-left">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div className="relative">
@@ -709,103 +709,107 @@ export default function DriversDirectoryPage() {
                           </div>
                           <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400 ring-2 ring-white" />
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400 ring-2 ring-[#0B1528]" />
                           </span>
                         </div>
 
-                        <div>
+                        <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <h3 className="font-extrabold text-base text-[#0B1528] group-hover:text-amber-600 transition-colors truncate">
+                            <h3 className="font-extrabold text-base text-white group-hover:text-[#FFC928] transition-colors truncate">
                               {driver.fullName}
                             </h3>
-                            <ShieldCheck className="h-4 w-4 text-[#CA8A04] shrink-0" />
+                            <ShieldCheck className="h-4 w-4 text-[#FFC928] shrink-0" />
                           </div>
-                          <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5 font-medium">
-                            <MapPin className="h-3 w-3 text-[#CA8A04] shrink-0" />
+                          <p className="text-xs text-slate-300 flex items-center gap-1 mt-0.5 font-medium truncate">
+                            <MapPin className="h-3 w-3 text-[#FFC928] shrink-0" />
                             <span>{driver.city || driver.district}, {driver.district}</span>
                           </p>
                         </div>
                       </div>
 
-                      {/* Gold Star Rating Pill */}
-                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEFCE8] border border-[#FEF08A] text-[#854D0E] text-xs font-black shrink-0 shadow-2xs">
-                        <Star className="h-3.5 w-3.5 fill-[#CA8A04] text-[#CA8A04]" />
-                        <span className="text-[#0B1528] font-bold">{driver.ratingAverage.toFixed(1)}</span>
-                        <span className="text-[10px] text-slate-500 font-medium">({driver.ratingCount})</span>
+                      {/* Gold Star Rating Pill on Dark Navy */}
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-white text-xs font-black shrink-0 shadow-2xs backdrop-blur-xs">
+                        <Star className="h-3.5 w-3.5 fill-[#FFC928] text-[#FFC928]" />
+                        <span className="text-white font-bold">{driver.ratingAverage.toFixed(1)}</span>
+                        <span className="text-[10px] text-slate-400 font-medium">({driver.ratingCount})</span>
                       </div>
                     </div>
-
-                    {/* Vehicle Spec Box with Clean White Background */}
-                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5 text-xs relative overflow-hidden">
-                      <div className="flex items-center justify-between font-bold text-[#0B1528]">
-                        <span className="flex items-center gap-1.5">
-                          <Bus className="h-3.5 w-3.5 text-[#CA8A04]" />
-                          <span className="truncate">{vehicle.make} {vehicle.model} ({vehicle.year || 2018})</span>
-                        </span>
-                        <span className="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold shrink-0">
-                          {vehicle.availableSeats || 2} Seats Open
-                        </span>
-                      </div>
-                      
-                      <div className="flex items-center gap-3 text-[11px] text-slate-500 font-medium pt-0.5 flex-wrap">
-                        <span className="font-mono text-[#854D0E] font-bold">
-                          {vehicle.licensePlate || 'WP NA-4521'}
-                        </span>
-                        {vehicle.isAirConditioned && <span>• Dual A/C</span>}
-                        {vehicle.hasGPS && <span>• Live GPS</span>}
-                        <span>• First-Aid Kit</span>
-                      </div>
-                    </div>
-
-                    {/* Route Corridor Path */}
-                    <div className="space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
-                        <Compass className="h-3 w-3 text-[#CA8A04]" /> Pickup Suburbs
-                      </span>
-                      <p className="text-xs text-[#0B1528] font-medium leading-relaxed">
-                        {driver.corridor}
-                      </p>
-                    </div>
-
-                    {/* Schools Covered */}
-                    <div className="space-y-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
-                        <GraduationCap className="h-3 w-3 text-[#CA8A04]" /> Served Schools ({schoolsList.length})
-                      </span>
-                      <div className="flex flex-wrap gap-1.5">
-                        {schoolsList.slice(0, 3).map((school: any) => (
-                          <span
-                            key={school.id || school.name}
-                            className="px-2.5 py-1 rounded-lg bg-blue-50/70 border border-blue-200/70 text-[#0B1528] text-[11px] font-semibold truncate max-w-[210px]"
-                          >
-                            {school.name}
-                          </span>
-                        ))}
-                        {schoolsList.length > 3 && (
-                          <span className="px-2 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[10px] text-slate-600 font-bold">
-                            +{schoolsList.length - 3} more
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Bio Snippet */}
-                    {driver.bio && (
-                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                        {driver.bio}
-                      </p>
-                    )}
                   </div>
 
-                  {/* Card Footer: Monthly Fee & Glass 3D Action Buttons */}
-                  <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/80 flex items-center justify-between gap-3 relative z-10">
+                  {/* Card Body: Pure White Background */}
+                  <div className="p-5 sm:p-6 space-y-4 bg-white relative z-10 text-left flex-1 flex flex-col justify-between">
+                    <div className="space-y-4">
+                      {/* Vehicle Spec Box with Clean White Background */}
+                      <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5 text-xs relative overflow-hidden">
+                        <div className="flex items-center justify-between font-bold text-[#0B1528]">
+                          <span className="flex items-center gap-1.5">
+                            <Bus className="h-3.5 w-3.5 text-[#CA8A04]" />
+                            <span className="truncate">{vehicle.make} {vehicle.model} ({vehicle.year || 2018})</span>
+                          </span>
+                          <span className="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold shrink-0">
+                            {vehicle.availableSeats || 2} Seats Open
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-3 text-slate-500 font-medium pt-0.5">
+                          <span className="font-mono font-bold text-[#0B1528]">{vehicle.licensePlate || 'WP NA-4521'}</span>
+                          <span>•</span>
+                          <span>{vehicle.hasAirConditioning !== false ? 'Dual A/C' : 'Standard Airflow'}</span>
+                          <span>•</span>
+                          <span>First-Aid Kit</span>
+                        </div>
+                      </div>
+
+                      {/* Corridors / Suburbs */}
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                          <Compass className="h-3 w-3 text-[#CA8A04]" /> Pickup Suburbs
+                        </span>
+                        <p className="text-xs text-slate-700 font-medium leading-relaxed">
+                          {driver.corridor}
+                        </p>
+                      </div>
+
+                      {/* Schools Covered */}
+                      <div className="space-y-1.5">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                          <GraduationCap className="h-3 w-3 text-[#CA8A04]" /> Served Schools ({schoolsList.length})
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {schoolsList.slice(0, 3).map((school: any) => (
+                            <span
+                              key={school.id || school.name}
+                              className="px-2.5 py-1 rounded-lg bg-blue-50/70 border border-blue-200/70 text-[#0B1528] text-[11px] font-semibold truncate max-w-[210px]"
+                            >
+                              {school.name}
+                            </span>
+                          ))}
+                          {schoolsList.length > 3 && (
+                            <span className="px-2 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[10px] text-slate-600 font-bold">
+                              +{schoolsList.length - 3} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Bio Snippet */}
+                      {driver.bio && (
+                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                          {driver.bio}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Card Footer: Dark Navy Blue Background */}
+                  <div className="px-6 py-4 border-t border-blue-900/40 bg-[#0B1528] text-white rounded-b-[28px] flex items-center justify-between gap-3 relative z-10">
                     <div>
-                      <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
+                      <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
                         Monthly Seat Fee
                       </span>
-                      <span className="text-sm font-black text-[#0B1528] font-mono">
+                      <span className="text-sm font-black text-white font-mono">
                         Rs. {driver.monthlyRateLKR.toLocaleString()}{' '}
-                        <span className="text-[10px] font-normal text-slate-500">/ child</span>
+                        <span className="text-[10px] font-normal text-slate-400">/ child</span>
                       </span>
                     </div>
 
@@ -817,7 +821,7 @@ export default function DriversDirectoryPage() {
                         <span>Inquire</span>
                       </button>
                       <Link href={`/drivers/${driver.id}`}>
-                        <button className="px-4 py-2 rounded-full bg-white hover:bg-slate-50 text-[#0B1528] font-bold text-xs border border-slate-200/90 shadow-2xs transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap">
+                        <button className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs border border-white/20 shadow-2xs transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap">
                           <span>Profile</span>
                           <ArrowRight className="h-3 w-3" />
                         </button>
@@ -971,10 +975,33 @@ export default function DriversDirectoryPage() {
           )}
         </AnimatePresence>
 
-        {/* Safety & Charter Banner: Dark Navy Blue Card */}
+        {/* Safety & Charter Banner: Dark Navy Blue Card with Matching Background Image */}
         <div className="rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative overflow-hidden">
-          <div className="absolute -top-16 -right-16 w-60 h-60 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-16 -left-16 w-60 h-60 bg-[#FFC928]/10 rounded-full blur-3xl pointer-events-none" />
+          {/* Matching Background Image */}
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/safety-charter-driver-kids.jpg"
+              alt="SchoolRide LK Child Transport Safety Standard"
+              fill
+              priority
+              className="object-cover object-center"
+            />
+          </div>
+
+          {/* Dark Navy Blue Low Fade Overlay (Ensures crystal clear text & rich navy aesthetic) */}
+          <div
+            className="absolute inset-0 z-[1] pointer-events-none"
+            style={{
+              background: 'linear-gradient(90deg, rgba(11, 21, 40, 0.95) 0%, rgba(11, 21, 40, 0.85) 48%, rgba(11, 21, 40, 0.65) 100%)',
+            }}
+          />
+          <div
+            className="absolute inset-0 z-[1] pointer-events-none"
+            style={{
+              backgroundColor: 'rgba(11, 21, 40, 0.35)',
+            }}
+          />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none z-[2]" />
 
           <div className="relative z-10 space-y-2 max-w-xl text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-[#FFC928] text-[11px] font-black uppercase tracking-wider border border-white/20 backdrop-blur-md">
@@ -984,7 +1011,7 @@ export default function DriversDirectoryPage() {
             <h3 className="text-xl sm:text-2xl font-black text-white">
               Every driver is vetted, <span className="text-[#FFC928]">every trip is tracked</span>
             </h3>
-            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            <p className="text-slate-200 text-xs sm:text-sm leading-relaxed">
               SchoolRide.lk enforces mandatory police criminal clearance, annual vehicle mechanical testing, and satellite GPS monitoring for all school transport operators in Sri Lanka.
             </p>
           </div>

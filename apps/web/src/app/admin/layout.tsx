@@ -301,8 +301,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         )}
 
-        {/* Page Content: Clean White Background */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-[#F8FAFC]">
+        {/* Page Content: Navy Blue & Yellow Atmospheric Background */}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 dashboard-navy-yellow-bg">
           {children}
         </main>
       </div>

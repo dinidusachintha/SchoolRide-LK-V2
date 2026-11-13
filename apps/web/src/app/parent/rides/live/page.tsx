@@ -241,17 +241,17 @@ export default function ParentLiveTrackingPage() {
         <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-slate-200/80 dark:border-slate-800">
           <Link href="/parent/dashboard">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              📌 Overview
+              Overview
             </button>
           </Link>
           <Link href="/parent/children">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              👦 My Children
+              My Children
             </button>
           </Link>
           <Link href="/parent/bookings">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              🚐 Van Bookings
+              Van Bookings
             </button>
           </Link>
           <Link href="/parent/rides/live">
@@ -262,50 +262,57 @@ export default function ParentLiveTrackingPage() {
           </Link>
           <Link href="/parent/complaints">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              ⚠️ Inquiries &amp; Support
+              Inquiries &amp; Support
             </button>
           </Link>
           <Link href="/parent/settings">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              ⚙️ Settings
+              Settings
             </button>
           </Link>
         </div>
 
-        {/* Header Bar matching Home Page Design System */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200/80 dark:border-slate-800 pb-5">
-          <div className="space-y-2">
+        {/* Hero Welcome Showcase Card - Dark Navy Blue */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 shadow-xl p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden"
+        >
+          {/* Subtle Ambient Glow */}
+          <div className="absolute right-0 top-0 w-80 h-80 bg-gradient-to-br from-yellow-500/10 via-blue-500/10 to-transparent blur-3xl pointer-events-none rounded-full" />
+
+          <div className="space-y-3 max-w-2xl relative z-10">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#FEF08A] text-[#713F12] border border-yellow-300 inline-flex items-center gap-1.5 shadow-xs">
-                <Radio className="h-3.5 w-3.5 text-[#CA8A04] animate-pulse" />
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#78350F]/50 text-[#FFC928] border border-[#F59E0B]/40 inline-flex items-center gap-1.5 shadow-xs">
                 <span>Live GPS Telemetry Console</span>
               </span>
 
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-[#14532D] border border-emerald-300 uppercase tracking-wider flex items-center gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-ping" />
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 uppercase tracking-wider flex items-center gap-1">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
                 Active Stream
               </span>
 
               {isDemoMode && (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-900 border border-amber-200 uppercase">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-400/20 text-[#FFC928] border border-amber-400/30 uppercase">
                   Interactive Demo Route
                 </span>
               )}
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-950 dark:text-white tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
               {activeRide?.routeName || 'School Commute Telemetry'}
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
               Sub-second vehicle speed, school corridor speed limit monitoring, and doorstep proximity chimes.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <div className="flex flex-wrap items-center gap-2.5 shrink-0 relative z-10">
             <button
               onClick={() => loadActiveRide()}
-              className="px-4 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 text-slate-800 dark:text-slate-200 text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
+              className="px-4 py-2.5 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 text-white text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               <span>Refresh Pings</span>
@@ -313,7 +320,7 @@ export default function ParentLiveTrackingPage() {
 
             {driver?.phone && (
               <a href={`tel:${driver.phone}`}>
-                <button className="px-5 py-2.5 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-xs shadow-sm hover:shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
+                <button className="px-5 py-2.5 rounded-full bg-[#FFC928] hover:bg-[#EAB308] text-slate-950 font-black text-xs shadow-sm hover:shadow-md transition-all flex items-center gap-1.5 cursor-pointer">
                   <Phone className="h-3.5 w-3.5 text-slate-950" />
                   <span>Call Driver</span>
                 </button>
@@ -321,13 +328,16 @@ export default function ParentLiveTrackingPage() {
             )}
 
             <Link href="/parent/complaints">
-              <button className="px-4 py-2.5 rounded-full border border-amber-300 dark:border-amber-700 bg-amber-50/70 hover:bg-amber-100 text-amber-900 dark:text-amber-200 text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer">
-                <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+              <button className="px-4 py-2.5 rounded-full border border-amber-400/30 bg-amber-400/10 hover:bg-amber-400/20 text-[#FFC928] text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer">
+                <AlertTriangle className="h-3.5 w-3.5 text-[#FFC928]" />
                 <span>Report Issue</span>
               </button>
             </Link>
           </div>
-        </div>
+        </motion.div>
+
+        {/* Master White Background Container Card with Soft Shadow (Excludes the Header) */}
+        <div className="rounded-[32px] sm:rounded-[40px] bg-white dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 shadow-[0_20px_60px_-15px_rgba(11,21,40,0.06)] p-6 sm:p-8 lg:p-10 space-y-8 relative z-10 text-left">
 
         {/* 4 Telemetry Quick-Stat Cards matching Home Page Stats Section */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
@@ -577,6 +587,38 @@ export default function ParentLiveTrackingPage() {
 
           </div>
 
+        </div>
+
+        {/* Safety & Verification Charter Banner matching Home Page */}
+        <div className="rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+          <div className="space-y-2 max-w-xl text-left relative z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#78350F]/50 text-[#FFC928] text-[11px] font-black uppercase tracking-wider border border-[#F59E0B]/40">
+              <ShieldCheck className="h-3.5 w-3.5 text-[#FFC928]" />
+              <span>Satellite GPS Safeguard</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black text-white">
+              Every turn is <span className="text-[#FFC928]">Telemetry Monitored</span>
+            </h3>
+            <p className="text-slate-300 text-xs sm:text-sm leading-relaxed">
+              Real-time geofence alerts ensure you are instantly notified upon home pickup and school gate arrival with 100% telemetry verification.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 shrink-0 relative z-10">
+            <Link href="/parent/dashboard">
+              <button className="px-6 py-3 rounded-full bg-[#FFC928] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-md transition-all cursor-pointer">
+                Back to Dashboard
+              </button>
+            </Link>
+            <Link href="/parent/complaints">
+              <button className="px-5 py-3 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-bold transition-all cursor-pointer">
+                Contact Dispatch
+              </button>
+            </Link>
+          </div>
+        </div>
+
+        {/* End Master White Container Card */}
         </div>
 
       </div>

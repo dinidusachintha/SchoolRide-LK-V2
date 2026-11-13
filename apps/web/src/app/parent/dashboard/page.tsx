@@ -71,7 +71,7 @@ export default function ParentDashboardPage() {
 
   if (isLoading || authLoading) {
     return (
-      <div className="min-h-screen bg-white dark:bg-slate-950 text-slate-900 dark:text-white py-10 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-slate-50/70 dark:bg-slate-950 text-slate-900 dark:text-white py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-6">
           <Skeleton className="h-10 w-64 rounded-xl" />
           <Skeleton className="h-44 w-full rounded-3xl" />
@@ -176,6 +176,9 @@ export default function ParentDashboardPage() {
             </Link>
           </div>
         </motion.div>
+
+        {/* Master White Background Container Card with Soft Shadow (Excludes the Header) */}
+        <div className="rounded-[32px] sm:rounded-[40px] bg-white dark:bg-slate-900/95 border border-slate-200/90 dark:border-slate-800 shadow-[0_20px_60px_-15px_rgba(11,21,40,0.06)] p-6 sm:p-8 lg:p-10 space-y-8 relative z-10 text-left">
 
         {/* Live Ride In-Progress Banner (If Active) */}
         {activeRide && (
@@ -537,6 +540,8 @@ export default function ParentDashboardPage() {
               </div>
             </div>
           </div>
+        </div>
+
         </div>
 
       </div>

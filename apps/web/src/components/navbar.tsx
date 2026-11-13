@@ -23,7 +23,7 @@ export function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/[0.14] bg-black/75 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] supports-[backdrop-filter]:bg-black/70">
+    <header className="sticky top-0 z-40 w-full border-b border-blue-900/40 bg-[#0B1528] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 shadow-[0_8px_32px_0_rgba(11,21,40,0.5)] supports-[backdrop-filter]:bg-[#0B1528]/95">
       {/* Frosted Glass Top Specular Highlight */}
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
       <div className="w-full max-w-[1600px] mx-auto flex h-[72px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16 relative">
@@ -141,7 +141,7 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -4, scale: 0.96 }}
                       transition={{ duration: 0.12 }}
-                      className="absolute right-0 mt-2 w-52 rounded-xl border border-white/20 bg-neutral-900/90 backdrop-blur-2xl p-1.5 shadow-[0_16px_40px_rgba(0,0,0,0.5)] z-50 text-white"
+                      className="absolute right-0 mt-2 w-52 rounded-xl border border-blue-900/50 bg-[#0B1528] backdrop-blur-2xl p-1.5 shadow-[0_16px_40px_rgba(11,21,40,0.6)] z-50 text-white"
                     >
                       <div className="px-3 py-2 border-b border-white/10 mb-1">
                         <p className="text-xs font-semibold text-white truncate">{user.fullName}</p>
@@ -332,7 +332,7 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-b border-white/[0.14] bg-black/85 backdrop-blur-2xl px-4 pt-3 pb-6 space-y-2.5 overflow-hidden text-white shadow-[0_16px_40px_rgba(0,0,0,0.6)]"
+            className="md:hidden border-b border-blue-900/40 bg-[#0B1528] backdrop-blur-2xl px-4 pt-3 pb-6 space-y-2.5 overflow-hidden text-white shadow-[0_16px_40px_rgba(11,21,40,0.6)]"
           >
             <Link
               href="/"
