@@ -636,33 +636,50 @@ export default function HomePage() {
   const [expandedReviewId, setExpandedReviewId] = React.useState<number | null>(null);
   const [isCarouselHovered, setIsCarouselHovered] = React.useState(false);
 
+  const carouselItems = React.useMemo(() => {
+    return [...filteredFeedbackList, ...filteredFeedbackList];
+  }, [filteredFeedbackList]);
+
   const scrollReviews = (direction: 'left' | 'right') => {
-    if (reviewsCarouselRef.current) {
-      const scrollAmount = reviewsCarouselRef.current.clientWidth < 640
-        ? Math.max(reviewsCarouselRef.current.clientWidth - 96, 260)
-        : 350;
-      reviewsCarouselRef.current.scrollBy({
-        left: direction === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      });
+    const el = reviewsCarouselRef.current;
+    if (!el) return;
+    const firstCard = el.querySelector('[data-review-card="true"]') as HTMLElement;
+    const gap = typeof window !== 'undefined' && window.innerWidth >= 640 ? 24 : 16;
+    const step = firstCard ? firstCard.offsetWidth + gap : 350;
+    const halfWidth = el.scrollWidth / 2;
+
+    if (direction === 'right') {
+      if (el.scrollLeft >= halfWidth - 10) {
+        el.scrollTo({ left: el.scrollLeft - halfWidth, behavior: 'auto' });
+      }
+      el.scrollBy({ left: step, behavior: 'smooth' });
+    } else {
+      if (el.scrollLeft <= 10) {
+        el.scrollTo({ left: el.scrollLeft + halfWidth, behavior: 'auto' });
+      }
+      el.scrollBy({ left: -step, behavior: 'smooth' });
     }
   };
 
-  // Smooth sliding auto-scroll effect (pauses on hover)
+  // Continuous smooth auto-sliding slideshow
   React.useEffect(() => {
-    if (isCarouselHovered) return;
-    const timer = setInterval(() => {
-      if (reviewsCarouselRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = reviewsCarouselRef.current;
-        if (scrollLeft + clientWidth >= scrollWidth - 15) {
-          reviewsCarouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          reviewsCarouselRef.current.scrollBy({ left: 350, behavior: 'smooth' });
-        }
+    if (isCarouselHovered || expandedReviewId !== null) return;
+    const interval = setInterval(() => {
+      const el = reviewsCarouselRef.current;
+      if (!el) return;
+      const firstCard = el.querySelector('[data-review-card="true"]') as HTMLElement;
+      const gap = typeof window !== 'undefined' && window.innerWidth >= 640 ? 24 : 16;
+      const step = firstCard ? firstCard.offsetWidth + gap : 350;
+      const halfWidth = el.scrollWidth / 2;
+
+      if (el.scrollLeft >= halfWidth - 10) {
+        el.scrollTo({ left: el.scrollLeft - halfWidth, behavior: 'auto' });
       }
-    }, 4500);
-    return () => clearInterval(timer);
-  }, [isCarouselHovered]);
+      el.scrollBy({ left: step, behavior: 'smooth' });
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [isCarouselHovered, expandedReviewId, filteredFeedbackList.length]);
 
   // Smooth scroll helper
   const scrollToSection = (id: string) => {
@@ -2295,6 +2312,10 @@ export default function HomePage() {
             className="relative group/carousel pt-1"
             onMouseEnter={() => setIsCarouselHovered(true)}
             onMouseLeave={() => setIsCarouselHovered(false)}
+            onTouchStart={() => setIsCarouselHovered(true)}
+            onTouchEnd={() => {
+              setTimeout(() => setIsCarouselHovered(false), 2500);
+            }}
           >
             {/* Navigation Chevron Left */}
             <button
@@ -2322,11 +2343,12 @@ export default function HomePage() {
               className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth py-3 px-10 sm:px-2 no-scrollbar [&::-webkit-scrollbar]:hidden select-none snap-x snap-mandatory"
               style={{ scrollSnapType: 'x mandatory', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
-              {filteredFeedbackList.map((t) => {
+              {carouselItems.map((t, idx) => {
                 const isExpanded = expandedReviewId === t.id;
                 return (
                   <div
-                    key={t.id}
+                    key={`${t.id}-${idx}`}
+                    data-review-card="true"
                     style={{ scrollSnapAlign: 'center' }}
                     className={`w-[calc(100vw-6rem)] max-w-[340px] sm:min-w-[340px] sm:max-w-[360px] flex-shrink-0 snap-center rounded-2xl bg-white dark:bg-slate-900 border ${
                       (t as any).isNew 
