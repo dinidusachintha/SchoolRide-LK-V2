@@ -30,13 +30,13 @@ export function Dialog({
               />
             </DialogPrimitive.Overlay>
             <DialogPrimitive.Content asChild>
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.96, y: 8 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.96, y: 8 }}
                   transition={{ type: 'spring', stiffness: 450, damping: 30 }}
-                  className="relative w-full max-w-lg rounded-2xl border border-border/80 bg-card p-6 shadow-floating focus:outline-none"
+                  className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-border/80 bg-card p-5 sm:p-6 shadow-floating focus:outline-none my-auto"
                 >
                   {children}
                   <DialogPrimitive.Close asChild>

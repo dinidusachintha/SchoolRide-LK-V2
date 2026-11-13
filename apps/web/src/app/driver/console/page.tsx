@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api-client';
-import { Skeleton } from '@/components/ui/skeleton';
+import { PortalDashboardSkeleton } from '@/components/ui/skeleton';
 import {
   Radio,
   Bus,
@@ -40,9 +40,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 const LiveRideMap = dynamic(() => import('@/components/map/live-ride-map'), {
   ssr: false,
   loading: () => (
-    <div className="h-[420px] sm:h-[480px] w-full bg-slate-100 dark:bg-slate-900 rounded-3xl flex flex-col items-center justify-center space-y-3 border border-slate-200 dark:border-slate-800">
+    <div className="h-[420px] sm:h-[480px] w-full bg-white/65 backdrop-blur-xl rounded-3xl flex flex-col items-center justify-center space-y-3 border border-white/75">
       <Radio className="h-8 w-8 text-[#16A34A] animate-pulse" />
-      <span className="text-xs font-bold text-slate-500">Initializing High-Precision GPS Satellite Stream...</span>
+      <span className="text-xs font-bold text-[#0B1528]">Initializing High-Precision GPS Satellite Stream...</span>
     </div>
   ),
 });
@@ -234,6 +234,10 @@ export default function DriverConsolePage() {
 
   const onBoardCount = passengers.filter((p) => p.pickupStatus === 'PICKED_UP').length;
   const droppedOffCount = passengers.filter((p) => p.pickupStatus === 'DROPPED_OFF').length;
+
+  if (authLoading) {
+    return <PortalDashboardSkeleton kpiCount={4} />;
+  }
 
   return (
     <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">

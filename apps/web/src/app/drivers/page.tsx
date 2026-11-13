@@ -3,7 +3,9 @@
 import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { api } from '@/lib/api-client';
+import { CURATED_DEMO_DRIVERS } from '@/lib/curated-drivers';
 import { Skeleton, DriverCardSkeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import {
@@ -33,199 +35,16 @@ import { formatLKR, SRI_LANKAN_DISTRICTS, INITIAL_SCHOOLS } from '@schoolride/sh
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// High-fidelity curated Sri Lankan school van operators data
-const CURATED_DEMO_DRIVERS = [
-  {
-    id: 'driver-prof-01',
-    fullName: 'Sunil Jayawardena',
-    district: 'Colombo',
-    city: 'Nugegoda',
-    ratingAverage: 4.95,
-    ratingCount: 38,
-    experienceYears: 14,
-    bio: 'Dedicated school van operator with over 14 years accident-free service in Colombo. Specialised in Royal College and Visakha Vidyalaya morning and afternoon routes.',
-    corridor: 'Maharagama → Nugegoda → Kohuwala → Bambalapitiya → Colombo 07',
-    monthlyRateLKR: 18000,
-    vehicle: {
-      make: 'Toyota',
-      model: 'HiAce Super GL',
-      year: 2018,
-      licensePlate: 'WP NA-4521',
-      capacity: 14,
-      availableSeats: 2,
-      vehicleType: 'VAN',
-      isAirConditioned: true,
-      hasEmergencyExit: true,
-      hasFirstAidKit: true,
-      hasGPS: true,
-    },
-    schools: [
-      { id: 'school-col-01', name: 'Royal College Colombo', city: 'Colombo 07' },
-      { id: 'school-col-02', name: 'Visakha Vidyalaya', city: 'Colombo 05' },
-      { id: 'school-col-03', name: 'Thurstan College', city: 'Colombo 07' },
-    ]
-  },
-  {
-    id: 'driver-prof-02',
-    fullName: 'Nihal Perera',
-    district: 'Colombo',
-    city: 'Malabe',
-    ratingAverage: 4.90,
-    ratingCount: 29,
-    experienceYears: 11,
-    bio: 'Reliable morning and evening transit along Malabe-Rajagiriya school belt. Equipped with dual A/C, onboard GPS, and CPR first-aid trained assistant.',
-    corridor: 'Athurugiriya → Malabe → Battaramulla → Rajagiriya → Colombo 08',
-    monthlyRateLKR: 17500,
-    vehicle: {
-      make: 'Nissan',
-      model: 'NV350 Caravan',
-      year: 2020,
-      licensePlate: 'WP PB-8812',
-      capacity: 14,
-      availableSeats: 3,
-      vehicleType: 'VAN',
-      isAirConditioned: true,
-      hasEmergencyExit: true,
-      hasFirstAidKit: true,
-      hasGPS: true,
-    },
-    schools: [
-      { id: 'school-col-04', name: 'Ananda College', city: 'Colombo 10' },
-      { id: 'school-col-05', name: 'Nalanda College', city: 'Colombo 10' },
-      { id: 'school-col-06', name: 'Musaeus College', city: 'Colombo 07' },
-    ]
-  },
-  {
-    id: 'driver-prof-03',
-    fullName: 'Chaminda Senanayake',
-    district: 'Gampaha',
-    city: 'Kelaniya',
-    ratingAverage: 4.88,
-    ratingCount: 44,
-    experienceYears: 16,
-    bio: '16 years serving Catholic and semi-government schools in central Colombo from Kelaniya & Kiribathgoda. Zero recorded road infractions.',
-    corridor: 'Kiribathgoda → Kelaniya → Peliyagoda → Maradana → Colombo 10',
-    monthlyRateLKR: 19000,
-    vehicle: {
-      make: 'Toyota',
-      model: 'HiAce Commuter',
-      year: 2019,
-      licensePlate: 'WP ND-3190',
-      capacity: 15,
-      availableSeats: 1,
-      vehicleType: 'VAN',
-      isAirConditioned: true,
-      hasEmergencyExit: true,
-      hasFirstAidKit: true,
-      hasGPS: true,
-    },
-    schools: [
-      { id: 'school-col-07', name: 'St. Joseph\'s College', city: 'Colombo 10' },
-      { id: 'school-col-08', name: 'Holy Family Convent', city: 'Colombo 04' },
-      { id: 'school-col-09', name: 'St. Peter\'s College', city: 'Colombo 04' },
-    ]
-  },
-  {
-    id: 'driver-prof-04',
-    fullName: 'Bandula Weerakoon',
-    district: 'Kandy',
-    city: 'Peradeniya',
-    ratingAverage: 4.92,
-    ratingCount: 25,
-    experienceYears: 12,
-    bio: 'Hill country school transport specialist. Smooth mountain driving with heated defoggers, CCTV, and live geofence tracking for Trinity and Kingswood.',
-    corridor: 'Peradeniya → Getambe → Mulgampola → Kandy City Centre',
-    monthlyRateLKR: 16500,
-    vehicle: {
-      make: 'Toyota',
-      model: 'HiAce GL',
-      year: 2017,
-      licensePlate: 'CP NB-7721',
-      capacity: 14,
-      availableSeats: 2,
-      vehicleType: 'VAN',
-      isAirConditioned: true,
-      hasEmergencyExit: true,
-      hasFirstAidKit: true,
-      hasGPS: true,
-    },
-    schools: [
-      { id: 'school-kan-01', name: 'Trinity College Kandy', city: 'Kandy' },
-      { id: 'school-kan-02', name: 'Kingswood College', city: 'Kandy' },
-      { id: 'school-kan-03', name: 'Dharmaraja College', city: 'Kandy' },
-    ]
-  },
-  {
-    id: 'driver-prof-05',
-    fullName: 'Dhammika Ranasinghe',
-    district: 'Galle',
-    city: 'Unawatuna',
-    ratingAverage: 4.85,
-    ratingCount: 19,
-    experienceYears: 9,
-    bio: 'Coastal school transit operating along Matara-Galle coastal corridor. Strict speed governance and door-to-door morning student pickups.',
-    corridor: 'Habaraduwa → Unawatuna → Katugoda → Galle Fort',
-    monthlyRateLKR: 15000,
-    vehicle: {
-      make: 'Nissan',
-      model: 'Caravan DX',
-      year: 2019,
-      licensePlate: 'SP PA-4491',
-      capacity: 14,
-      availableSeats: 4,
-      vehicleType: 'VAN',
-      isAirConditioned: true,
-      hasEmergencyExit: true,
-      hasFirstAidKit: true,
-      hasGPS: true,
-    },
-    schools: [
-      { id: 'school-gal-01', name: 'Richmond College Galle', city: 'Galle' },
-      { id: 'school-gal-02', name: 'Mahinda College', city: 'Galle' },
-      { id: 'school-gal-03', name: 'Southlands College', city: 'Galle' },
-    ]
-  },
-  {
-    id: 'driver-prof-06',
-    fullName: 'Roshan Fernando',
-    district: 'Gampaha',
-    city: 'Negombo',
-    ratingAverage: 4.97,
-    ratingCount: 33,
-    experienceYears: 10,
-    bio: 'Punctual Negombo student transit with clean cabin, high-roof comfort, and direct SMS alerts on school gate arrival.',
-    corridor: 'Kochchikade → Negombo Town → Katunayake → Seeduwa',
-    monthlyRateLKR: 18500,
-    vehicle: {
-      make: 'Toyota',
-      model: 'HiAce High Roof',
-      year: 2021,
-      licensePlate: 'WP PC-1044',
-      capacity: 15,
-      availableSeats: 2,
-      vehicleType: 'VAN',
-      isAirConditioned: true,
-      hasEmergencyExit: true,
-      hasFirstAidKit: true,
-      hasGPS: true,
-    },
-    schools: [
-      { id: 'school-neg-01', name: 'Maris Stella College', city: 'Negombo' },
-      { id: 'school-neg-02', name: 'Ave Maria Convent', city: 'Negombo' },
-      { id: 'school-neg-03', name: 'Harischandra College', city: 'Negombo' },
-    ]
-  }
-];
-
-export default function DriversDirectoryPage() {
+function DriversDirectoryContent() {
+  const searchParams = useSearchParams();
   const [drivers, setDrivers] = React.useState<any[]>(CURATED_DEMO_DRIVERS);
   const [schools, setSchools] = React.useState<any[]>(INITIAL_SCHOOLS);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
 
-  // Filters
-  const [district, setDistrict] = React.useState('');
-  const [schoolId, setSchoolId] = React.useState('');
-  const [query, setQuery] = React.useState('');
+  // Filters initialized cleanly from query params (e.g. Hero Quick Route Matcher)
+  const [district, setDistrict] = React.useState(() => searchParams.get('district') || '');
+  const [schoolId, setSchoolId] = React.useState(() => searchParams.get('school') || '');
+  const [query, setQuery] = React.useState(() => searchParams.get('q') || '');
   const [vehicleType, setVehicleType] = React.useState('');
   const [activeQuickFilter, setActiveQuickFilter] = React.useState<'ALL' | 'COLOMBO' | 'KANDY' | 'AVAILABLE' | 'AC'>('ALL');
 
@@ -327,8 +146,15 @@ export default function DriversDirectoryPage() {
           d.city.toLowerCase().includes(q) ||
           d.corridor.toLowerCase().includes(q) ||
           d.vehicle?.model?.toLowerCase().includes(q) ||
-          d.vehicle?.licensePlate?.toLowerCase().includes(q)
+          d.vehicle?.licensePlate?.toLowerCase().includes(q) ||
+          d.schools.some((s: any) => s.name?.toLowerCase().includes(q))
         );
+      }
+
+      if (activeQuickFilter === 'AVAILABLE') {
+        allDrivers = allDrivers.filter((d) => (d.vehicle?.availableSeats ?? 0) > 0);
+      } else if (activeQuickFilter === 'AC') {
+        allDrivers = allDrivers.filter((d) => d.vehicle?.isAirConditioned !== false);
       }
 
       setDrivers(allDrivers);
@@ -337,7 +163,7 @@ export default function DriversDirectoryPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [district, schoolId, query, vehicleType]);
+  }, [district, schoolId, query, vehicleType, activeQuickFilter]);
 
   React.useEffect(() => {
     fetchDrivers();
@@ -397,16 +223,7 @@ export default function DriversDirectoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] dark:bg-slate-950 text-slate-900 dark:text-white relative overflow-hidden select-none pb-24">
-      
-      {/* Top Specular Sheen Gradient (Pure White Glass Effect) */}
-      <div className="absolute top-0 inset-x-0 h-[480px] bg-gradient-to-b from-white/95 via-slate-100/40 to-transparent dark:from-white/[0.04] dark:to-transparent pointer-events-none" />
-
-      {/* Subtle Luminous White Glass Highlights */}
-      <div className="absolute -top-32 -left-32 w-[600px] h-[600px] bg-white/80 dark:bg-slate-900/40 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/3 -right-32 w-[600px] h-[600px] bg-slate-100/60 dark:bg-slate-900/30 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute -bottom-24 left-1/3 w-[600px] h-[400px] bg-white/70 dark:bg-slate-900/30 rounded-full blur-[160px] pointer-events-none" />
-
+    <div className="min-h-screen drivers-dashboard dashboard-navy-yellow-bg text-white relative overflow-hidden pb-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 space-y-8 relative z-10 text-left">
         
         {/* Hero Header Showcase with Clean White Frosted Glass */}
@@ -463,7 +280,7 @@ export default function DriversDirectoryPage() {
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Active Fleet
               </span>
-              <div className="w-8 h-8 rounded-xl bg-yellow-50 dark:bg-yellow-950/40 text-[#CA8A04] dark:text-[#FACC15] border border-yellow-200 dark:border-yellow-800/50 flex items-center justify-center backdrop-blur-md">
+              <div className="w-8 h-8 rounded-xl bg-yellow-50 text-[#CA8A04] border border-yellow-200 flex items-center justify-center backdrop-blur-md">
                 <Bus className="h-4 w-4" />
               </div>
             </div>
@@ -476,16 +293,16 @@ export default function DriversDirectoryPage() {
           </div>
 
           <div className="p-5 sm:p-6 rounded-[24px] bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-800 shadow-[0_14px_35px_rgba(15,23,42,0.08),0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_22px_45px_rgba(15,23,42,0.13)] hover:-translate-y-1 transition-all duration-300 space-y-2 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Safety Vetting
               </span>
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 flex items-center justify-center backdrop-blur-md">
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center backdrop-blur-md">
                 <ShieldCheck className="h-4 w-4" />
               </div>
             </div>
-            <h3 className="text-2xl sm:text-3xl font-black text-[#CA8A04] dark:text-[#FACC15] relative z-10">
+            <h3 className="text-2xl sm:text-3xl font-black text-[#CA8A04] relative z-10">
               100%
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 font-medium relative z-10">
@@ -494,12 +311,12 @@ export default function DriversDirectoryPage() {
           </div>
 
           <div className="p-5 sm:p-6 rounded-[24px] bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-800 shadow-[0_14px_35px_rgba(15,23,42,0.08),0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_22px_45px_rgba(15,23,42,0.13)] hover:-translate-y-1 transition-all duration-300 space-y-2 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Parent Rating
               </span>
-              <div className="w-8 h-8 rounded-xl bg-yellow-50 dark:bg-yellow-950/40 text-[#CA8A04] dark:text-[#FACC15] border border-yellow-200 dark:border-yellow-800/50 flex items-center justify-center backdrop-blur-md">
+              <div className="w-8 h-8 rounded-xl bg-yellow-50 text-[#CA8A04] border border-yellow-200 flex items-center justify-center backdrop-blur-md">
                 <Star className="h-4 w-4 fill-current" />
               </div>
             </div>
@@ -512,12 +329,12 @@ export default function DriversDirectoryPage() {
           </div>
 
           <div className="p-5 sm:p-6 rounded-[24px] bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-800 shadow-[0_14px_35px_rgba(15,23,42,0.08),0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_22px_45px_rgba(15,23,42,0.13)] hover:-translate-y-1 transition-all duration-300 space-y-2 relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Telemetry
               </span>
-              <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 flex items-center justify-center backdrop-blur-md">
+              <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 flex items-center justify-center backdrop-blur-md">
                 <Radio className="h-4 w-4" />
               </div>
             </div>
@@ -537,7 +354,7 @@ export default function DriversDirectoryPage() {
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 activeQuickFilter === 'ALL'
                   ? 'btn-glass-yellow-3d font-black shadow-sm'
-                  : 'bg-slate-100 hover:bg-slate-200/70 text-[#0B1528] font-bold border border-slate-200'
+                  : 'bg-white/70 hover:bg-white text-[#0B1528] font-bold border border-white/80 backdrop-blur-md'
               }`}
             >
               All Sri Lanka ({drivers.length})
@@ -548,7 +365,7 @@ export default function DriversDirectoryPage() {
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 activeQuickFilter === 'COLOMBO'
                   ? 'btn-glass-yellow-3d font-black shadow-sm'
-                  : 'bg-slate-100 hover:bg-slate-200/70 text-[#0B1528] font-bold border border-slate-200'
+                  : 'bg-white/70 hover:bg-white text-[#0B1528] font-bold border border-white/80 backdrop-blur-md'
               }`}
             >
               Colombo Corridors
@@ -559,7 +376,7 @@ export default function DriversDirectoryPage() {
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 activeQuickFilter === 'KANDY'
                   ? 'btn-glass-yellow-3d font-black shadow-sm'
-                  : 'bg-slate-100 hover:bg-slate-200/70 text-[#0B1528] font-bold border border-slate-200'
+                  : 'bg-white/70 hover:bg-white text-[#0B1528] font-bold border border-white/80 backdrop-blur-md'
               }`}
             >
               Kandy Hill Country
@@ -570,7 +387,7 @@ export default function DriversDirectoryPage() {
               className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 activeQuickFilter === 'AC'
                   ? 'btn-glass-yellow-3d font-black shadow-sm'
-                  : 'bg-slate-100 hover:bg-slate-200/70 text-[#0B1528] font-bold border border-slate-200'
+                  : 'bg-white/70 hover:bg-white text-[#0B1528] font-bold border border-white/80 backdrop-blur-md'
               }`}
             >
               Dual A/C Vans Only
@@ -670,7 +487,7 @@ export default function DriversDirectoryPage() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="h-96 rounded-[28px] bg-white/60 dark:bg-[#0B1528]/80 animate-pulse border border-slate-200/60 dark:border-white/10" />
+              <DriverCardSkeleton key={i} />
             ))}
           </div>
         ) : drivers.length === 0 ? (
@@ -751,11 +568,11 @@ export default function DriversDirectoryPage() {
                           </span>
                         </div>
                         
-                        <div className="flex items-center gap-3 text-slate-500 font-medium pt-0.5">
+                        <div className="flex items-center flex-wrap gap-2 sm:gap-3 text-slate-500 font-medium pt-0.5">
                           <span className="font-mono font-bold text-[#0B1528]">{vehicle.licensePlate || 'WP NA-4521'}</span>
-                          <span>•</span>
-                          <span>{vehicle.hasAirConditioning !== false ? 'Dual A/C' : 'Standard Airflow'}</span>
-                          <span>•</span>
+                          <span aria-hidden="true">•</span>
+                          <span>{(vehicle.isAirConditioned ?? vehicle.hasAirConditioning) !== false ? 'Dual A/C' : 'Standard Airflow'}</span>
+                          <span aria-hidden="true">•</span>
                           <span>First-Aid Kit</span>
                         </div>
                       </div>
@@ -779,7 +596,7 @@ export default function DriversDirectoryPage() {
                           {schoolsList.slice(0, 3).map((school: any) => (
                             <span
                               key={school.id || school.name}
-                              className="px-2.5 py-1 rounded-lg bg-blue-50/70 border border-blue-200/70 text-[#0B1528] text-[11px] font-semibold truncate max-w-[210px]"
+                              className="px-2.5 py-1 rounded-lg bg-blue-50/80 border border-blue-200/80 text-[#0B1528] text-[11px] font-semibold truncate max-w-[210px]"
                             >
                               {school.name}
                             </span>
@@ -856,6 +673,8 @@ export default function DriversDirectoryPage() {
                     </p>
                   </div>
                   <button
+                    type="button"
+                    aria-label="Close inquiry modal"
                     onClick={() => setInquiryModalOpen(false)}
                     className="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer transition-colors"
                   >
@@ -983,7 +802,7 @@ export default function DriversDirectoryPage() {
               src="/images/safety-charter-driver-kids.jpg"
               alt="SchoolRide LK Child Transport Safety Standard"
               fill
-              priority
+              sizes="(max-width: 1024px) 100vw, 1280px"
               className="object-cover object-center"
             />
           </div>
@@ -1033,5 +852,23 @@ export default function DriversDirectoryPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function DriversDirectoryPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="min-h-screen dashboard-navy-yellow-bg py-12 px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <DriverCardSkeleton />
+            <DriverCardSkeleton />
+            <DriverCardSkeleton />
+          </div>
+        </div>
+      }
+    >
+      <DriversDirectoryContent />
+    </React.Suspense>
   );
 }

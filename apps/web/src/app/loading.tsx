@@ -3,7 +3,7 @@ import { Skeleton, MetricStatsSkeleton, SchoolCardSkeleton } from '@/components/
 
 export default function GlobalLoading() {
   return (
-    <div className="flex flex-col w-full min-h-screen bg-[#FAFDF9] dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-x-hidden">
+    <div className="flex flex-col w-full min-h-screen bg-[#FFFFFF] dark:bg-slate-950 text-slate-900 dark:text-slate-100 overflow-x-hidden">
       {/* Hero Section Skeleton */}
       <section className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 pt-8 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
@@ -33,7 +33,7 @@ export default function GlobalLoading() {
         {/* 4 Bottom Cards Skeleton */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="p-5 rounded-[22px] bg-white dark:bg-slate-900 border border-emerald-950/[0.08] shadow-sm flex items-center gap-4">
+            <div key={i} className="p-5 rounded-[22px] bg-white dark:bg-slate-900 border border-slate-200/80 shadow-sm flex items-center gap-4">
               <Skeleton className="h-14 w-14 rounded-2xl shrink-0" />
               <div className="space-y-2 flex-1">
                 <Skeleton className="h-5 w-28 rounded" />
@@ -45,7 +45,7 @@ export default function GlobalLoading() {
       </section>
 
       {/* Marquee Stats Skeleton */}
-      <section className="py-10 border-y border-emerald-100/60 dark:border-slate-800 bg-[#F4FAF5] dark:bg-slate-900/60">
+      <section className="py-10 border-y border-blue-900/30 bg-[#0B1528]">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-8">
           <MetricStatsSkeleton />
         </div>

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api-client';
-import { Skeleton } from '@/components/ui/skeleton';
+import { PortalDashboardSkeleton } from '@/components/ui/skeleton';
 import {
   User,
   Phone,
@@ -235,6 +235,10 @@ export default function DriverSettingsPage() {
       school.city.toLowerCase().includes(q)
     );
   });
+
+  if (authLoading || isLoading) {
+    return <PortalDashboardSkeleton kpiCount={0} />;
+  }
 
   return (
     <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-24">
@@ -1045,7 +1049,7 @@ export default function DriverSettingsPage() {
             <form onSubmit={handleSavePayout} className="space-y-6">
               
               {/* Bank Preview Card */}
-              <div className="rounded-[28px] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-950 text-white p-6 sm:p-8 shadow-xl relative overflow-hidden">
+              <div className="rounded-[28px] bg-[#0B1528] border border-blue-900/40 text-white p-6 sm:p-8 shadow-xl relative overflow-hidden">
                 <div className="absolute right-0 top-0 w-64 h-64 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none" />
                 
                 <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">

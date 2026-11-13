@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import * as React from 'react';
+
+export const metadata: Metadata = {
+  title: 'Parent Portal',
+  robots: { index: false, follow: false },
+};
 
 export default function ParentLayout({
   children,
@@ -6,7 +12,7 @@ export default function ParentLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-full font-sans font-['DM_Sans',sans-serif] parent-dashboard">
+    <div className="w-full font-sans parent-dashboard">
       {children}
     </div>
   );

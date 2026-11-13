@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api-client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Skeleton } from '@/components/ui/skeleton';
+import { PortalDashboardSkeleton } from '@/components/ui/skeleton';
 import {
   Car,
   Plus,
@@ -161,6 +161,10 @@ export default function DriverVehiclesPage() {
   // Metrics
   const totalFleetCapacity = vehicles.reduce((sum, v) => sum + (v.capacity || 14), 0);
   const activeFleetCount = vehicles.length;
+
+  if (authLoading || isLoading) {
+    return <PortalDashboardSkeleton kpiCount={4} />;
+  }
 
   return (
     <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">

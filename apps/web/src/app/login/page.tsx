@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import {
   Mail,
@@ -25,9 +25,16 @@ import {
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
-export default function LoginPage() {
+function getSafeRedirect(raw: string | null): string | null {
+  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return null;
+  return raw;
+}
+
+function LoginContent() {
   const { login, user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTarget = getSafeRedirect(searchParams.get('redirect'));
 
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -36,18 +43,21 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [selectedRole, setSelectedRole] = React.useState<'Parent' | 'Driver' | 'Admin' | null>(null);
 
-  // If already logged in, redirect to appropriate role portal
+  // If already logged in, redirect to requested destination or role portal
   React.useEffect(() => {
     if (user) {
-      if (user.role === 'ADMIN') router.push('/admin/dashboard');
+      if (redirectTarget) {
+        router.push(redirectTarget);
+      } else if (user.role === 'ADMIN') router.push('/admin/dashboard');
       else if (user.role === 'DRIVER') router.push('/driver/dashboard');
       else router.push('/parent/dashboard');
     }
-  }, [user, router]);
+  }, [user, router, redirectTarget]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail || !password) {
       setErrorMessage('Please enter both email address and password.');
       return;
     }
@@ -56,9 +66,11 @@ export default function LoginPage() {
     setErrorMessage(null);
 
     try {
-      const loggedInUser = await login(email, password);
+      const loggedInUser = await login(trimmedEmail, password);
       toast.success(`Welcome back, ${loggedInUser.fullName}!`);
-      if (loggedInUser.role === 'ADMIN') router.push('/admin/dashboard');
+      if (redirectTarget) {
+        router.push(redirectTarget);
+      } else if (loggedInUser.role === 'ADMIN') router.push('/admin/dashboard');
       else if (loggedInUser.role === 'DRIVER') router.push('/driver/dashboard');
       else router.push('/parent/dashboard');
     } catch (err: any) {
@@ -76,18 +88,18 @@ export default function LoginPage() {
 
     if (role === 'Parent') {
       setEmail('parent@schoolride.lk');
-      setPassword('Password123!');
+      setPassword('ParentPassword123!');
     } else if (role === 'Driver') {
       setEmail('sunil.driver@schoolride.lk');
-      setPassword('Password123!');
+      setPassword('DriverPassword123!');
     } else if (role === 'Admin') {
       setEmail('admin@schoolride.lk');
-      setPassword('Password123!');
+      setPassword('AdminPassword123!');
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] text-[#0B1528] flex items-center justify-center p-3 sm:p-6 lg:p-10 relative overflow-hidden select-none">
+    <div className="min-h-screen bg-[#FFFFFF] text-[#0B1528] flex items-center justify-center p-3 sm:p-6 lg:p-10 relative overflow-hidden">
       
       {/* Clean White Texture Subtle Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />
@@ -322,13 +334,15 @@ export default function LoginPage() {
 
             {/* Email Field */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-[#0B1528] block">
+              <label htmlFor="login-email" className="text-xs font-bold text-[#0B1528] block">
                 Email Address
               </label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <input
+                  id="login-email"
                   type="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -341,7 +355,7 @@ export default function LoginPage() {
             {/* Password Field */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-[#0B1528]">
+                <label htmlFor="login-password" className="text-xs font-bold text-[#0B1528]">
                   Password
                 </label>
                 <Link
@@ -354,7 +368,9 @@ export default function LoginPage() {
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <input
+                  id="login-password"
                   type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -364,6 +380,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-0.5"
                   title={showPassword ? 'Hide password' : 'Show password'}
                 >
@@ -396,23 +413,23 @@ export default function LoginPage() {
           </div>
 
           {/* Social Auth Buttons */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {/* Google Button */}
             <button
               type="button"
               onClick={() => {
                 selectQuickRole('Parent');
-                toast.info('Signed in with Google test account (Chathura Bandara).');
+                toast.info('Demo parent credentials pre-filled. Click "Sign In to Portal" to continue.');
               }}
               className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-2xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-[#0B1528] transition-all cursor-pointer shadow-2xs"
             >
-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
                 <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
               </svg>
-              <span>Continue with Google</span>
+              <span>Parent Demo Fill</span>
             </button>
 
             {/* Microsoft Button */}
@@ -420,17 +437,17 @@ export default function LoginPage() {
               type="button"
               onClick={() => {
                 selectQuickRole('Driver');
-                toast.info('Signed in with Microsoft test account (Sunil Wickramasinghe).');
+                toast.info('Demo driver credentials pre-filled. Click "Sign In to Portal" to continue.');
               }}
               className="flex items-center justify-center gap-2 px-3 py-2.5 rounded-2xl border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-[#0B1528] transition-all cursor-pointer shadow-2xs"
             >
-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 23 23">
+              <svg className="w-4 h-4 shrink-0" viewBox="0 0 23 23" aria-hidden="true">
                 <path fill="#f35325" d="M1 1h10v10H1z"/>
                 <path fill="#81bc06" d="M12 1h10v10H12z"/>
                 <path fill="#05a6f0" d="M1 12h10v10H1z"/>
                 <path fill="#ffba08" d="M12 12h10v10H12z"/>
               </svg>
-              <span>Continue with Microsoft</span>
+              <span>Driver Demo Fill</span>
             </button>
           </div>
 
@@ -449,5 +466,19 @@ export default function LoginPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="min-h-screen bg-[#FFFFFF] flex items-center justify-center p-6">
+          <div className="w-full max-w-5xl h-[540px] rounded-[36px] bg-slate-100 animate-pulse" />
+        </div>
+      }
+    >
+      <LoginContent />
+    </React.Suspense>
   );
 }

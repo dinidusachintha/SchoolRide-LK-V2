@@ -98,6 +98,25 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return () => clearInterval(interval);
   }, []);
 
+  // Close drawer on route change and Escape key; lock body scroll when open
+  React.useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  React.useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.body.style.overflow = prev;
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
   // Protect Admin route
   React.useEffect(() => {
     if (!isLoading && (!user || user.role !== 'ADMIN')) {
@@ -108,12 +127,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const isActive = (href: string) => pathname === href;
 
   return (
-    <div className="min-h-screen flex bg-[#F8FAFC] text-slate-900 selection:bg-[#0B2345] selection:text-white antialiased font-sans font-['DM_Sans',sans-serif] admin-dashboard">
+    <div className="min-h-screen flex bg-[#0B1528] text-slate-900 selection:bg-[#0B2345] selection:text-white antialiased font-sans admin-dashboard">
       
       {/* ======================================================== */}
       {/* 1. DESKTOP SIDEBAR (DARK NAVY BLUE THEME)               */}
       {/* ======================================================== */}
-      <aside className="hidden lg:flex w-72 flex-col justify-between border-r border-white/10 bg-[#0B1528] p-5 shrink-0 select-none shadow-[4px_0_24px_rgba(0,0,0,0.25)] text-white">
+      <aside className="hidden lg:flex w-72 flex-col justify-between border-r border-white/10 bg-[#0B1528] p-5 shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.25)] text-white">
         <div className="space-y-6">
           
           {/* Logo & Root Tag */}
@@ -197,8 +216,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
 
             <button
+              type="button"
               onClick={() => logout()}
               title="Logout"
+              aria-label="Sign out of Admin Console"
               className="p-2 rounded-xl bg-white/5 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 border border-white/10 hover:border-rose-500/30 transition-colors cursor-pointer"
             >
               <LogOut className="h-4 w-4" />
@@ -217,7 +238,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-3 lg:hidden">
             <button
+              type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="admin-mobile-drawer"
+              aria-label="Toggle Admin Navigation"
               className="p-2 rounded-xl bg-[#0B1528]/10 text-[#0B1528] border border-[#0B1528]/15 hover:bg-[#0B1528]/15 transition-colors cursor-pointer"
             >
               {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}

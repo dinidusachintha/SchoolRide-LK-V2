@@ -71,19 +71,28 @@ export default function ParentDashboardPage() {
 
   if (isLoading || authLoading) {
     return (
-      <div className="min-h-screen bg-slate-50/70 dark:bg-slate-950 text-slate-900 dark:text-white py-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <Skeleton className="h-10 w-64 rounded-xl" />
-          <Skeleton className="h-44 w-full rounded-3xl" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            <Skeleton className="h-28 rounded-2xl" />
-            <Skeleton className="h-28 rounded-2xl" />
-            <Skeleton className="h-28 rounded-2xl" />
-            <Skeleton className="h-28 rounded-2xl" />
+      <div className="min-h-screen dashboard-navy-yellow-bg text-[#0B1528] py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto space-y-8 relative z-10">
+          <div className="flex items-center gap-2 pb-2 border-b border-white/15">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} className="h-9 w-28 rounded-full" />
+            ))}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Skeleton className="h-56 rounded-3xl" />
-            <Skeleton className="h-56 rounded-3xl" />
+          <div className="rounded-[32px] p-6 sm:p-8 border border-white/75 bg-white/65 backdrop-blur-xl space-y-4">
+            <Skeleton className="h-6 w-48 rounded-full" />
+            <Skeleton className="h-10 w-80 rounded-xl" />
+            <Skeleton className="h-4 w-96 rounded-lg" />
+          </div>
+          <div className="rounded-[32px] p-6 sm:p-8 border border-white/75 bg-white/65 backdrop-blur-xl space-y-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-28 rounded-[22px]" />
+              ))}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Skeleton className="h-56 rounded-[24px]" />
+              <Skeleton className="h-56 rounded-[24px]" />
+            </div>
           </div>
         </div>
       </div>

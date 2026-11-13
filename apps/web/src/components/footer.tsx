@@ -9,7 +9,12 @@ export function Footer() {
   const pathname = usePathname();
 
   if (
-    pathname.startsWith('/admin') ||
+    pathname === '/admin' ||
+    pathname.startsWith('/admin/') ||
+    pathname === '/parent' ||
+    pathname.startsWith('/parent/') ||
+    pathname === '/driver' ||
+    pathname.startsWith('/driver/') ||
     pathname === '/login' ||
     pathname === '/register' ||
     pathname === '/forgot-password' ||
@@ -17,8 +22,9 @@ export function Footer() {
   ) {
     return null;
   }
+
   return (
-    <footer className="border-t border-white/10 bg-black text-white mt-auto">
+    <footer className="relative z-20 border-t border-white/10 bg-[#050b16] text-white mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
           {/* Column 1: Platform Info */}

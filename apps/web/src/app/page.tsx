@@ -540,6 +540,7 @@ export default function HomePage() {
   const [isFiltering, setIsFiltering] = React.useState(false);
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(0);
   const [isSchoolsDropdownOpen, setIsSchoolsDropdownOpen] = React.useState(false);
+  const [selectedSchoolId, setSelectedSchoolId] = React.useState<number>(1);
   const [activeSafetyTab, setActiveSafetyTab] = React.useState<'driver' | 'vehicle' | 'telemetry' | 'attendance'>('attendance');
 
   // Feedback & Parent Reviews states
@@ -766,6 +767,7 @@ export default function HomePage() {
     return matchesDistrict && matchesSearch;
   });
 
+  const selectedSchool = schoolsData.find((s) => s.id === selectedSchoolId) || schoolsData[0];
   const visibleSchools = filteredSchools.slice(0, 3);
   const dropdownSchools = filteredSchools.slice(3);
 
@@ -1791,18 +1793,18 @@ export default function HomePage() {
       {/* 7. ISLAND-WIDE SCHOOL DIRECTORY (DARK NAVY BLUE THEME)   */}
       {/* ======================================================== */}
       <section id="routes" className="py-20 md:py-28 border-b border-blue-900/30 bg-[#0B1528] text-white relative overflow-hidden">
-        
         {/* Subtle Ambient Navy Glow Accents */}
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 space-y-12">
-          
+        <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-[#FACC15]/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12 xl:px-16 space-y-10 sm:space-y-12">
+          {/* Header Row: Title on Left, Dropdown Button & Controls on Right */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col md:flex-row md:items-end justify-between gap-6 text-left"
+            className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 text-left"
           >
             <div className="space-y-3 max-w-2xl">
               <span className="px-3.5 py-1.5 rounded-full bg-[#FACC15]/15 text-[#FACC15] text-xs font-bold border border-[#FACC15]/30">
@@ -1812,212 +1814,228 @@ export default function HomePage() {
                 Covering <span className="text-[#FACC15]">Leading Schools</span> Across Sri Lanka
               </h2>
               <p className="text-sm sm:text-base text-slate-400">
-                Connecting top national, private, and international campuses with verified neighborhood van networks.
+                Select your school from the dropdown to explore verified neighborhood van networks, active fleets, and daily commute routes.
               </p>
             </div>
 
-            {/* District Filter Pills & Quick Dropdown Button */}
-            <div className="flex flex-wrap items-center gap-2">
-              {['All', 'Colombo', 'Kandy'].map((district) => (
+            {/* Dropdown Selector Button & Quick Navigation Controls */}
+            <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto relative z-30">
+              {/* Dropdown Button with Floating Popover */}
+              <div className="relative flex-1 sm:flex-initial">
                 <button
-                  key={district}
-                  onClick={() => handleDistrictFilter(district)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-                    selectedDistrict === district
-                      ? 'bg-[#FACC15] text-slate-950 font-black shadow-md'
-                      : 'bg-white/10 text-white/80 border border-white/20 hover:bg-white/20 hover:text-white'
-                  }`}
-                >
-                  {district === 'All' ? 'All Districts' : district}
-                </button>
-              ))}
-
-              {dropdownSchools.length > 0 && (
-                <button
+                  type="button"
                   onClick={() => setIsSchoolsDropdownOpen(!isSchoolsDropdownOpen)}
-                  className={`px-4 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-                    isSchoolsDropdownOpen
-                      ? 'bg-[#FACC15] text-slate-950 font-black shadow-md'
-                      : 'bg-white/10 text-[#FACC15] border border-[#FACC15]/40 hover:bg-white/20'
-                  }`}
-                >
-                  <School className="h-3.5 w-3.5 text-[#FACC15]" />
-                  <span>More Schools ({dropdownSchools.length})</span>
-                  <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${isSchoolsDropdownOpen ? 'rotate-180' : ''}`} />
-                </button>
-              )}
-            </div>
-          </motion.div>
-
-          {/* School Cards Grid (Showing strictly 3 primary cards + dropdown for remaining) */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="space-y-8"
-          >
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-60px" }} variants={cardsContainerVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {isFiltering ? (
-                <>
-                  <SchoolCardSkeleton />
-                  <SchoolCardSkeleton />
-                  <SchoolCardSkeleton />
-                </>
-              ) : filteredSchools.length === 0 ? (
-                <div className="col-span-full py-12 text-center text-slate-400">
-                  <p className="text-sm font-semibold">No schools found matching your search. Try adjusting your query or district.</p>
-                </div>
-              ) : (
-                visibleSchools.map((school) => (
-                  <motion.div key={school.id} variants={cardItemVariants} whileHover={{ y: -6, transition: { duration: 0.25, ease: [0.16, 1, 0.3, 1] } }} className="p-6 rounded-[26px] bg-white/[0.06] backdrop-blur-xl border border-white/[0.14] text-white shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:shadow-xl hover:border-white/30 transition-all duration-300 space-y-4 flex flex-col justify-between"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-white/10 text-[#FACC15] border border-[#FACC15]/30">
-                          {school.badge}
-                        </span>
-                        <span className="text-xs font-bold text-[#FACC15] flex items-center gap-1">
-                          <Bus className="h-3.5 w-3.5" /> {school.vansCount} Active Vans
-                        </span>
-                      </div>
-
-                      <h3 className="text-lg font-extrabold text-white">
-                        {school.name}
-                      </h3>
-                      <p className="text-xs text-slate-400 flex items-center gap-1.5">
-                        <MapPin className="h-3.5 w-3.5 text-[#FACC15]" /> {school.location}
-                      </p>
-
-                      <div className="space-y-1.5 pt-2 border-t border-white/10">
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
-                          Popular Commute Routes:
-                        </span>
-                        {school.popularRoutes.map((route, i) => (
-                          <div key={i} className="text-xs text-slate-200 flex items-center gap-2">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#FACC15]" />
-                            <span>{route}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                      <div className="text-left">
-                        <span className="text-[10px] text-slate-400 block font-semibold">Typical Monthly Fee</span>
-                        <span className="text-xs font-black text-[#FACC15]">{school.monthlyRate}</span>
-                      </div>
-                      <Link href="/drivers">
-                        <button className="btn-glass-yellow-3d px-4 py-1.5 text-xs font-black">
-                          View Vans
-                        </button>
-                      </Link>
-                    </div>
-                  </motion.div>
-                ))
-              )}
-            </motion.div>
-
-            {/* Dropdown Toggle Button below the 3 cards */}
-            {!isFiltering && dropdownSchools.length > 0 && (
-              <div className="flex flex-col items-center justify-center pt-2">
-                <button
-                  onClick={() => setIsSchoolsDropdownOpen(!isSchoolsDropdownOpen)}
-                  className="btn-glass-yellow-3d px-8 py-3.5 text-xs sm:text-sm"
+                  className="w-full sm:w-auto min-w-[260px] md:min-w-[300px] px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm border border-white/20 backdrop-blur-xl shadow-lg transition-all flex items-center justify-between gap-3 cursor-pointer group"
                   aria-expanded={isSchoolsDropdownOpen}
                 >
-                  <School className="h-4 w-4 text-[#FACC15] group-hover:scale-110 transition-transform" />
-                  <span>
-                    {isSchoolsDropdownOpen
-                      ? `Close Additional Schools (${dropdownSchools.length})`
-                      : `View Other Schools in Dropdown (${dropdownSchools.length} More Campuses)`}
-                  </span>
+                  <div className="flex items-center gap-2.5 min-w-0 text-left">
+                    <div className="w-8 h-8 rounded-xl bg-[#FACC15]/20 border border-[#FACC15]/30 flex items-center justify-center shrink-0">
+                      <School className="h-4 w-4 text-[#FACC15]" />
+                    </div>
+                    <div className="truncate">
+                      <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">Selected Campus</span>
+                      <span className="text-xs sm:text-sm font-extrabold text-white group-hover:text-[#FACC15] transition-colors truncate block">
+                        {selectedSchool.name}
+                      </span>
+                    </div>
+                  </div>
                   <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-300 ${
+                    className={`h-4 w-4 text-[#FACC15] shrink-0 transition-transform duration-300 ${
                       isSchoolsDropdownOpen ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
-              </div>
-            )}
 
-            {/* Expandable Dropdown Section with Smooth Animation */}
-            <AnimatePresence>
-              {isSchoolsDropdownOpen && dropdownSchools.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  className="overflow-hidden pt-2 space-y-4"
-                >
-                  <div className="pt-4 flex items-center justify-between border-t border-white/10">
-                    <span className="text-xs font-bold uppercase tracking-wider text-[#FACC15] flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-[#FACC15] animate-pulse" />
-                      Other Mapped Schools ({dropdownSchools.length})
-                    </span>
-                    <span className="text-xs text-slate-400 hidden sm:inline">
-                      All schools vetted with active van fleets
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {dropdownSchools.map((school) => (
+                {/* Dropdown Menu Modal / Sheet */}
+                <AnimatePresence>
+                  {isSchoolsDropdownOpen && (
+                    <>
+                      {/* Invisible backdrop to dismiss click outside */}
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setIsSchoolsDropdownOpen(false)}
+                      />
                       <motion.div
-                        key={school.id}
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="p-6 rounded-[26px] bg-white/[0.06] backdrop-blur-xl border border-white/[0.14] text-white shadow-[0_4px_24px_rgba(0,0,0,0.4)] hover:shadow-xl hover:border-white/30 hover:-translate-y-1 transition-all duration-300 space-y-4 flex flex-col justify-between"
+                        initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
+                        className="absolute right-0 sm:right-0 left-0 sm:left-auto top-full mt-2 w-full sm:w-80 md:w-96 max-h-80 overflow-y-auto rounded-2xl bg-[#0B1528]/95 backdrop-blur-2xl border border-white/20 shadow-2xl p-2 z-50 space-y-1 text-left"
                       >
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <span className="px-3 py-1 rounded-full text-[11px] font-bold bg-white/10 text-[#FACC15] border border-[#FACC15]/30">
-                              {school.badge}
-                            </span>
-                            <span className="text-xs font-bold text-[#FACC15] flex items-center gap-1">
-                              <Bus className="h-3.5 w-3.5" /> {school.vansCount} Active Vans
-                            </span>
-                          </div>
-
-                          <h3 className="text-lg font-extrabold text-white">
-                            {school.name}
-                          </h3>
-                          <p className="text-xs text-slate-400 flex items-center gap-1.5">
-                            <MapPin className="h-3.5 w-3.5 text-[#FACC15]" /> {school.location}
-                          </p>
-
-                          <div className="space-y-1.5 pt-2 border-t border-white/10">
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
-                              Popular Commute Routes:
-                            </span>
-                            {school.popularRoutes.map((route, i) => (
-                              <div key={i} className="text-xs text-slate-200 flex items-center gap-2">
-                                <span className="h-1.5 w-1.5 rounded-full bg-[#FACC15]" />
-                                <span>{route}</span>
+                        <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-white/10 flex items-center justify-between">
+                          <span>Select From 9 Mapped Campuses</span>
+                          <span className="text-[#FACC15]">25 Districts</span>
+                        </div>
+                        {schoolsData.map((school) => {
+                          const isSelected = school.id === selectedSchool.id;
+                          return (
+                            <button
+                              key={school.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedSchoolId(school.id);
+                                setIsSchoolsDropdownOpen(false);
+                              }}
+                              className={`w-full p-2.5 sm:p-3 rounded-xl transition-all flex items-center justify-between gap-3 cursor-pointer text-left ${
+                                isSelected
+                                  ? 'bg-[#FACC15] text-slate-950 font-black shadow-sm'
+                                  : 'hover:bg-white/10 text-white'
+                              }`}
+                            >
+                              <div className="min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs sm:text-sm font-bold truncate">{school.name}</span>
+                                  <span
+                                    className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                                      isSelected ? 'bg-black/15 text-slate-950' : 'bg-white/10 text-[#FACC15]'
+                                    }`}
+                                  >
+                                    {school.district}
+                                  </span>
+                                </div>
+                                <p
+                                  className={`text-[11px] truncate mt-0.5 ${
+                                    isSelected ? 'text-slate-800' : 'text-slate-400'
+                                  }`}
+                                >
+                                  {school.location}
+                                </p>
                               </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                          <div className="text-left">
-                            <span className="text-[10px] text-slate-400 block font-semibold">Typical Monthly Fee</span>
-                            <span className="text-xs font-black text-[#FACC15]">{school.monthlyRate}</span>
-                          </div>
-                          <Link href="/drivers">
-                            <button className="btn-glass-yellow-3d px-4 py-1.5 text-xs font-black">
-                              View Vans
+                              <div className="text-right shrink-0">
+                                <span
+                                  className={`text-[11px] font-bold block ${
+                                    isSelected ? 'text-slate-950' : 'text-[#FACC15]'
+                                  }`}
+                                >
+                                  {school.vansCount} Vans
+                                </span>
+                              </div>
                             </button>
-                          </Link>
-                        </div>
+                          );
+                        })}
                       </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Prev / Next Quick Step Buttons */}
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentIndex = schoolsData.findIndex((s) => s.id === selectedSchool.id);
+                    const prevIndex = (currentIndex - 1 + schoolsData.length) % schoolsData.length;
+                    setSelectedSchoolId(schoolsData[prevIndex].id);
+                  }}
+                  aria-label="Previous School"
+                  title="Previous School"
+                  className="w-11 h-11 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-95"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const currentIndex = schoolsData.findIndex((s) => s.id === selectedSchool.id);
+                    const nextIndex = (currentIndex + 1) % schoolsData.length;
+                    setSelectedSchoolId(schoolsData[nextIndex].id);
+                  }}
+                  aria-label="Next School"
+                  title="Next School"
+                  className="w-11 h-11 rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/20 flex items-center justify-center transition-all cursor-pointer shadow-sm active:scale-95"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
           </motion.div>
+
+          {/* Only ONE School Card Displayed (Fully Mobile Responsive) */}
+          <div className="w-full max-w-3xl mx-auto">
+            <motion.div
+              key={selectedSchool.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="p-6 sm:p-8 md:p-10 rounded-[28px] sm:rounded-[36px] bg-white/[0.08] backdrop-blur-2xl border border-white/20 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] relative overflow-hidden space-y-6 text-left group"
+            >
+              {/* Subtle inner ambient glows */}
+              <div className="absolute -right-20 -top-20 w-72 h-72 bg-[#FACC15]/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute -left-20 -bottom-20 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              {/* Card Header Row: Badge, District & Vans Count */}
+              <div className="flex flex-wrap items-center justify-between gap-3 relative z-10">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-white/10 text-[#FACC15] border border-[#FACC15]/30 shadow-xs backdrop-blur-md">
+                    {selectedSchool.badge}
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-slate-300 border border-white/15">
+                    {selectedSchool.district} District
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 flex items-center gap-1.5 shadow-xs">
+                    <Bus className="h-3.5 w-3.5" />
+                    <span>{selectedSchool.vansCount} Active Vans</span>
+                  </span>
+                  <span className="text-xs text-slate-300 font-semibold hidden sm:inline">
+                    {selectedSchool.students}+ Students
+                  </span>
+                </div>
+              </div>
+
+              {/* School Name & Location */}
+              <div className="space-y-2 relative z-10">
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight leading-tight">
+                  {selectedSchool.name}
+                </h3>
+                <p className="text-xs sm:text-sm text-slate-300 flex items-center gap-2 font-medium">
+                  <MapPin className="h-4 w-4 text-[#FACC15] shrink-0" />
+                  <span>{selectedSchool.location}</span>
+                </p>
+              </div>
+
+              {/* Popular Commute Corridors Covered */}
+              <div className="space-y-2.5 pt-2 border-t border-white/10 relative z-10">
+                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+                  Popular Commute Corridors Covered:
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  {selectedSchool.popularRoutes.map((route, i) => (
+                    <div
+                      key={i}
+                      className="p-3 sm:p-3.5 rounded-2xl bg-white/[0.06] border border-white/10 text-xs text-slate-200 flex items-center gap-2.5 shadow-xs"
+                    >
+                      <span className="h-2 w-2 rounded-full bg-[#FACC15] shrink-0" />
+                      <span className="font-semibold leading-relaxed truncate sm:whitespace-normal">{route}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Card Footer: Monthly Rate & CTA Button */}
+              <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
+                <div>
+                  <span className="text-[11px] text-slate-400 block font-semibold uppercase tracking-wider">
+                    Typical Monthly Fee
+                  </span>
+                  <span className="text-base sm:text-lg font-black text-[#FACC15] font-mono">
+                    {selectedSchool.monthlyRate}
+                  </span>
+                </div>
+
+                <Link href="/drivers" className="w-full sm:w-auto">
+                  <button className="btn-glass-yellow-3d px-6 sm:px-8 py-3 text-xs sm:text-sm font-black shadow-lg cursor-pointer flex items-center justify-center gap-2 w-full sm:w-auto">
+                    <Bus className="h-4 w-4" />
+                    <span>View Verified Vans for {selectedSchool.name.split(' ')[0]}</span>
+                    <ArrowRight className="h-4 w-4" />
+                  </button>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -2118,51 +2136,51 @@ export default function HomePage() {
 
               <div className="space-y-4 pt-2">
                 {/* Feature 1 */}
-                <div className="flex items-start gap-4 p-4.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-yellow-400 dark:hover:border-yellow-600 hover:shadow-[0_8px_24px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 shadow-xs transition-all duration-200">
-                  <div className="h-11 w-11 rounded-2xl bg-[#FEF08A] text-[#713F12] border border-yellow-300 flex items-center justify-center shrink-0 shadow-xs">
+                <div className="flex items-start gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-yellow-400 dark:hover:border-yellow-600 hover:shadow-[0_8px_24px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 shadow-xs transition-all duration-200">
+                  <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-[#FEF08A] text-[#713F12] border border-yellow-300 flex items-center justify-center shrink-0 shadow-xs mt-0.5">
                     <Clock className="h-5 w-5 text-[#713F12]" />
                   </div>
-                  <div>
-                    <h4 className="text-sm sm:text-base font-black text-slate-950 dark:text-white">
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <h4 className="text-sm sm:text-base font-black text-slate-950 dark:text-white leading-snug">
                       Precision Doorstep <span className="text-[#CA8A04] dark:text-[#FACC15]">ETA Countdown</span>
                     </h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                       Get a 10-minute and 2-minute proximity chime before the van pulls up to your residential gate.
                     </p>
                   </div>
                 </div>
 
                 {/* Feature 2 */}
-                <div className="flex items-start gap-4 p-4.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-yellow-400 dark:hover:border-yellow-600 hover:shadow-[0_8px_24px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 shadow-xs transition-all duration-200">
-                  <div className="h-11 w-11 rounded-2xl bg-[#FEF08A] text-[#713F12] border border-yellow-300 flex items-center justify-center shrink-0 shadow-xs">
+                <div className="flex items-start gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-yellow-400 dark:hover:border-yellow-600 hover:shadow-[0_8px_24px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 shadow-xs transition-all duration-200">
+                  <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-[#FEF08A] text-[#713F12] border border-yellow-300 flex items-center justify-center shrink-0 shadow-xs mt-0.5">
                     <ShieldCheck className="h-5 w-5 text-[#713F12]" />
                   </div>
-                  <div>
-                    <h4 className="text-sm sm:text-base font-black text-slate-950 dark:text-white">
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <h4 className="text-sm sm:text-base font-black text-slate-950 dark:text-white leading-snug">
                       Safe Speed Limit <span className="text-[#CA8A04] dark:text-[#FACC15]">Monitoring &amp; Audit</span>
                     </h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                       Automated telemetry logs van speed continuously to guarantee drivers adhere strictly to school zone speed limits.
                     </p>
                   </div>
                 </div>
 
                 {/* Feature 3 */}
-                <div className="flex items-start gap-4 p-4.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-yellow-400 dark:hover:border-yellow-600 hover:shadow-[0_8px_24px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 shadow-xs transition-all duration-200">
-                  <div className="h-11 w-11 rounded-2xl bg-[#FEF08A] text-[#713F12] border border-yellow-300 flex items-center justify-center shrink-0 shadow-xs">
+                <div className="flex items-start gap-3.5 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-yellow-400 dark:hover:border-yellow-600 hover:shadow-[0_8px_24px_rgba(250,204,21,0.12)] hover:-translate-y-0.5 shadow-xs transition-all duration-200">
+                  <div className="h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-[#FEF08A] text-[#713F12] border border-yellow-300 flex items-center justify-center shrink-0 shadow-xs mt-0.5">
                     <Phone className="h-5 w-5 text-[#713F12]" />
                   </div>
-                  <div>
-                    <h4 className="text-sm sm:text-base font-black text-slate-950 dark:text-white">
+                  <div className="flex-1 min-w-0 space-y-1">
+                    <h4 className="text-sm sm:text-base font-black text-slate-950 dark:text-white leading-snug">
                       Direct One-Touch <span className="text-[#CA8A04] dark:text-[#FACC15]">Driver Hotline</span>
                     </h4>
-                    <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
                       Call or send instant sick-leave pickup skip notices directly through the parent dashboard with a single tap.
                     </p>
                   </div>
                 </div>
-              </div>
-
+              </div>
+
               {/* Yellow Primary Action Button */}
               <div className="pt-2">
                 <Link href="/parent/rides/live">

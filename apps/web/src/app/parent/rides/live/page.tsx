@@ -29,14 +29,15 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { Skeleton, LiveTrackingSkeleton } from '@/components/ui/skeleton';
 
 // Dynamically import Leaflet map with SSR disabled
 const LiveRideMap = dynamic(() => import('@/components/map/live-ride-map'), {
   ssr: false,
   loading: () => (
-    <div className="h-[520px] w-full rounded-[24px] bg-slate-50 dark:bg-slate-900 animate-pulse flex flex-col items-center justify-center gap-3 border border-slate-200 dark:border-slate-800">
-      <Bus className="h-10 w-10 text-[#CA8A04] dark:text-[#FACC15] animate-bounce" />
-      <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-bold">
+    <div className="h-[520px] w-full rounded-[24px] bg-white/65 backdrop-blur-xl flex flex-col items-center justify-center gap-3 border border-white/75">
+      <Bus className="h-10 w-10 text-[#CA8A04] animate-bounce" />
+      <p className="text-xs sm:text-sm text-[#0B1528] font-bold">
         Connecting to high-precision live GPS telemetry stream...
       </p>
     </div>
@@ -227,6 +228,32 @@ export default function ParentLiveTrackingPage() {
 
   const driver = activeRide?.driverProfile?.user;
   const vehicle = activeRide?.vehicle;
+
+  if (isLoading || authLoading) {
+    return (
+      <div className="min-h-screen dashboard-navy-yellow-bg text-[#0B1528] py-8 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto space-y-8 relative z-10">
+          <div className="flex items-center gap-2 pb-2 border-b border-white/15">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <Skeleton key={i} className="h-9 w-28 rounded-full" />
+            ))}
+          </div>
+          <div className="rounded-[32px] p-6 sm:p-8 border border-white/75 bg-white/65 backdrop-blur-xl space-y-4">
+            <Skeleton className="h-6 w-48 rounded-full" />
+            <Skeleton className="h-9 w-72 rounded-xl" />
+          </div>
+          <div className="rounded-[32px] p-6 sm:p-8 border border-white/75 bg-white/65 backdrop-blur-xl space-y-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-24 rounded-[22px]" />
+              ))}
+            </div>
+            <LiveTrackingSkeleton />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-16">

@@ -15,17 +15,51 @@ export function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = React.useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
-  const isActive = (path: string) => pathname === path;
+  // Close menus on route navigation
+  React.useEffect(() => {
+    setMobileMenuOpen(false);
+    setUserDropdownOpen(false);
+  }, [pathname]);
+
+  // Prevent background scroll when mobile drawer is open
+  React.useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [mobileMenuOpen]);
+
+  // Dismiss menus on Escape or outside click
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+        setUserDropdownOpen(false);
+      }
+    };
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   if (pathname.startsWith('/admin')) {
     return null;
   }
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-blue-900/40 bg-[#0B1528] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 shadow-[0_8px_32px_0_rgba(11,21,40,0.5)] supports-[backdrop-filter]:bg-[#0B1528]/95">
-      {/* Frosted Glass Top Specular Highlight */}
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+    <header className="sticky top-0 z-40 w-full bg-[#071426]/90 backdrop-blur-2xl backdrop-saturate-150 transition-all duration-300 supports-[backdrop-filter]:bg-[#071426]/85">
       <div className="w-full max-w-[1600px] mx-auto flex h-[72px] items-center justify-between px-4 sm:px-8 lg:px-12 xl:px-16 relative">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center group">
@@ -119,12 +153,16 @@ export function Navbar() {
               <NotificationPopover />
 
               {/* User Dropdown */}
-              <div className="relative">
+              <div className="relative" ref={dropdownRef}>
                 <button
+                  type="button"
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer select-none text-left"
+                  aria-expanded={userDropdownOpen}
+                  aria-haspopup="menu"
+                  aria-label="Open account menu"
+                  className="flex items-center gap-2 px-2 sm:px-2.5 py-1.5 rounded-lg hover:bg-white/10 transition-colors cursor-pointer select-none text-left"
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FACC15] text-[#14532D] font-black text-xs shadow-sm">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FACC15] text-[#071426] font-black text-xs shadow-sm">
                     {user.fullName.slice(0, 2).toUpperCase()}
                   </div>
                   <div className="hidden sm:block">
@@ -300,24 +338,33 @@ export function Navbar() {
               </div>
             </>
           ) : (
-            <div className="flex items-center gap-3">
-              <Link href="/login">
-                <button className="px-5 sm:px-6 py-2.5 text-sm font-bold text-white border border-white/30 hover:border-white/70 bg-white/[0.08] hover:bg-white/[0.16] backdrop-blur-md rounded-full transition-all duration-150 cursor-pointer shadow-sm">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Link href="/login" className="hidden sm:inline-flex">
+                <button
+                  type="button"
+                  className="px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-bold text-white border border-white/30 hover:border-white/70 bg-white/[0.08] hover:bg-white/[0.16] backdrop-blur-md rounded-full transition-all duration-150 cursor-pointer shadow-sm whitespace-nowrap"
+                >
                   Sign In
                 </button>
               </Link>
               <Link href="/drivers">
-                <button className="btn-glass-yellow-3d px-5 sm:px-6 py-2.5 text-sm">
+                <button
+                  type="button"
+                  className="btn-glass-yellow-3d px-3.5 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm whitespace-nowrap"
+                >
                   Book a Ride
                 </button>
               </Link>
             </div>
           )}
 
-          {/* Mobile Menu Toggle Button */}
+          {/* Mobile & Tablet Menu Toggle Button (shown below lg where desktop nav appears) */}
           <button
+            type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors cursor-pointer"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation-drawer"
+            className="lg:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors cursor-pointer"
             aria-label="Toggle Navigation Menu"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -325,14 +372,15 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu Drawer */}
+      {/* Mobile & Tablet Menu Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
+            id="mobile-navigation-drawer"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-b border-blue-900/40 bg-[#0B1528] backdrop-blur-2xl px-4 pt-3 pb-6 space-y-2.5 overflow-hidden text-white shadow-[0_16px_40px_rgba(11,21,40,0.6)]"
+            className="lg:hidden border-b border-blue-900/40 bg-[#0B1528] backdrop-blur-2xl px-4 pt-3 pb-6 space-y-2.5 overflow-y-auto max-h-[calc(100vh-72px)] text-white shadow-[0_16px_40px_rgba(11,21,40,0.6)]"
           >
             <Link
               href="/"

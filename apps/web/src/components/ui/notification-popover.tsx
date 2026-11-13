@@ -5,29 +5,33 @@ import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, CheckCheck, Clock, ShieldCheck, Bus, AlertCircle } from 'lucide-react';
 import { api } from '@/lib/api-client';
+import { useAuth } from '@/lib/auth-context';
 import { formatSriLankanTime } from '@/lib/utils';
 
 export function NotificationPopover() {
+  const { user } = useAuth();
   const [open, setOpen] = React.useState(false);
   const [notifications, setNotifications] = React.useState<any[]>([]);
   const [unreadCount, setUnreadCount] = React.useState(0);
 
-  const fetchNotifications = async () => {
+  const fetchNotifications = React.useCallback(async () => {
+    if (!user || !api.getToken()) return;
     try {
       const data = await api.get('/notifications');
-      setNotifications(data);
+      setNotifications(Array.isArray(data) ? data : []);
       const countRes = await api.get('/notifications/unread-count');
-      setUnreadCount(countRes.count);
+      setUnreadCount(countRes?.count ?? 0);
     } catch {
-      // not logged in or network error
+      // ignore transient network errors during background polling
     }
-  };
+  }, [user]);
 
   React.useEffect(() => {
+    if (!user) return;
     fetchNotifications();
-    const interval = setInterval(fetchNotifications, 15000); // 15s refresh
+    const interval = setInterval(fetchNotifications, 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user, fetchNotifications]);
 
   const handleMarkAllRead = async () => {
     try {
@@ -81,7 +85,7 @@ export function NotificationPopover() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -4, scale: 0.96 }}
                 transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                className="z-50 w-80 sm:w-96 rounded-2xl border border-border/80 bg-card p-0 shadow-floating focus:outline-none"
+                className="z-50 w-[calc(100vw-2rem)] sm:w-96 max-w-sm rounded-2xl border border-border/80 bg-card p-0 shadow-floating focus:outline-none"
               >
                 <div className="flex items-center justify-between border-b border-border/60 p-4">
                   <div className="flex items-center gap-2">

@@ -114,8 +114,8 @@ export function HowItWorksSlideshow() {
     <div className="w-full space-y-10 sm:space-y-12 select-none">
       {/* Left-Aligned Headline directly matching reference image */}
       <div className="text-left space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF6ED] text-[#14532D] text-xs font-bold border border-[#BCE6C9]">
-          <span className="h-2 w-2 rounded-full bg-[#16A34A]" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FACC15]/15 text-[#FACC15] text-xs font-bold border border-[#FACC15]/30">
+          <span className="h-2 w-2 rounded-full bg-[#FACC15]" />
           <span>SIMPLE 3-STEP JOURNEY</span>
         </div>
         <h2 className="text-3xl sm:text-4xl md:text-[44px] font-bold text-white tracking-tight leading-tight">
@@ -167,7 +167,7 @@ export function HowItWorksSlideshow() {
                     </p>
                     {step.detailTag && (
                       <div className="pt-1">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-medium text-emerald-400">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-medium text-[#FACC15]">
                           <span>✓</span>
                           <span>{step.detailTag}</span>
                         </span>

@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatLKR, BookingStatus } from '@schoolride/shared';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const DEMO_DRIVER_BOOKINGS = [
   {
@@ -455,7 +456,29 @@ export default function DriverBookingsPage() {
           </div>
 
           {/* Bookings & Passenger Manifest List */}
-          {filteredBookings.length === 0 ? (
+          {isLoading || authLoading ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="p-5 sm:p-6 rounded-[24px] border border-white/75 bg-white/55 backdrop-blur-xl space-y-4">
+                  <div className="flex items-center justify-between border-b border-slate-200/60 pb-4">
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-11 w-11 rounded-2xl shrink-0" />
+                      <div className="space-y-2">
+                        <Skeleton className="h-5 w-44 rounded-lg" />
+                        <Skeleton className="h-3.5 w-32 rounded" />
+                      </div>
+                    </div>
+                    <Skeleton className="h-7 w-24 rounded-full" />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Skeleton className="h-12 rounded-xl" />
+                    <Skeleton className="h-12 rounded-xl" />
+                    <Skeleton className="h-12 rounded-xl" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredBookings.length === 0 ? (
             <div className="p-12 text-center rounded-[24px] bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
               <Bus className="h-10 w-10 text-slate-400 mx-auto" />
               <h3 className="text-base font-bold text-slate-900 dark:text-white">No Bookings in this Category</h3>

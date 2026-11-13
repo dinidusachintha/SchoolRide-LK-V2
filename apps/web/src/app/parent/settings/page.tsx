@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api-client';
-import { Skeleton } from '@/components/ui/skeleton';
+import { PortalDashboardSkeleton } from '@/components/ui/skeleton';
 import {
   User,
   Phone,
@@ -154,6 +154,10 @@ export default function ParentSettingsPage() {
       toast.success('Account password updated securely.');
     }, 600);
   };
+
+  if (authLoading || isLoading) {
+    return <PortalDashboardSkeleton kpiCount={0} />;
+  }
 
   return (
     <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">

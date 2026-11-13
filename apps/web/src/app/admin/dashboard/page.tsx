@@ -22,6 +22,7 @@ import {
   Car,
 } from 'lucide-react';
 import { formatSriLankanDateTime } from '@schoolride/shared';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const DEFAULT_ADMIN_OVERVIEW = {
   metrics: {
@@ -92,6 +93,40 @@ export default function AdminDashboardPage() {
 
   const m = overview?.metrics || DEFAULT_ADMIN_OVERVIEW.metrics;
   const logs = overview?.recentAuditLogs || DEFAULT_ADMIN_OVERVIEW.recentAuditLogs;
+
+  if (authLoading || isFetching) {
+    return (
+      <div className="space-y-8 w-full text-left">
+        <div className="rounded-3xl p-6 sm:p-8 border border-white/75 bg-white/65 backdrop-blur-xl space-y-4">
+          <Skeleton className="h-9 w-72 rounded-xl" />
+          <Skeleton className="h-4 w-96 max-w-full rounded-lg" />
+          <div className="flex gap-3 pt-2">
+            <Skeleton className="h-10 w-44 rounded-full" />
+            <Skeleton className="h-10 w-40 rounded-2xl" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="glass-card-white p-6 rounded-3xl space-y-4">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-12 w-12 rounded-2xl" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+              </div>
+              <Skeleton className="h-3 w-28 rounded" />
+              <Skeleton className="h-10 w-20 rounded-lg" />
+              <Skeleton className="h-3.5 w-36 rounded" />
+            </div>
+          ))}
+        </div>
+        <div className="glass-card-white rounded-3xl p-6 space-y-4">
+          <Skeleton className="h-6 w-52 rounded-lg" />
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-12 w-full rounded-2xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 w-full text-left">

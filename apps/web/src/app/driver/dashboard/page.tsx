@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { api } from '@/lib/api-client';
-import { Skeleton } from '@/components/ui/skeleton';
+import { PortalDashboardSkeleton } from '@/components/ui/skeleton';
 import {
   Bus,
   ShieldCheck,
@@ -177,6 +177,10 @@ export default function DriverDashboardPage() {
     (sum, b) => sum + (b.monthlyFee || (b.monthlyFeeMinorUnits ? b.monthlyFeeMinorUnits / 100 : 18000)),
     0
   );
+
+  if (authLoading || isLoading) {
+    return <PortalDashboardSkeleton />;
+  }
 
   return (
     <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">

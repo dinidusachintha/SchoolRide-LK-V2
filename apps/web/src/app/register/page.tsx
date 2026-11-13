@@ -31,7 +31,7 @@ import { SRI_LANKAN_DISTRICTS } from '@schoolride/shared';
 function RegisterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login } = useAuth();
+  const { refreshUser } = useAuth();
 
   const initialRole = searchParams.get('role') === 'DRIVER' ? 'DRIVER' : 'PARENT';
   const [activeRole, setActiveRole] = React.useState<'PARENT' | 'DRIVER'>(initialRole);
@@ -52,6 +52,11 @@ function RegisterContent() {
     e.preventDefault();
     setErrorMessage(null);
 
+    if (password.length < 8) {
+      setErrorMessage('Password must be at least 8 characters long.');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setErrorMessage('Passwords do not match.');
       return;
@@ -62,31 +67,34 @@ function RegisterContent() {
     try {
       if (activeRole === 'PARENT') {
         const payload = {
-          fullName,
-          email,
-          phone,
+          fullName: fullName.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
           password,
           confirmPassword,
           district,
-          city: city || district,
+          city: city.trim() || district,
           role: 'PARENT',
         };
         const res = await api.post('/auth/register/parent', payload);
         api.setToken(res.accessToken);
+        await refreshUser();
         toast.success('Parent registration successful!');
         router.push('/parent/dashboard');
       } else {
         const payload = {
-          fullName,
-          email,
-          phone,
+          fullName: fullName.trim(),
+          email: email.trim(),
+          phone: phone.trim(),
           password,
           confirmPassword,
           district,
+          city: city.trim() || district,
           role: 'DRIVER',
         };
         const res = await api.post('/auth/register/driver', payload);
         api.setToken(res.accessToken);
+        await refreshUser();
         toast.success('Driver account created! Please complete your onboarding.');
         router.push('/driver/onboarding');
       }
@@ -99,7 +107,7 @@ function RegisterContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] text-[#0B1528] flex items-center justify-center p-3 sm:p-6 lg:p-10 relative overflow-hidden select-none">
+    <div className="min-h-screen bg-[#FFFFFF] text-[#0B1528] flex items-center justify-center p-3 sm:p-6 lg:p-10 relative overflow-hidden">
       
       {/* Clean White Texture Subtle Grid */}
       <div className="absolute inset-0 bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:24px_24px] opacity-40 pointer-events-none" />

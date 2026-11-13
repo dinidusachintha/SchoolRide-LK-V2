@@ -735,7 +735,7 @@ export default function ParentChildrenPage() {
         )}
 
         {/* Safety & Verification Charter Banner matching Home Page */}
-        <div className="rounded-[28px] bg-slate-950 text-white p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+        <div className="rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
           <div className="space-y-2 max-w-xl text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-400/20 text-[#FACC15] text-[11px] font-black uppercase tracking-wider border border-yellow-400/30">
               <ShieldCheck className="h-3.5 w-3.5 text-[#FACC15]" />
@@ -756,7 +756,7 @@ export default function ParentChildrenPage() {
               </button>
             </Link>
             <Link href="/parent/complaints">
-              <button className="px-5 py-3 rounded-full border border-slate-700 hover:border-slate-500 text-slate-200 text-xs sm:text-sm font-bold transition-all cursor-pointer">
+              <button className="px-5 py-3 rounded-full border border-white/25 bg-white/10 hover:bg-white/15 hover:border-white/40 text-white text-xs sm:text-sm font-bold transition-all cursor-pointer">
                 Contact Dispatch
               </button>
             </Link>
