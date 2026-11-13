@@ -25,10 +25,10 @@ export function Footer() {
 
   return (
     <footer className="relative z-20 border-t border-white/10 bg-[#050b16] text-white mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-10 md:py-12 lg:py-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-12 gap-y-6 sm:gap-y-8">
           {/* Column 1: Platform Info */}
-          <div className="space-y-4 md:col-span-1 text-left">
+          <div className="col-span-2 md:col-span-1 space-y-2.5 sm:space-y-3.5 text-left">
             <Link href="/" className="inline-block group">
               <div className="relative flex items-center transition-transform duration-150 group-hover:scale-102">
                 <Image
@@ -36,28 +36,28 @@ export function Footer() {
                   alt="SchoolRide LK"
                   width={180}
                   height={36}
-                  className="h-8 sm:h-9 w-auto object-contain"
+                  className="h-7 sm:h-8 md:h-9 w-auto object-contain"
                 />
               </div>
             </Link>
-            <p className="text-xs text-slate-400 leading-relaxed font-normal">
+            <p className="text-[11px] sm:text-xs text-slate-400 leading-relaxed font-normal max-w-sm md:max-w-none">
               Sri Lanka&apos;s dedicated school transport network connecting verified van drivers with families across Western, Central, Southern, and all 25 administrative districts.
             </p>
-            <div className="flex items-center gap-2 text-xs text-slate-300 font-semibold pt-1">
-              <Shield className="h-4 w-4 text-[#FACC15]" />
-              <span>Multi-tier driver and vehicle verification</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-slate-300 font-semibold pt-0.5">
+              <Shield className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#FACC15] shrink-0" />
+              <span>Multi-tier driver &amp; vehicle verification</span>
             </div>
           </div>
 
           {/* Column 2: Parent Resources */}
-          <div className="text-left">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
+          <div className="col-span-1 text-left">
+            <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white mb-2 sm:mb-3">
               Parents
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400 font-medium">
+            <ul className="space-y-1.5 sm:space-y-2 text-[11px] sm:text-xs text-slate-400 font-medium">
               <li>
                 <Link href="/drivers" className="hover:text-[#FACC15] transition-colors">
-                  Find Verified Drivers
+                  Find Drivers
                 </Link>
               </li>
               <li>
@@ -67,23 +67,23 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/safety" className="hover:text-[#FACC15] transition-colors">
-                  Safety &amp; Background Standards
+                  Safety Standards
                 </Link>
               </li>
               <li>
                 <Link href="/register" className="hover:text-[#FACC15] transition-colors">
-                  Create Parent Account
+                  Create Account
                 </Link>
               </li>
             </ul>
           </div>
 
           {/* Column 3: Van Drivers */}
-          <div className="text-left">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
-              Van Drivers &amp; Operators
+          <div className="col-span-1 text-left">
+            <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white mb-2 sm:mb-3">
+              Drivers &amp; Operators
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400 font-medium">
+            <ul className="space-y-1.5 sm:space-y-2 text-[11px] sm:text-xs text-slate-400 font-medium">
               <li>
                 <Link href="/register" className="hover:text-[#FACC15] transition-colors">
                   Register as Driver
@@ -96,42 +96,42 @@ export function Footer() {
               </li>
               <li>
                 <Link href="/driver/onboarding" className="hover:text-[#FACC15] transition-colors">
-                  Verification Guidelines
+                  Verification
                 </Link>
               </li>
               <li>
                 <Link href="/driver/console" className="hover:text-[#FACC15] transition-colors">
-                  Live Ride Console
+                  Ride Console
                 </Link>
               </li>
             </ul>
           </div>
 
           {/* Column 4: Contact & Operations */}
-          <div className="text-left">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
+          <div className="col-span-2 md:col-span-1 text-left pt-2 sm:pt-0 border-t border-white/5 md:border-t-0">
+            <h4 className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white mb-2 sm:mb-3">
               Support &amp; Location
             </h4>
-            <ul className="space-y-2.5 text-xs text-slate-400 font-medium">
+            <ul className="space-y-1.5 sm:space-y-2 text-[11px] sm:text-xs text-slate-400 font-medium">
               <li className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-[#FACC15] shrink-0" />
+                <MapPin className="h-3.5 w-3.5 text-[#FACC15] shrink-0" />
                 <span>Colombo 07, Western Province, Sri Lanka</span>
               </li>
               <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-[#FACC15] shrink-0" />
-                <span>+94 11 234 5678 (Mon–Fri, 6:00 AM – 6:00 PM)</span>
+                <Phone className="h-3.5 w-3.5 text-[#FACC15] shrink-0" />
+                <span>+94 11 234 5678 (6:00 AM – 6:00 PM)</span>
               </li>
               <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-[#FACC15] shrink-0" />
+                <Mail className="h-3.5 w-3.5 text-[#FACC15] shrink-0" />
                 <span>support@schoolride.lk</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
-          <p>© {new Date().getFullYear()} SchoolRide LK. All rights reserved. Timezone: Asia/Colombo.</p>
-          <div className="flex gap-6">
+        <div className="border-t border-white/10 mt-6 sm:mt-8 pt-4 sm:pt-5 flex flex-col sm:flex-row items-center justify-between text-[11px] sm:text-xs text-slate-500 gap-2.5 sm:gap-4 text-center sm:text-left">
+          <p>© {new Date().getFullYear()} SchoolRide LK. All rights reserved.</p>
+          <div className="flex gap-4 sm:gap-6">
             <Link href="/safety" className="hover:text-[#FACC15] transition-colors">
               Privacy &amp; Child Safety Policy
             </Link>
