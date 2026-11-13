@@ -638,7 +638,9 @@ export default function HomePage() {
 
   const scrollReviews = (direction: 'left' | 'right') => {
     if (reviewsCarouselRef.current) {
-      const scrollAmount = 350;
+      const scrollAmount = reviewsCarouselRef.current.clientWidth < 640
+        ? Math.max(reviewsCarouselRef.current.clientWidth - 96, 260)
+        : 350;
       reviewsCarouselRef.current.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth',
@@ -784,6 +786,18 @@ export default function HomePage() {
   });
 
   const selectedSchool = schoolsData.find((s) => s.id === selectedSchoolId) || schoolsData[0];
+  const displaySchools = React.useMemo(() => {
+    const pool = filteredSchools.length > 0 ? filteredSchools : schoolsData;
+    const selectedIdx = pool.findIndex((s) => s.id === selectedSchool.id);
+    if (selectedIdx === -1) return pool.slice(0, 3);
+    const count = pool.length;
+    if (count <= 3) return pool;
+    return [
+      pool[selectedIdx],
+      pool[(selectedIdx + 1) % count],
+      pool[(selectedIdx + 2) % count],
+    ];
+  }, [filteredSchools, selectedSchool.id, schoolsData]);
   const visibleSchools = filteredSchools.slice(0, 3);
   const dropdownSchools = filteredSchools.slice(3);
 
@@ -1968,90 +1982,103 @@ export default function HomePage() {
             </div>
           </motion.div>
 
-          {/* Only ONE School Card Displayed (Fully Mobile Responsive) */}
-          <div className="w-full max-w-3xl mx-auto">
-            <motion.div
-              key={selectedSchool.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="p-6 sm:p-8 md:p-10 rounded-[28px] sm:rounded-[36px] bg-white/[0.08] backdrop-blur-2xl border border-white/20 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] relative overflow-hidden space-y-6 text-left group"
-            >
-              {/* Subtle inner ambient glows */}
-              <div className="absolute -right-20 -top-20 w-72 h-72 bg-[#FACC15]/10 rounded-full blur-3xl pointer-events-none" />
-              <div className="absolute -left-20 -bottom-20 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+          {/* School Cards: 3 cards on desktop, only 1 card on mobile responsively */}
+          <div className="w-full max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {displaySchools.map((school, index) => {
+                const isSelected = school.id === selectedSchool.id;
+                return (
+                  <motion.div
+                    key={school.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                    className={`p-6 sm:p-7 rounded-[28px] bg-white/[0.08] backdrop-blur-2xl border ${
+                      isSelected
+                        ? 'border-[#FACC15]/60 ring-2 ring-[#FACC15]/25 shadow-[0_20px_50px_rgba(250,204,21,0.14)]'
+                        : 'border-white/15 shadow-[0_12px_32px_rgba(0,0,0,0.35)]'
+                    } text-white relative overflow-hidden flex flex-col justify-between text-left group transition-all duration-300 ${
+                      index > 0 ? 'hidden md:flex' : 'flex'
+                    }`}
+                  >
+                    {/* Subtle inner ambient glows for selected */}
+                    {isSelected && (
+                      <>
+                        <div className="absolute -right-16 -top-16 w-56 h-56 bg-[#FACC15]/10 rounded-full blur-2xl pointer-events-none" />
+                        <div className="absolute -left-16 -bottom-16 w-56 h-56 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
+                      </>
+                    )}
 
-              {/* Card Header Row: Badge, District & Vans Count */}
-              <div className="flex flex-wrap items-center justify-between gap-3 relative z-10">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-3.5 py-1.5 rounded-full text-xs font-extrabold bg-white/10 text-[#FACC15] border border-[#FACC15]/30 shadow-xs backdrop-blur-md">
-                    {selectedSchool.badge}
-                  </span>
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-white/10 text-slate-300 border border-white/15">
-                    {selectedSchool.district} District
-                  </span>
-                </div>
+                    <div className="space-y-4 relative z-10">
+                      {/* Card Header Row: Badge, District & Vans Count */}
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="px-3 py-1 rounded-full text-[11px] font-extrabold bg-white/10 text-[#FACC15] border border-[#FACC15]/30 shadow-xs backdrop-blur-md">
+                            {school.badge}
+                          </span>
+                          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-white/10 text-slate-300 border border-white/15">
+                            {school.district}
+                          </span>
+                        </div>
 
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 flex items-center gap-1.5 shadow-xs">
-                    <Bus className="h-3.5 w-3.5" />
-                    <span>{selectedSchool.vansCount} Active Vans</span>
-                  </span>
-                  <span className="text-xs text-slate-300 font-semibold hidden sm:inline">
-                    {selectedSchool.students}+ Students
-                  </span>
-                </div>
-              </div>
+                        <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-400/30 flex items-center gap-1.5 shadow-xs">
+                          <Bus className="h-3 w-3" />
+                          <span>{school.vansCount} Active Vans</span>
+                        </span>
+                      </div>
 
-              {/* School Name & Location */}
-              <div className="space-y-2 relative z-10">
-                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight leading-tight">
-                  {selectedSchool.name}
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-300 flex items-center gap-2 font-medium">
-                  <MapPin className="h-4 w-4 text-[#FACC15] shrink-0" />
-                  <span>{selectedSchool.location}</span>
-                </p>
-              </div>
+                      {/* School Name & Location */}
+                      <div className="space-y-1.5">
+                        <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight leading-snug">
+                          {school.name}
+                        </h3>
+                        <p className="text-xs text-slate-300 flex items-center gap-1.5 font-medium">
+                          <MapPin className="h-3.5 w-3.5 text-[#FACC15] shrink-0" />
+                          <span>{school.location}</span>
+                        </p>
+                      </div>
 
-              {/* Popular Commute Corridors Covered */}
-              <div className="space-y-2.5 pt-2 border-t border-white/10 relative z-10">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
-                  Popular Commute Corridors Covered:
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  {selectedSchool.popularRoutes.map((route, i) => (
-                    <div
-                      key={i}
-                      className="p-3 sm:p-3.5 rounded-2xl bg-white/[0.06] border border-white/10 text-xs text-slate-200 flex items-center gap-2.5 shadow-xs"
-                    >
-                      <span className="h-2 w-2 rounded-full bg-[#FACC15] shrink-0" />
-                      <span className="font-semibold leading-relaxed truncate sm:whitespace-normal">{route}</span>
+                      {/* Popular Commute Corridors Covered */}
+                      <div className="space-y-2 pt-2 border-t border-white/10">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+                          Popular Commute Corridors:
+                        </span>
+                        <div className="space-y-1.5">
+                          {school.popularRoutes.map((route, i) => (
+                            <div
+                              key={i}
+                              className="p-2 sm:p-2.5 rounded-xl bg-white/[0.06] border border-white/10 text-xs text-slate-200 flex items-center gap-2 shadow-xs"
+                            >
+                              <span className="h-1.5 w-1.5 rounded-full bg-[#FACC15] shrink-0" />
+                              <span className="font-semibold leading-relaxed truncate">{route}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
 
-              {/* Card Footer: Monthly Rate & CTA Button */}
-              <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-10">
-                <div>
-                  <span className="text-[11px] text-slate-400 block font-semibold uppercase tracking-wider">
-                    Typical Monthly Fee
-                  </span>
-                  <span className="text-base sm:text-lg font-black text-[#FACC15] font-mono">
-                    {selectedSchool.monthlyRate}
-                  </span>
-                </div>
+                    {/* Card Footer: Monthly Rate & CTA Button */}
+                    <div className="pt-4 mt-5 border-t border-white/10 flex items-center justify-between gap-3 relative z-10">
+                      <div>
+                        <span className="text-[10px] text-slate-400 block font-semibold uppercase tracking-wider">
+                          Typical Monthly Fee
+                        </span>
+                        <span className="text-sm sm:text-base font-black text-[#FACC15] font-mono">
+                          {school.monthlyRate}
+                        </span>
+                      </div>
 
-                <Link href="/drivers" className="w-full sm:w-auto">
-                  <button className="btn-glass-yellow-3d px-6 sm:px-8 py-3 text-xs sm:text-sm font-black shadow-lg cursor-pointer flex items-center justify-center gap-2 w-full sm:w-auto">
-                    <Bus className="h-4 w-4" />
-                    <span>View Verified Vans for {selectedSchool.name.split(' ')[0]}</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </Link>
-              </div>
-            </motion.div>
+                      <Link href={`/drivers?school=${encodeURIComponent(school.name)}`}>
+                        <button className="btn-glass-yellow-3d px-4 py-2 sm:px-5 sm:py-2.5 text-xs font-black shadow-md cursor-pointer flex items-center justify-center gap-1.5">
+                          <span>View Vans</span>
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </button>
+                      </Link>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
@@ -2274,7 +2301,7 @@ export default function HomePage() {
               type="button"
               onClick={() => scrollReviews('left')}
               aria-label="Previous reviews"
-              className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-[0_4px_16px_rgba(0,0,0,0.12)] flex items-center justify-center text-slate-700 dark:text-slate-200 hover:text-black dark:hover:text-white hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              className="absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-[0_4px_16px_rgba(0,0,0,0.14)] flex items-center justify-center text-slate-700 dark:text-slate-200 hover:text-black dark:hover:text-white hover:scale-105 active:scale-95 transition-all cursor-pointer"
             >
               <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
             </button>
@@ -2284,7 +2311,7 @@ export default function HomePage() {
               type="button"
               onClick={() => scrollReviews('right')}
               aria-label="Next reviews"
-              className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-[0_4px_16px_rgba(0,0,0,0.12)] flex items-center justify-center text-slate-700 dark:text-slate-200 hover:text-black dark:hover:text-white hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              className="absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-200 dark:border-slate-700 shadow-[0_4px_16px_rgba(0,0,0,0.14)] flex items-center justify-center text-slate-700 dark:text-slate-200 hover:text-black dark:hover:text-white hover:scale-105 active:scale-95 transition-all cursor-pointer"
             >
               <ChevronRight className="w-5 h-5 stroke-[2.5]" />
             </button>
@@ -2292,7 +2319,7 @@ export default function HomePage() {
             {/* Sliding cards track */}
             <div
               ref={reviewsCarouselRef}
-              className="flex gap-5 sm:gap-6 overflow-x-auto scroll-smooth py-3 px-1 no-scrollbar [&::-webkit-scrollbar]:hidden select-none"
+              className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth py-3 px-10 sm:px-2 no-scrollbar [&::-webkit-scrollbar]:hidden select-none snap-x snap-mandatory"
               style={{ scrollSnapType: 'x mandatory', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {filteredFeedbackList.map((t) => {
@@ -2300,8 +2327,8 @@ export default function HomePage() {
                 return (
                   <div
                     key={t.id}
-                    style={{ scrollSnapAlign: 'start' }}
-                    className={`min-w-[290px] sm:min-w-[340px] max-w-[360px] flex-shrink-0 rounded-2xl bg-white dark:bg-slate-900 border ${
+                    style={{ scrollSnapAlign: 'center' }}
+                    className={`w-[calc(100vw-6rem)] max-w-[340px] sm:min-w-[340px] sm:max-w-[360px] flex-shrink-0 snap-center rounded-2xl bg-white dark:bg-slate-900 border ${
                       (t as any).isNew 
                         ? 'border-emerald-400 ring-2 ring-emerald-400/20' 
                         : 'border-slate-200/90 dark:border-slate-800'
@@ -2397,11 +2424,11 @@ export default function HomePage() {
             </div>
 
             {/* Trustindex Verification Footer */}
-            <div className="flex justify-between items-center pt-3 text-xs text-slate-500">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-4 text-xs text-slate-500">
               <span className="text-xs text-slate-400">Swipe or click arrows to explore parent stories</span>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#00875A] text-white text-xs font-bold shadow-sm tracking-wide">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 text-xs font-black shadow-sm tracking-wide transition-colors cursor-pointer border border-[#EAB308]">
                 <span>Verified by Trustindex</span>
-                <Info className="w-3.5 h-3.5 opacity-80" />
+                <Info className="w-3.5 h-3.5 text-slate-950 stroke-[2.5]" />
               </div>
             </div>
           </div>
