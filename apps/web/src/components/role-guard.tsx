@@ -17,7 +17,7 @@ export function RoleGuard({ allowedRoles, children, fallback }: RoleGuardProps) 
   const router = useRouter();
   const pathname = usePathname();
 
-  const isAuthorized = !!user && allowedRoles.includes(user.role);
+  const isAuthorized = !!user && allowedRoles.includes(user.role as UserRole);
 
   React.useEffect(() => {
     if (isLoading) return;
@@ -26,7 +26,7 @@ export function RoleGuard({ allowedRoles, children, fallback }: RoleGuardProps) 
       router.replace(`/login${next}`);
       return;
     }
-    if (!allowedRoles.includes(user.role)) {
+    if (!allowedRoles.includes(user.role as UserRole)) {
       if (user.role === UserRole.ADMIN) router.replace('/admin/dashboard');
       else if (user.role === UserRole.DRIVER) router.replace('/driver/dashboard');
       else router.replace('/parent/dashboard');

@@ -30,6 +30,11 @@ import {
   IdCard
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { VehicleType, VerificationStatus } from '@schoolride/shared';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -75,12 +80,14 @@ const DEMO_VEHICLES = [
   },
 ];
 
-export default function DriverVehiclesPage() {
+function DriverVehiclesContent() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [vehicles, setVehicles] = React.useState<any[]>(DEMO_VEHICLES);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [vehicles, setVehicles] = React.useState<any[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [pendingDeleteVehicle, setPendingDeleteVehicle] = React.useState<{ id: string; licensePlate: string } | null>(null);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -102,13 +109,16 @@ export default function DriverVehiclesPage() {
   });
 
   const loadVehicles = React.useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     try {
-      const data = await api.get('/drivers/me').catch(() => null);
-      if (data?.vehicles?.length > 0) {
-        setVehicles(data.vehicles);
-      }
-    } catch {
-      // Retain fallback demonstration vehicles
+      const data = await api.get('/drivers/me');
+      setVehicles(Array.isArray(data?.vehicles) ? data.vehicles : []);
+    } catch (err: any) {
+      setError(err?.message || 'Unable to load registered fleet vehicles.');
+      setVehicles([]);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -126,21 +136,10 @@ export default function DriverVehiclesPage() {
         ...formData,
         year: Number(formData.year),
         capacity: Number(formData.capacity),
-        verificationStatus: 'APPROVED',
       };
 
-      try {
-        await api.post('/drivers/me/vehicles', payload);
-      } catch {
-        // Fallback local addition
-      }
-
-      const newVehicleEntry = {
-        id: `veh-${Date.now()}`,
-        ...payload,
-      };
-
-      setVehicles((prev) => [newVehicleEntry, ...prev]);
+      const created = await api.post('/drivers/me/vehicles', payload);
+      setVehicles((prev) => [created, ...prev]);
       toast.success('Vehicle registered successfully! Submitted for inspection.');
       setIsDialogOpen(false);
     } catch (err: any) {
@@ -151,11 +150,13 @@ export default function DriverVehiclesPage() {
   };
 
   const handleDeleteVehicle = (vehicleId: string, licensePlate: string) => {
-    if (!confirm(`Are you sure you want to remove vehicle ${licensePlate} from your fleet?`)) {
-      return;
-    }
-    setVehicles((prev) => prev.filter((v) => v.id !== vehicleId));
-    toast.success(`Vehicle ${licensePlate} removed from active fleet.`);
+    setPendingDeleteVehicle({ id: vehicleId, licensePlate });
+  };
+
+  const confirmDeleteVehicle = () => {
+    if (!pendingDeleteVehicle) return;
+    toast.info(`Removal of ${pendingDeleteVehicle.licensePlate} requires Trust & Safety inspection sign-off. Contact Central Dispatch to archive an active school vehicle.`);
+    setPendingDeleteVehicle(null);
   };
 
   // Metrics
@@ -167,39 +168,13 @@ export default function DriverVehiclesPage() {
   }
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-20">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Driver Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/driver/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Overview
-            </button>
-          </Link>
-          <Link href="/driver/console">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>Active GPS Console</span>
-            </button>
-          </Link>
-          <Link href="/driver/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Bookings &amp; Manifest
-            </button>
-          </Link>
-          <Link href="/driver/vehicles">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
-              Fleet Vehicles ({vehicles.length})
-            </button>
-          </Link>
-          <Link href="/driver/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Operator Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.DRIVER} />
+        {error && <ErrorBanner message={error} onRetry={loadVehicles} />}
 
         {/* Hero Welcome Showcase Card - Dark Navy Blue */}
         <motion.div
@@ -701,6 +676,24 @@ export default function DriverVehiclesPage() {
           </form>
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={!!pendingDeleteVehicle}
+        onOpenChange={(open) => !open && setPendingDeleteVehicle(null)}
+        title="Request Vehicle Archival"
+        description={`Vehicle ${pendingDeleteVehicle?.licensePlate || ''} is linked to passenger compliance logs. Request Trust & Safety dispatch archival?`}
+        confirmLabel="Request Archival"
+        variant="danger"
+        onConfirm={confirmDeleteVehicle}
+      />
     </div>
+  );
+}
+
+export default function DriverVehiclesPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.DRIVER]}>
+      <DriverVehiclesContent />
+    </RoleGuard>
   );
 }

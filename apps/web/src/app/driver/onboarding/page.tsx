@@ -30,7 +30,10 @@ import {
   Bus
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { DriverDocumentType, VerificationStatus } from '@schoolride/shared';
+import { DriverDocumentType, VerificationStatus, UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface DocUploadItem {
@@ -93,36 +96,31 @@ const REQUIRED_DOCUMENTS: DocUploadItem[] = [
   },
 ];
 
-export default function DriverOnboardingPage() {
+function DriverOnboardingContent() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   const [profile, setProfile] = React.useState<any>(null);
-  const [documents, setDocuments] = React.useState<any[]>(
-    REQUIRED_DOCUMENTS.map((req) => ({
-      documentType: req.type,
-      fileName: req.defaultFileName,
-      fileSize: 1500000,
-      isVerified: true,
-      verifiedAt: '2026-01-10',
-    }))
-  );
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [documents, setDocuments] = React.useState<any[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [uploadingType, setUploadingType] = React.useState<string | null>(null);
 
   const fileInputRefs = React.useRef<{ [key: string]: HTMLInputElement | null }>({});
 
   const loadData = React.useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     try {
-      const data = await api.get('/drivers/me').catch(() => null);
+      const data = await api.get('/drivers/me');
       if (data) {
         setProfile(data);
-        if (data.documents && data.documents.length > 0) {
-          setDocuments(data.documents);
-        }
+        setDocuments(Array.isArray(data.documents) ? data.documents : []);
       }
-    } catch {
-      // Retain fallback demonstration state
+    } catch (err: any) {
+      setError(err?.message || 'Unable to load compliance credentials.');
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -142,20 +140,33 @@ export default function DriverOnboardingPage() {
     }
 
     setUploadingType(docType);
-    setTimeout(() => {
-      setUploadingType(null);
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const uploaded = await api.post('/storage/upload', fd);
+      const savedDoc = await api.post('/drivers/me/documents', {
+        documentType: docType,
+        fileKey: uploaded?.fileKey || `docs/${Date.now()}-${file.name}`,
+        fileName: file.name,
+        fileSize: file.size,
+        mimeType: file.type || 'application/pdf',
+      });
       setDocuments((prev) => [
         ...prev.filter((d) => d.documentType !== docType),
-        {
+        savedDoc || {
           documentType: docType,
           fileName: file.name,
           fileSize: file.size,
-          isVerified: true,
-          verifiedAt: new Date().toISOString(),
+          isVerified: false,
         },
       ]);
-      toast.success(`Uploaded ${file.name} successfully! Submitted for verification.`);
-    }, 800);
+      toast.success(`Uploaded ${file.name}! Submitted for Trust & Safety review.`);
+    } catch (err: any) {
+      toast.error(err?.message || `Unable to upload ${file.name}.`);
+    } finally {
+      setUploadingType(null);
+      e.target.value = '';
+    }
   };
 
   const verifiedCount = documents.filter((d) => d.isVerified).length;
@@ -166,39 +177,13 @@ export default function DriverOnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-20">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Driver Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/driver/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Overview
-            </button>
-          </Link>
-          <Link href="/driver/console">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>Active GPS Console</span>
-            </button>
-          </Link>
-          <Link href="/driver/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Bookings &amp; Manifest
-            </button>
-          </Link>
-          <Link href="/driver/vehicles">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Fleet Vehicles
-            </button>
-          </Link>
-          <Link href="/driver/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Operator Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.DRIVER} />
+        {error && <ErrorBanner message={error} onRetry={loadData} />}
 
         {/* Hero Welcome Showcase Card - Dark Navy Blue */}
         <motion.div
@@ -519,5 +504,13 @@ export default function DriverOnboardingPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function DriverOnboardingPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.DRIVER]}>
+      <DriverOnboardingContent />
+    </RoleGuard>
   );
 }

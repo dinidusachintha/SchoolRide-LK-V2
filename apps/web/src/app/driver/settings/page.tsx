@@ -41,7 +41,10 @@ import {
   Info
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { SRI_LANKAN_DISTRICTS, INITIAL_SCHOOLS, formatLKR } from '@schoolride/shared';
+import { SRI_LANKAN_DISTRICTS, INITIAL_SCHOOLS, formatLKR, UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Demonstration fallback data for Sunil Wickramasinghe
@@ -78,13 +81,14 @@ const DEMO_DRIVER_PROFILE = {
   pushGeofenceAlerts: true,
 };
 
-export default function DriverSettingsPage() {
+function DriverSettingsContent() {
   const { user, isLoading: authLoading, refreshUser } = useAuth();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = React.useState<'PROFILE' | 'COVERAGE' | 'CREDENTIALS' | 'PAYOUT' | 'NOTIFICATIONS'>('PROFILE');
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
+  const [loadError, setLoadError] = React.useState<string | null>(null);
   const [schoolSearchQuery, setSchoolSearchQuery] = React.useState('');
 
   // Profile Form State
@@ -130,8 +134,9 @@ export default function DriverSettingsPage() {
 
   React.useEffect(() => {
     async function loadDriverSettings() {
+      setLoadError(null);
       try {
-        const driverRes = await api.get('/drivers/me').catch(() => null);
+        const driverRes = await api.get('/drivers/me');
 
         if (driverRes) {
           setProfileData((prev) => ({
@@ -166,8 +171,8 @@ export default function DriverSettingsPage() {
             }
           }
         }
-      } catch {
-        // Fallback demo state retained
+      } catch (err: any) {
+        setLoadError(err?.message || 'Unable to load saved operator settings.');
       }
     }
 
@@ -183,7 +188,7 @@ export default function DriverSettingsPage() {
       await api.patch('/drivers/me/profile', {
         ...profileData,
         experienceYears: Number(profileData.experienceYears),
-      }).catch(() => null);
+      });
 
       const areas = operatingAreasText
         .split(',')
@@ -196,13 +201,13 @@ export default function DriverSettingsPage() {
           serviceDistricts: [profileData.district],
           operatingAreas: areas.length > 0 ? areas : ['Colombo'],
           monthlyRateMinorUnits: monthlyRateLKR * 100,
-        }).catch(() => null);
+        });
       }
 
       toast.success('Driver operator profile and route corridors updated successfully.');
       if (refreshUser) await refreshUser();
-    } catch {
-      toast.success('Driver operator profile updated successfully.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Unable to save driver operator settings.');
     } finally {
       setIsSaving(false);
     }
@@ -241,44 +246,13 @@ export default function DriverSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-24">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-24">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Unified Driver Sub-Navigation Bar matching Onboarding & Console */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/driver/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Overview
-            </button>
-          </Link>
-          <Link href="/driver/console">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>Active GPS Console</span>
-            </button>
-          </Link>
-          <Link href="/driver/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Bookings &amp; Manifest
-            </button>
-          </Link>
-          <Link href="/driver/vehicles">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Fleet Vehicles
-            </button>
-          </Link>
-          <Link href="/driver/onboarding">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Compliance &amp; Onboarding
-            </button>
-          </Link>
-          <Link href="/driver/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
-              Operator Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.DRIVER} />
+        {loadError && <ErrorBanner message={loadError} onRetry={() => window.location.reload()} />}
 
         {/* Hero Welcome Showcase Card - Dark Navy Blue */}
         <motion.div
@@ -1254,7 +1228,7 @@ export default function DriverSettingsPage() {
                         onChange={(e) => setNotifications({ ...notifications, smsRideAlerts: e.target.checked })}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#14532D]"></div>
+                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B1528]"></div>
                     </label>
                   </div>
 
@@ -1276,7 +1250,7 @@ export default function DriverSettingsPage() {
                         onChange={(e) => setNotifications({ ...notifications, smsDelayAlerts: e.target.checked })}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#14532D]"></div>
+                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B1528]"></div>
                     </label>
                   </div>
 
@@ -1298,7 +1272,7 @@ export default function DriverSettingsPage() {
                         onChange={(e) => setNotifications({ ...notifications, pushGeofenceAlerts: e.target.checked })}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#14532D]"></div>
+                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B1528]"></div>
                     </label>
                   </div>
 
@@ -1320,7 +1294,7 @@ export default function DriverSettingsPage() {
                         onChange={(e) => setNotifications({ ...notifications, smsEarningsWeekly: e.target.checked })}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#14532D]"></div>
+                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B1528]"></div>
                     </label>
                   </div>
                 </div>
@@ -1378,5 +1352,13 @@ export default function DriverSettingsPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function DriverSettingsPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.DRIVER]}>
+      <DriverSettingsContent />
+    </RoleGuard>
   );
 }

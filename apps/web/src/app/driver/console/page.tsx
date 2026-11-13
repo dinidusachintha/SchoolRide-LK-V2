@@ -33,7 +33,11 @@ import {
   AlertOctagon
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { PassengerPickupStatus, formatSriLankanTime } from '@schoolride/shared';
+import { PassengerPickupStatus, formatSriLankanTime, UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Dynamic import for Leaflet live map to avoid Next.js SSR window error
@@ -96,7 +100,7 @@ const DEMO_CONSOLE_RIDE = {
   ],
 };
 
-export default function DriverConsolePage() {
+function DriverConsoleContent() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
@@ -112,34 +116,37 @@ export default function DriverConsolePage() {
   const [trail, setTrail] = React.useState<[number, number][]>(DEMO_CONSOLE_RIDE.trail);
   const [filterManifest, setFilterManifest] = React.useState<'ALL' | 'PICKED_UP' | 'SCHEDULED' | 'DROPPED_OFF'>('ALL');
   const [isEndingRide, setIsEndingRide] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [sosConfirmOpen, setSosConfirmOpen] = React.useState(false);
+  const [completeConfirmOpen, setCompleteConfirmOpen] = React.useState(false);
 
-  // Load Real Active Ride If Available
-  React.useEffect(() => {
-    async function loadActiveRide() {
-      try {
-        const res = await api.get('/rides/active').catch(() => null);
-        if (res && res.status === 'IN_PROGRESS') {
-          setActiveRide(res);
-          if (res.currentLatitude && res.currentLongitude) {
-            setCoords({ lat: res.currentLatitude, lng: res.currentLongitude });
-            setTrail([[res.currentLatitude, res.currentLongitude]]);
-          }
-          if (res.passengers?.length > 0) {
-            setPassengers(res.passengers);
-          }
-          if (res.currentSpeed !== undefined) {
-            setCurrentSpeed(res.currentSpeed);
-          }
+  const loadActiveRide = React.useCallback(async () => {
+    setError(null);
+    try {
+      const res = await api.get('/rides/active');
+      if (res && res.status === 'IN_PROGRESS') {
+        setActiveRide(res);
+        if (res.currentLatitude && res.currentLongitude) {
+          setCoords({ lat: res.currentLatitude, lng: res.currentLongitude });
+          setTrail([[res.currentLatitude, res.currentLongitude]]);
         }
-      } catch {
-        // Fallback demo state retained
+        if (res.passengers?.length > 0) {
+          setPassengers(res.passengers);
+        }
+        if (res.currentSpeed !== undefined) {
+          setCurrentSpeed(res.currentSpeed);
+        }
       }
+    } catch (err: any) {
+      setError(err?.message || 'Unable to sync active ride session from server.');
     }
+  }, []);
 
+  React.useEffect(() => {
     if (user) {
       loadActiveRide();
     }
-  }, [user]);
+  }, [user, loadActiveRide]);
 
   // Simulated live telemetry movement along Colombo corridor
   React.useEffect(() => {
@@ -177,13 +184,28 @@ export default function DriverConsolePage() {
     passengerId: string,
     newStatus: string
   ) => {
-    // Optimistic UI state
+    const targetChild = passengers.find((p) => p.id === passengerId);
+    const prevStatus = targetChild?.pickupStatus;
+    const childName = targetChild ? `${targetChild.child?.firstName} ${targetChild.child?.lastName}` : 'Student';
+
     setPassengers((prev) =>
       prev.map((p) => (p.id === passengerId ? { ...p, pickupStatus: newStatus } : p))
     );
 
-    const targetChild = passengers.find((p) => p.id === passengerId);
-    const childName = targetChild ? `${targetChild.child?.firstName} ${targetChild.child?.lastName}` : 'Student';
+    if (activeRide?.id && activeRide.id !== 'ride-demo-01') {
+      try {
+        await api.patch(`/rides/${activeRide.id}/passenger-status`, {
+          passengerId,
+          pickupStatus: newStatus,
+        });
+      } catch (err: any) {
+        setPassengers((prev) =>
+          prev.map((p) => (p.id === passengerId ? { ...p, pickupStatus: prevStatus } : p))
+        );
+        toast.error(err?.message || `Unable to update status for ${childName}.`);
+        return;
+      }
+    }
 
     if (newStatus === 'PICKED_UP') {
       toast.success(`${childName} checked in: Picked Up & On Board!`);
@@ -192,36 +214,35 @@ export default function DriverConsolePage() {
     } else if (newStatus === 'ABSENT') {
       toast.info(`${childName} marked absent for this morning run.`);
     }
-
-    if (activeRide?.id && activeRide.id !== 'ride-demo-01') {
-      try {
-        await api.patch(`/rides/${activeRide.id}/passenger-status`, {
-          passengerId,
-          pickupStatus: newStatus,
-        });
-      } catch {
-        // Optimistic state remains
-      }
-    }
   };
 
   const handleTriggerSOS = () => {
-    if (confirm('EMERGENCY SOS: Dispatch roadside support & notify school coordinators immediately?')) {
-      toast.error('EMERGENCY SOS ACTIVATED. Colombo Central Dispatch is tracking your vehicle.');
-    }
+    setSosConfirmOpen(true);
   };
 
-  const handleCompleteRide = async () => {
-    if (!confirm('Are you sure you want to end this school run? This concludes live GPS broadcasting to parents.')) {
-      return;
-    }
+  const confirmSOS = () => {
+    setSosConfirmOpen(false);
+    toast.error('EMERGENCY SOS ACTIVATED. Colombo Central Dispatch is tracking your vehicle.');
+  };
 
+  const handleCompleteRide = () => {
+    setCompleteConfirmOpen(true);
+  };
+
+  const confirmCompleteRide = async () => {
     setIsEndingRide(true);
-    setTimeout(() => {
-      setIsEndingRide(false);
+    try {
+      if (activeRide?.id && activeRide.id !== 'ride-demo-01') {
+        await api.post(`/rides/${activeRide.id}/complete`, {});
+      }
       toast.success('School transit run completed successfully! Outstanding work.');
+      setCompleteConfirmOpen(false);
       router.push('/driver/dashboard');
-    }, 600);
+    } catch (err: any) {
+      toast.error(err?.message || 'Unable to complete active school run.');
+    } finally {
+      setIsEndingRide(false);
+    }
   };
 
   // Filter passengers
@@ -240,39 +261,13 @@ export default function DriverConsolePage() {
   }
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-20">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Driver Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/driver/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Overview
-            </button>
-          </Link>
-          <Link href="/driver/console">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-slate-950 animate-ping" />
-              <span>Active GPS Console</span>
-            </button>
-          </Link>
-          <Link href="/driver/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Bookings &amp; Manifest
-            </button>
-          </Link>
-          <Link href="/driver/vehicles">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Fleet Vehicles
-            </button>
-          </Link>
-          <Link href="/driver/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Operator Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.DRIVER} />
+        {error && <ErrorBanner message={error} onRetry={loadActiveRide} />}
 
         {/* Hero Control Showcase Card - Dark Navy Blue */}
         <motion.div
@@ -702,6 +697,34 @@ export default function DriverConsolePage() {
 
       </div>
 
+      <ConfirmDialog
+        open={sosConfirmOpen}
+        onOpenChange={setSosConfirmOpen}
+        title="Activate Emergency SOS?"
+        description="Dispatch roadside support & notify Colombo Central Coordinators and enrolled parents immediately?"
+        confirmLabel="Activate SOS"
+        variant="danger"
+        onConfirm={confirmSOS}
+      />
+
+      <ConfirmDialog
+        open={completeConfirmOpen}
+        onOpenChange={setCompleteConfirmOpen}
+        title="Complete School Run?"
+        description="Ending this trip stops live GPS broadcasting to enrolled parents and finalizes today's attendance manifest."
+        confirmLabel="End School Run"
+        variant="primary"
+        isLoading={isEndingRide}
+        onConfirm={confirmCompleteRide}
+      />
     </div>
+  );
+}
+
+export default function DriverConsolePage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.DRIVER]}>
+      <DriverConsoleContent />
+    </RoleGuard>
   );
 }

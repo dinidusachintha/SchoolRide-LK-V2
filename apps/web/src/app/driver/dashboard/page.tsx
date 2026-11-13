@@ -32,7 +32,11 @@ import {
   Check,
   X
 } from 'lucide-react';
-import { formatLKR, VerificationStatus } from '@schoolride/shared';
+import { formatLKR, VerificationStatus, UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -122,53 +126,77 @@ const DEMO_PENDING_REQUESTS = [
   },
 ];
 
-export default function DriverDashboardPage() {
+function DriverDashboardContent() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
   const [profile, setProfile] = React.useState<any>(null);
-  const [bookings, setBookings] = React.useState<any[]>(DEMO_ENROLLED_STUDENTS);
-  const [pendingRequests, setPendingRequests] = React.useState<any[]>(DEMO_PENDING_REQUESTS);
-  const [activeRide, setActiveRide] = React.useState<any>(DEMO_ACTIVE_RIDE);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [bookings, setBookings] = React.useState<any[]>([]);
+  const [pendingRequests, setPendingRequests] = React.useState<any[]>([]);
+  const [activeRide, setActiveRide] = React.useState<any>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [declineTarget, setDeclineTarget] = React.useState<{ id: string; childName: string } | null>(null);
+  const [isUpdatingReq, setIsUpdatingReq] = React.useState(false);
+
+  const loadDriverData = React.useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const [profileRes, bookingsRes, activeRideRes] = await Promise.all([
+        api.get('/drivers/me'),
+        api.get('/bookings'),
+        api.get('/rides/active').catch(() => null),
+      ]);
+
+      if (profileRes) setProfile(profileRes);
+      const rows = Array.isArray(bookingsRes) ? bookingsRes : bookingsRes?.data || [];
+      setBookings(rows.filter((b: any) => b.status === 'ACCEPTED' || b.status === 'ACTIVE'));
+      setPendingRequests(rows.filter((b: any) => b.status === 'PENDING'));
+      setActiveRide(activeRideRes && activeRideRes.status === 'IN_PROGRESS' ? activeRideRes : null);
+    } catch (err: any) {
+      setError(err?.message || 'Unable to load operator overview.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   React.useEffect(() => {
-    async function loadDriverData() {
-      try {
-        const [profileRes, bookingsRes, activeRideRes] = await Promise.all([
-          api.get('/drivers/me').catch(() => null),
-          api.get('/bookings').catch(() => []),
-          api.get('/rides/active').catch(() => null),
-        ]);
-
-        if (profileRes) setProfile(profileRes);
-        if (Array.isArray(bookingsRes) && bookingsRes.length > 0) {
-          const accepted = bookingsRes.filter((b) => b.status === 'ACCEPTED' || b.status === 'ACTIVE');
-          const pending = bookingsRes.filter((b) => b.status === 'PENDING');
-          if (accepted.length > 0) setBookings(accepted);
-          if (pending.length > 0) setPendingRequests(pending);
-        }
-        if (activeRideRes && activeRideRes.status === 'IN_PROGRESS') {
-          setActiveRide(activeRideRes);
-        }
-      } catch {
-        // Fallback demo state retained
-      }
-    }
-
     if (user) {
       loadDriverData();
     }
-  }, [user]);
+  }, [user, loadDriverData]);
 
-  const handleAcceptRequest = (requestId: string, childName: string) => {
-    setPendingRequests((prev) => prev.filter((r) => r.id !== requestId));
-    toast.success(`Accepted seat booking request for ${childName}!`);
+  const handleAcceptRequest = async (requestId: string, childName: string) => {
+    setIsUpdatingReq(true);
+    try {
+      await api.patch(`/bookings/${requestId}/status`, { targetStatus: 'ACCEPTED' });
+      toast.success(`Accepted seat booking request for ${childName}!`);
+      await loadDriverData();
+    } catch (err: any) {
+      toast.error(err?.message || `Unable to accept booking for ${childName}.`);
+    } finally {
+      setIsUpdatingReq(false);
+    }
   };
 
   const handleDeclineRequest = (requestId: string, childName: string) => {
-    setPendingRequests((prev) => prev.filter((r) => r.id !== requestId));
-    toast.info(`Declined booking request for ${childName}.`);
+    setDeclineTarget({ id: requestId, childName });
+  };
+
+  const confirmDeclineRequest = async () => {
+    if (!declineTarget) return;
+    setIsUpdatingReq(true);
+    try {
+      await api.patch(`/bookings/${declineTarget.id}/status`, { targetStatus: 'REJECTED' });
+      toast.info(`Declined booking request for ${declineTarget.childName}.`);
+      setDeclineTarget(null);
+      await loadDriverData();
+    } catch (err: any) {
+      toast.error(err?.message || `Unable to decline booking for ${declineTarget.childName}.`);
+    } finally {
+      setIsUpdatingReq(false);
+    }
   };
 
   // Metrics
@@ -183,39 +211,13 @@ export default function DriverDashboardPage() {
   }
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-20">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Driver Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/driver/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
-              Overview
-            </button>
-          </Link>
-          <Link href="/driver/console">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>Active GPS Console</span>
-            </button>
-          </Link>
-          <Link href="/driver/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Bookings &amp; Manifest
-            </button>
-          </Link>
-          <Link href="/driver/vehicles">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Fleet Vehicles
-            </button>
-          </Link>
-          <Link href="/driver/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Operator Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.DRIVER} />
+        {error && <ErrorBanner message={error} onRetry={loadDriverData} />}
 
         {/* Hero Welcome Showcase Card matching Home Page Theme */}
         <motion.div
@@ -626,6 +628,24 @@ export default function DriverDashboardPage() {
 
       </div>
 
+      <ConfirmDialog
+        open={!!declineTarget}
+        onOpenChange={(open) => !open && setDeclineTarget(null)}
+        title="Decline Seat Request"
+        description={`Are you sure you want to decline the seat booking request for ${declineTarget?.childName || 'this student'}?`}
+        confirmLabel="Confirm Decline"
+        variant="danger"
+        isLoading={isUpdatingReq}
+        onConfirm={confirmDeclineRequest}
+      />
     </div>
+  );
+}
+
+export default function DriverDashboardPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.DRIVER]}>
+      <DriverDashboardContent />
+    </RoleGuard>
   );
 }

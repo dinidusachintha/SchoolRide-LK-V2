@@ -28,7 +28,10 @@ import {
   Filter,
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatLKR, BookingStatus } from '@schoolride/shared';
+import { formatLKR, BookingStatus, UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import { Skeleton } from '@/components/ui/skeleton';
 
 const DEMO_DRIVER_BOOKINGS = [
@@ -139,14 +142,15 @@ const DEMO_DRIVER_BOOKINGS = [
   },
 ];
 
-export default function DriverBookingsPage() {
+function DriverBookingsContent() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [bookings, setBookings] = React.useState<any[]>(DEMO_DRIVER_BOOKINGS);
+  const [bookings, setBookings] = React.useState<any[]>([]);
   const [filter, setFilter] = React.useState<'ALL' | 'PENDING' | 'ACCEPTED' | 'ARCHIVED'>('ALL');
   const [searchQuery, setSearchQuery] = React.useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
   // Reject modal state
   const [rejectingBookingId, setRejectingBookingId] = React.useState<string | null>(null);
@@ -155,13 +159,13 @@ export default function DriverBookingsPage() {
 
   const loadBookings = React.useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const data = await api.get('/bookings');
-      if (Array.isArray(data) && data.length > 0) {
-        setBookings(data);
-      }
-    } catch {
-      // Retain DEMO_DRIVER_BOOKINGS
+      setBookings(Array.isArray(data) ? data : data?.data || []);
+    } catch (err: any) {
+      setError(err?.message || 'Unable to load booking requests & passenger manifest.');
+      setBookings([]);
     } finally {
       setIsLoading(false);
     }
@@ -178,12 +182,8 @@ export default function DriverBookingsPage() {
       });
       toast.success('Transport booking accepted! Passenger added to manifest.');
       loadBookings();
-    } catch {
-      // Local state update for preview
-      setBookings((prev) =>
-        prev.map((b) => (b.id === bookingId ? { ...b, status: 'ACCEPTED' } : b))
-      );
-      toast.success('Transport booking accepted! Passenger added to manifest.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Unable to accept booking request right now.');
     }
   };
 
@@ -201,14 +201,8 @@ export default function DriverBookingsPage() {
       setRejectingBookingId(null);
       setRejectReason('');
       loadBookings();
-    } catch {
-      // Local state update
-      setBookings((prev) =>
-        prev.map((b) => (b.id === rejectingBookingId ? { ...b, status: 'REJECTED' } : b))
-      );
-      toast.info('Booking request declined.');
-      setRejectingBookingId(null);
-      setRejectReason('');
+    } catch (err: any) {
+      toast.error(err?.message || 'Unable to decline booking request.');
     } finally {
       setIsSubmitting(false);
     }
@@ -242,39 +236,13 @@ export default function DriverBookingsPage() {
   });
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-20">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Driver Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/driver/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Overview
-            </button>
-          </Link>
-          <Link href="/driver/console">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>Active GPS Console</span>
-            </button>
-          </Link>
-          <Link href="/driver/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
-              Bookings &amp; Manifest ({bookings.length})
-            </button>
-          </Link>
-          <Link href="/driver/vehicles">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Fleet Vehicles
-            </button>
-          </Link>
-          <Link href="/driver/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Operator Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.DRIVER} />
+        {error && <ErrorBanner message={error} onRetry={loadBookings} />}
 
         {/* Hero Welcome Showcase Card - Dark Navy Blue */}
         <motion.div
@@ -647,10 +615,11 @@ export default function DriverBookingsPage() {
 
           <form onSubmit={handleReject} className="space-y-4 py-2">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">
+              <label htmlFor="decline-reason" className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">
                 Reason for Declining (Optional)
               </label>
               <Textarea
+                id="decline-reason"
                 rows={3}
                 placeholder="e.g. Van capacity reached for this school route, or pickup address outside coverage corridor."
                 value={rejectReason}
@@ -670,5 +639,13 @@ export default function DriverBookingsPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function DriverBookingsPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.DRIVER]}>
+      <DriverBookingsContent />
+    </RoleGuard>
   );
 }
