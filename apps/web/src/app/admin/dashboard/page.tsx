@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { formatSriLankanDateTime } from '@schoolride/shared';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorBanner } from '@/components/ui/error-banner';
 
 const DEFAULT_ADMIN_OVERVIEW = {
   metrics: {
@@ -65,6 +66,7 @@ export default function AdminDashboardPage() {
 
   const [overview, setOverview] = React.useState<any>(DEFAULT_ADMIN_OVERVIEW);
   const [isFetching, setIsFetching] = React.useState(false);
+  const [loadError, setLoadError] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     if (!authLoading && (!user || user.role !== 'ADMIN')) {
@@ -74,13 +76,14 @@ export default function AdminDashboardPage() {
 
     async function loadOverview() {
       setIsFetching(true);
+      setLoadError(null);
       try {
         const data = await api.get('/admin/overview');
         if (data && data.metrics) {
           setOverview(data);
         }
       } catch (err: any) {
-        console.warn('Using fallback admin overview metrics:', err?.message || err);
+        setLoadError(err?.message || 'Unable to refresh live admin metrics; showing cached overview.');
       } finally {
         setIsFetching(false);
       }
@@ -130,6 +133,7 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 w-full text-left">
+      {loadError && <ErrorBanner title="Live Metrics Unavailable" message={loadError} onRetry={() => window.location.reload()} />}
       {/* 2nd Section: Administrative Control Center Header Card (Dark Navy Blue Background) */}
       <div className="relative w-full rounded-2xl sm:rounded-3xl bg-[#0B1528] text-white p-6 sm:p-8 border border-blue-900/40 shadow-xl overflow-hidden">
         {/* Subtle Ambient Radial Glow */}

@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Textarea } from '@/components/ui/input';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import {
   FileCheck,
   CheckCircle2,
@@ -35,6 +36,7 @@ export default function AdminVerificationsPage() {
 
   const [queue, setQueue] = React.useState<any[]>([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [searchQuery, setSearchQuery] = React.useState('');
 
   // Rejection modal
@@ -44,11 +46,13 @@ export default function AdminVerificationsPage() {
 
   const loadQueue = React.useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const data = await api.get('/admin/verifications');
-      setQueue(data || []);
+      setQueue(Array.isArray(data) ? data : data?.data || []);
     } catch (err: any) {
       console.error('Failed to load verification queue:', err);
+      setError(err?.message || 'Unable to load pending driver verification queue.');
     } finally {
       setIsLoading(false);
     }
@@ -148,7 +152,7 @@ export default function AdminVerificationsPage() {
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <Link href="/admin/dashboard" className="text-slate-400 hover:text-white transition-colors mr-1">
+              <Link href="/admin/dashboard" aria-label="Back to Admin Dashboard" className="text-slate-400 hover:text-white transition-colors mr-1">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
@@ -179,6 +183,8 @@ export default function AdminVerificationsPage() {
           <Search className="absolute left-3 top-3 h-4 w-4 text-[#0B2345]" />
         </div>
       </div>
+
+      {error && <ErrorBanner message={error} onRetry={loadQueue} />}
 
       {/* Queue List: Glass Cards with Dark Navy Blue Headers & Footers */}
       {queue.length === 0 ? (
@@ -299,10 +305,11 @@ export default function AdminVerificationsPage() {
             </DialogTitle>
           </DialogHeader>
           <form onSubmit={handleReject} className="space-y-4 pt-2">
-            <p className="text-xs text-slate-500 leading-relaxed">
+            <label htmlFor="reject-verification-reason" className="block text-xs text-slate-500 leading-relaxed">
               Please state why the credentials failed compliance (e.g., blurred NIC, expired revenue license, unverified commercial heavy license).
-            </p>
+            </label>
             <Textarea
+              id="reject-verification-reason"
               placeholder="e.g. Please upload a clear photo of your 2026 Provincial Revenue License."
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
@@ -314,7 +321,7 @@ export default function AdminVerificationsPage() {
                 type="button"
                 variant="outline"
                 onClick={() => setRejectingDriverId(null)}
-                className="bg-white text-[#4E6258] border-slate-200"
+                className="bg-white text-slate-700 border-slate-200"
               >
                 Cancel
               </Button>

@@ -8,6 +8,7 @@ import { api } from '@/lib/api-client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import {
   History,
   ShieldCheck,
@@ -27,16 +28,20 @@ export default function AdminAuditLogsPage() {
   const [page, setPage] = React.useState(1);
   const [totalCount, setTotalCount] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const loadLogs = React.useCallback(async (p: number) => {
     setIsLoading(true);
+    setError(null);
     try {
       const data = await api.get(`/admin/audit-logs?page=${p}&limit=25`);
-      setLogs(data.data || []);
-      setTotalCount(data.total || 0);
+      const rows = Array.isArray(data) ? data : data?.data || [];
+      setLogs(rows);
+      setTotalCount(data?.meta?.total ?? data?.total ?? rows.length);
     } catch (err: any) {
       console.error('Failed to load audit logs:', err);
+      setError(err?.message || 'Unable to load platform audit logs.');
     } finally {
       setIsLoading(false);
     }
@@ -74,7 +79,7 @@ export default function AdminAuditLogsPage() {
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <Link href="/admin/dashboard" className="text-slate-400 hover:text-white transition-colors mr-1">
+              <Link href="/admin/dashboard" aria-label="Back to Admin Dashboard" className="text-slate-400 hover:text-white transition-colors mr-1">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
@@ -106,6 +111,8 @@ export default function AdminAuditLogsPage() {
           <Search className="absolute left-3 top-3 h-4 w-4 text-[#FFC928]" />
         </div>
       </div>
+
+      {error && <ErrorBanner message={error} onRetry={() => loadLogs(page)} />}
 
       {/* Audit Log Table: Premium White Glass Card */}
       <div className="glass-card-white rounded-3xl overflow-hidden shadow-xl">
@@ -169,6 +176,8 @@ export default function AdminAuditLogsPage() {
           <span className="text-slate-300">Page {page} of {Math.ceil(totalCount / 25) || 1}</span>
           <div className="flex items-center gap-2">
             <button
+              type="button"
+              aria-label="Previous audit logs page"
               onClick={() => setPage((p) => Math.max(p - 1, 1))}
               disabled={page <= 1}
               className="p-1.5 rounded-xl border border-white/15 bg-white/10 text-white hover:bg-white/20 disabled:opacity-30 cursor-pointer transition-colors shadow-2xs"
@@ -176,6 +185,8 @@ export default function AdminAuditLogsPage() {
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
+              type="button"
+              aria-label="Next audit logs page"
               onClick={() => setPage((p) => p + 1)}
               disabled={page * 25 >= totalCount}
               className="p-1.5 rounded-xl border border-white/15 bg-white/10 text-white hover:bg-white/20 disabled:opacity-30 cursor-pointer transition-colors shadow-2xs"

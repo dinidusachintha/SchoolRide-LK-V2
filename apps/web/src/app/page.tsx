@@ -537,7 +537,23 @@ export default function HomePage() {
 
   const [selectedDistrict, setSelectedDistrict] = React.useState('All');
   const [schoolSearchQuery, setSchoolSearchQuery] = React.useState('');
+  const [pickupTownQuery, setPickupTownQuery] = React.useState('');
   const [isFiltering, setIsFiltering] = React.useState(false);
+
+  const heroDriversHref = React.useMemo(() => {
+    const params = new URLSearchParams();
+    if (selectedDistrict && selectedDistrict !== 'All') {
+      params.set('district', selectedDistrict);
+    }
+    if (schoolSearchQuery.trim()) {
+      params.set('school', schoolSearchQuery.trim());
+    }
+    if (pickupTownQuery.trim()) {
+      params.set('q', pickupTownQuery.trim());
+    }
+    const qs = params.toString();
+    return qs ? `/drivers?${qs}` : '/drivers';
+  }, [selectedDistrict, schoolSearchQuery, pickupTownQuery]);
   const [openFaqIndex, setOpenFaqIndex] = React.useState<number | null>(0);
   const [isSchoolsDropdownOpen, setIsSchoolsDropdownOpen] = React.useState(false);
   const [selectedSchoolId, setSelectedSchoolId] = React.useState<number>(1);
@@ -1042,10 +1058,11 @@ export default function HomePage() {
                 
                 {/* 1. District Glass Card */}
                 <div className="relative p-2.5 rounded-2xl bg-white/[0.06] backdrop-blur-md border border-white/[0.12] hover:border-blue-400/40 transition-all">
-                  <label className="block text-[11px] font-bold text-white/80 mb-1">
+                  <label htmlFor="hero-district" className="block text-[11px] font-bold text-white/80 mb-1">
                     Province / District
                   </label>
                   <select
+                    id="hero-district"
                     value={selectedDistrict}
                     onChange={(e) => handleDistrictFilter(e.target.value)}
                     className="w-full px-2.5 py-2 rounded-xl border border-white/20 bg-white/[0.1] text-sm font-semibold text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15] cursor-pointer"
@@ -1062,11 +1079,12 @@ export default function HomePage() {
 
                 {/* 2. School Glass Card */}
                 <div className="relative p-2.5 rounded-2xl bg-white/[0.06] backdrop-blur-md border border-white/[0.12] hover:border-blue-400/40 transition-all">
-                  <label className="block text-[11px] font-bold text-white/80 mb-1">
+                  <label htmlFor="hero-school" className="block text-[11px] font-bold text-white/80 mb-1">
                     Child's School
                   </label>
                   <div className="relative">
                     <input
+                      id="hero-school"
                       type="text"
                       placeholder="e.g. Royal, Visakha, Ananda"
                       value={schoolSearchQuery}
@@ -1079,12 +1097,15 @@ export default function HomePage() {
 
                 {/* 3. Pickup Town Glass Card */}
                 <div className="relative p-2.5 rounded-2xl bg-white/[0.06] backdrop-blur-md border border-white/[0.12] hover:border-blue-400/40 transition-all">
-                  <label className="block text-[11px] font-bold text-white/80 mb-1">
+                  <label htmlFor="hero-pickup-town" className="block text-[11px] font-bold text-white/80 mb-1">
                     Home / Pickup Town
                   </label>
                   <div className="relative">
                     <input
+                      id="hero-pickup-town"
                       type="text"
+                      value={pickupTownQuery}
+                      onChange={(e) => setPickupTownQuery(e.target.value)}
                       placeholder="e.g. Nugegoda, Malabe"
                       className="w-full pl-8 pr-3 py-2 rounded-xl border border-white/20 bg-white/[0.1] text-sm font-semibold text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                     />
@@ -1096,8 +1117,8 @@ export default function HomePage() {
 
               {/* Action Button */}
               <div className="pt-2 lg:pt-0 shrink-0">
-                <Link href="/drivers">
-                  <button className="btn-glass-yellow-3d w-full lg:w-auto px-8 py-3.5 text-sm sm:text-base">
+                <Link href={heroDriversHref}>
+                  <button type="button" className="btn-glass-yellow-3d w-full lg:w-auto px-8 py-3.5 text-sm sm:text-base">
                     <Search className="h-4 w-4 stroke-[2.5]" />
                     <span>Search Verified Fleet</span>
                   </button>
@@ -1189,7 +1210,6 @@ export default function HomePage() {
                     src="/images/banner-student-window-hd.jpg"
                     alt="Happy Sri Lankan school student smiling safely with seatbelt from the yellow school van window"
                     fill
-                    priority
                     sizes="(max-width: 1024px) 100vw, 45vw"
                     quality={92}
                     className="object-cover object-center lg:object-[65%_center] filter contrast-[1.03]"
@@ -1215,7 +1235,6 @@ export default function HomePage() {
             src="/images/fleet-stats-motion-bg.jpg"
             alt="SchoolRide LK verified school commuter fleet"
             fill
-            priority
             sizes="100vw"
             quality={92}
             className="object-cover object-right lg:object-[85%_center] filter brightness-[0.82] contrast-[1.08]"
@@ -1370,7 +1389,6 @@ export default function HomePage() {
                     src={servicesData[activeServiceSlide].image}
                     alt={servicesData[activeServiceSlide].alt}
                     fill
-                    priority
                     sizes="100vw"
                     className="object-cover object-center"
                   />
@@ -1740,7 +1758,6 @@ export default function HomePage() {
                     src="/images/safety-charter-driver-kids.jpg"
                     alt="Verified School Van Driver and Students Beside Commuter Van"
                     fill
-                    priority
                     sizes="(max-width: 1024px) 100vw, 45vw"
                     className="object-cover object-[55%_center] group-hover:scale-103 transition-transform duration-700"
                   />
@@ -2239,8 +2256,8 @@ export default function HomePage() {
                   src="/images/banner-school-van-dark.jpg"
                   alt="SchoolRide LK Yellow School Van"
                   fill
+                  sizes="(max-width: 1024px) 50vw, 40vw"
                   className="object-cover object-left md:object-center transform translate-x-4 md:translate-x-6 scale-105"
-                  priority
                 />
               </div>
             </div>
@@ -2417,6 +2434,7 @@ export default function HomePage() {
                 {/* Close Button */}
                 <button
                   type="button"
+                  aria-label="Close feedback modal"
                   onClick={() => setIsFeedbackModalOpen(false)}
                   className="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
                 >
@@ -2491,7 +2509,7 @@ export default function HomePage() {
                         placeholder="e.g. Priyantha Silva"
                         value={feedbackForm.name}
                         onChange={(e) => setFeedbackForm({ ...feedbackForm, name: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#FACC15]"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                       />
                     </div>
 
@@ -2506,7 +2524,7 @@ export default function HomePage() {
                           placeholder="e.g. Royal College, Colombo 07"
                           value={feedbackForm.school}
                           onChange={(e) => setFeedbackForm({ ...feedbackForm, school: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#FACC15]"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                         />
                       </div>
                       <div>
@@ -2518,7 +2536,7 @@ export default function HomePage() {
                           placeholder="e.g. Malabe &amp; Rajagiriya"
                           value={feedbackForm.route}
                           onChange={(e) => setFeedbackForm({ ...feedbackForm, route: e.target.value })}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#FACC15]"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                         />
                       </div>
                     </div>
@@ -2531,7 +2549,7 @@ export default function HomePage() {
                       <select
                         value={feedbackForm.category}
                         onChange={(e) => setFeedbackForm({ ...feedbackForm, category: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#FACC15]"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                       >
                         <option value="Live GPS Tracking">Live GPS Tracking &amp; Alerts</option>
                         <option value="Driver Safety &amp; Vetting">Driver Safety &amp; Vetting</option>
@@ -2551,7 +2569,7 @@ export default function HomePage() {
                         placeholder="Share your experience regarding driver punctuality, vehicle comfort, or the tracking experience..."
                         value={feedbackForm.comment}
                         onChange={(e) => setFeedbackForm({ ...feedbackForm, comment: e.target.value })}
-                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#FACC15] resize-none"
+                        className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FACC15] resize-none"
                       />
                     </div>
 
@@ -2624,7 +2642,7 @@ export default function HomePage() {
                   src="/images/verified-fleet-team.jpg"
                   alt="SchoolRide LK Verified Fleet Team"
                   fill
-                  priority
+                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover object-center"
                 />
                 
@@ -2649,7 +2667,7 @@ export default function HomePage() {
               </div>
 
               {/* Bottom Quick Fleet Charter Row */}
-              <div className="grid grid-cols-3 gap-2.5 pt-1 text-center">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-center">
                 <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80">
                   <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Clearance</span>
                   <span className="text-xs font-extrabold text-[#0B1528] block mt-0.5">100% Police Vetted</span>
@@ -2728,7 +2746,7 @@ export default function HomePage() {
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-center gap-3.5">
                       <div className="relative">
-                        <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#FFE57F] to-[#FACC15] text-slate-950 font-black text-lg flex items-center justify-center shadow-sm border border-amber-300">
+                        <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-[#FFE57F] to-[#FACC15] text-slate-950 font-black text-lg flex items-center justify-center shadow-sm border border-amber-300">
                           {verifiedFleetDrivers[activeFleetSlide].initials}
                         </div>
                         <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white" />
@@ -2843,9 +2861,8 @@ export default function HomePage() {
             src="/images/faq-school-van-bg-hd.jpg"
             alt="SchoolRide LK verified driver and students with yellow school commuter van"
             fill
-            priority
             sizes="100vw"
-            quality={90}
+            quality={85}
             className="object-cover object-right lg:object-[70%_center]"
           />
           {/* Subtle gradient wash behind the question card for crystal-clear readability */}
@@ -2879,6 +2896,7 @@ export default function HomePage() {
                       <button
                         type="button"
                         onClick={() => toggleFaq(index)}
+                        aria-expanded={isOpen}
                         className="w-full text-left flex items-center justify-between gap-3 group cursor-pointer"
                       >
                         <span

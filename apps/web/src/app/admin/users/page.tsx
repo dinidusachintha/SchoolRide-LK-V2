@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import {
   Users,
   Search,
@@ -33,6 +34,7 @@ export default function AdminUsersPage() {
   const [statusFilter, setStatusFilter] = React.useState('');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
   // Suspend modal state
   const [suspendingUser, setSuspendingUser] = React.useState<any>(null);
@@ -41,6 +43,7 @@ export default function AdminUsersPage() {
 
   const loadUsers = React.useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams();
       if (roleFilter) params.append('role', roleFilter);
@@ -48,9 +51,10 @@ export default function AdminUsersPage() {
       if (searchQuery.trim()) params.append('query', searchQuery.trim());
 
       const data = await api.get(`/admin/users?${params.toString()}`);
-      setUsers(data || []);
+      setUsers(Array.isArray(data) ? data : data?.data || []);
     } catch (err: any) {
       console.error('Failed to load users:', err);
+      setError(err?.message || 'Unable to load platform user records.');
     } finally {
       setIsLoading(false);
     }
@@ -73,10 +77,14 @@ export default function AdminUsersPage() {
     setIsSubmitting(true);
     try {
       if (suspendingUser.status === AccountStatus.SUSPENDED) {
-        await api.patch(`/admin/users/${suspendingUser.id}/reactivate`, {});
+        await api.patch(`/admin/users/${suspendingUser.id}/status`, {
+          status: AccountStatus.ACTIVE,
+          reason: 'Administrative reactivation',
+        });
         toast.success(`Account for ${suspendingUser.fullName} reactivated.`);
       } else {
-        await api.patch(`/admin/users/${suspendingUser.id}/suspend`, {
+        await api.patch(`/admin/users/${suspendingUser.id}/status`, {
+          status: AccountStatus.SUSPENDED,
           reason: suspendReason.trim() || 'Administrative security suspension',
         });
         toast.warning(`Account for ${suspendingUser.fullName} suspended.`);
@@ -101,7 +109,7 @@ export default function AdminUsersPage() {
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
-              <Link href="/admin/dashboard" className="text-slate-400 hover:text-white transition-colors mr-1">
+              <Link href="/admin/dashboard" aria-label="Back to Admin Dashboard" className="text-slate-400 hover:text-white transition-colors mr-1">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
               <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
@@ -158,6 +166,8 @@ export default function AdminUsersPage() {
           </select>
         </div>
       </div>
+
+      {error && <ErrorBanner message={error} onRetry={loadUsers} />}
 
       {/* Users Table: Premium White Glass Card */}
       <div className="glass-card-white rounded-3xl overflow-hidden shadow-md">
@@ -256,15 +266,16 @@ export default function AdminUsersPage() {
           </DialogHeader>
           <form onSubmit={handleToggleSuspend} className="space-y-4 pt-2">
             {suspendingUser?.status === AccountStatus.SUSPENDED ? (
-              <p className="text-xs text-[#4E6258]">
+              <p className="text-xs text-slate-600">
                 Reactivating will restore login access and allow this user to book rides or operate vans normally.
               </p>
             ) : (
               <div className="space-y-2">
-                <p className="text-xs text-[#4E6258]">
+                <label htmlFor="suspend-reason" className="block text-xs text-slate-600">
                   Suspension immediately revokes active session access and driver operating status.
-                </p>
+                </label>
                 <Textarea
+                  id="suspend-reason"
                   placeholder="Reason for suspension (e.g., policy violation, complaint investigation)"
                   value={suspendReason}
                   onChange={(e) => setSuspendReason(e.target.value)}
@@ -277,7 +288,7 @@ export default function AdminUsersPage() {
                 type="button"
                 variant="outline"
                 onClick={() => setSuspendingUser(null)}
-                className="bg-white text-[#4E6258] border-slate-200"
+                className="bg-white text-slate-700 border-slate-200"
               >
                 Cancel
               </Button>
@@ -286,7 +297,7 @@ export default function AdminUsersPage() {
                 disabled={isSubmitting}
                 className={
                   suspendingUser?.status === AccountStatus.SUSPENDED
-                    ? 'bg-[#094718] hover:bg-[#073713] text-white font-bold text-xs'
+                    ? 'bg-[#0B1528] hover:bg-[#13294B] text-[#FFC928] font-bold text-xs'
                     : 'bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs'
                 }
               >

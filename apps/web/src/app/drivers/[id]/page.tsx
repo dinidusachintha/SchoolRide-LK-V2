@@ -5,9 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { api } from '@/lib/api-client';
 import { useAuth } from '@/lib/auth-context';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { CURATED_DEMO_DRIVERS } from '@/lib/curated-drivers';
 import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -17,12 +15,10 @@ import {
   Star,
   Bus,
   CheckCircle2,
-  Calendar,
-  Clock,
   GraduationCap,
-  Sparkles,
   ArrowLeft,
   AlertCircle,
+  Compass,
 } from 'lucide-react';
 import { formatLKR, formatSriLankanDateTime } from '@schoolride/shared';
 import { toast } from 'sonner';
@@ -61,18 +57,44 @@ export default function DriverPublicProfilePage() {
           setSelectedVehicleId(data.vehicles[0].id);
         }
 
-        // If parent is logged in, fetch their children for booking dropdown
         if (user?.role === 'PARENT') {
           const children = await api.get('/parents/me/children').catch(() => []);
-          setChildrenList(children);
-          if (children.length > 0) {
-            setSelectedChildId(children[0].id);
-            setPickupAddress(children[0].pickupAddress || '');
-            setDropoffAddress(children[0].dropoffAddress || '');
+          const safeChildren = Array.isArray(children) ? children : [];
+          setChildrenList(safeChildren);
+          if (safeChildren.length > 0) {
+            setSelectedChildId(safeChildren[0].id);
+            setPickupAddress(safeChildren[0].pickupAddress || '');
+            setDropoffAddress(safeChildren[0].dropoffAddress || '');
           }
         }
       } catch (err: any) {
-        setError(err.message || 'Driver profile not found.');
+        const curated = CURATED_DEMO_DRIVERS.find((d) => d.id === driverId);
+        if (curated) {
+          const mappedDriver = {
+            id: curated.id,
+            fullName: curated.fullName,
+            district: curated.district,
+            city: curated.city,
+            ratingAverage: curated.ratingAverage,
+            ratingCount: curated.ratingCount,
+            experienceYears: curated.experienceYears,
+            bio: curated.bio,
+            corridor: curated.corridor,
+            vehicles: [curated.vehicle],
+            schools: curated.schools,
+            serviceAreas: [
+              {
+                monthlyRateMinorUnits: curated.monthlyRateLKR * 100,
+                operatingAreas: curated.corridor.split(' → '),
+              },
+            ],
+            reviews: [],
+          };
+          setDriver(mappedDriver);
+          setSelectedVehicleId(curated.vehicle.id || 'veh-demo-01');
+        } else {
+          setError(err?.message || 'Driver profile not found.');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -83,7 +105,7 @@ export default function DriverPublicProfilePage() {
   const handleOpenBookingModal = () => {
     if (!user) {
       toast.info('Please sign in or create a parent account to request a booking.');
-      router.push(`/login?redirect=/drivers/${driverId}`);
+      router.push(`/login?redirect=${encodeURIComponent(`/drivers/${driverId}`)}`);
       return;
     }
     if (user.role !== 'PARENT') {
@@ -132,7 +154,7 @@ export default function DriverPublicProfilePage() {
       setBookingModalOpen(false);
       router.push('/parent/bookings');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to submit booking request.');
+      toast.error(err?.message || 'Failed to submit booking request.');
     } finally {
       setIsSubmittingBooking(false);
     }
@@ -140,12 +162,14 @@ export default function DriverPublicProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
-        <Skeleton className="h-8 w-40" />
-        <Skeleton className="h-64 w-full rounded-2xl" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Skeleton className="h-48 w-full rounded-xl" />
-          <Skeleton className="h-48 w-full rounded-xl" />
+      <div className="min-h-screen w-full dashboard-navy-yellow-bg py-10 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto space-y-6 relative z-10">
+          <Skeleton className="h-8 w-40 bg-white/20" />
+          <Skeleton className="h-56 w-full rounded-[32px] bg-white/40" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Skeleton className="h-52 w-full rounded-[28px] bg-white/40" />
+            <Skeleton className="h-52 w-full rounded-[28px] bg-white/40" />
+          </div>
         </div>
       </div>
     );
@@ -153,215 +177,243 @@ export default function DriverPublicProfilePage() {
 
   if (error || !driver) {
     return (
-      <div className="max-w-md mx-auto px-4 py-20 text-center space-y-4">
-        <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
-        <h2 className="text-xl font-bold text-foreground">Driver Not Available</h2>
-        <p className="text-xs text-muted-foreground">{error || 'This driver profile is not currently public.'}</p>
-        <Link href="/drivers">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-1" /> Back to Directory
-          </Button>
-        </Link>
+      <div className="min-h-[75vh] w-full dashboard-navy-yellow-bg flex items-center justify-center p-4 sm:p-8">
+        <div className="max-w-md w-full glass-card-white rounded-[32px] p-8 text-center space-y-4 shadow-2xl">
+          <div className="h-12 w-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
+            <AlertCircle className="h-6 w-6" />
+          </div>
+          <h1 className="text-xl font-black text-[#0B1528]">Driver Not Available</h1>
+          <p className="text-xs sm:text-sm text-slate-600">{error || 'This driver profile is not currently public.'}</p>
+          <Link
+            href="/drivers"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#0B1528] text-white font-bold text-xs sm:text-sm hover:bg-[#071426] transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 text-[#FACC15]" />
+            <span>Back to Drivers Directory</span>
+          </Link>
+        </div>
       </div>
     );
   }
 
   const primaryArea = driver.serviceAreas?.[0];
+  const fullName = driver.user?.fullName || driver.fullName || 'Verified Operator';
+  const district = driver.user?.district || driver.district || 'Colombo';
+  const city = driver.user?.city || driver.city || district;
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 w-full">
-      {/* Back button */}
-      <Link href="/drivers" className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground transition-colors">
-        <ArrowLeft className="h-3.5 w-3.5 mr-1" /> Back to Drivers Directory
-      </Link>
+    <div className="min-h-screen w-full dashboard-navy-yellow-bg text-[#0B1528] py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto space-y-6 sm:space-y-8 relative z-10 text-left">
+        {/* Back button */}
+        <Link
+          href="/drivers"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 text-xs font-bold transition-colors"
+        >
+          <ArrowLeft className="h-3.5 w-3.5 text-[#FACC15]" />
+          <span>Back to Drivers Directory</span>
+        </Link>
 
-      {/* Main Profile Header Card */}
-      <div className="p-6 sm:p-8 rounded-3xl border border-border bg-card shadow-card flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex items-start sm:items-center gap-4">
-          <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-primary text-primary-foreground font-extrabold text-2xl shadow-elevated shrink-0">
-            {driver.fullName
-              .split(' ')
-              .map((n: string) => n[0])
-              .slice(0, 2)
-              .join('')}
-          </div>
-          <div className="space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground">{driver.fullName}</h1>
-              <Badge variant="success">
-                <ShieldCheck className="h-3.5 w-3.5 mr-1" /> Verified Operator
-              </Badge>
+        {/* Main Profile Header Card (Dark Navy + Glass Aesthetic) */}
+        <div className="rounded-[28px] sm:rounded-[32px] bg-[#0B1528] text-white border border-blue-900/50 p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-start sm:items-center gap-4">
+            <div className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-[#FACC15] text-[#071426] font-black text-2xl shadow-md shrink-0">
+              {fullName
+                .split(' ')
+                .map((n: string) => n[0])
+                .slice(0, 2)
+                .join('')}
             </div>
-            <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-primary shrink-0" />
-              Operating in {driver.city || driver.district}, {driver.district} District
-            </p>
-            <div className="flex items-center gap-4 text-xs text-foreground font-medium pt-1">
-              <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-bold">
-                <Star className="h-4 w-4 fill-current" />
-                {driver.ratingAverage.toFixed(1)} ({driver.ratingCount} reviews)
+            <div className="space-y-1.5 min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{fullName}</h1>
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[11px] font-extrabold">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Verified Operator
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-300 flex items-center gap-1.5">
+                <MapPin className="h-4 w-4 text-[#FACC15] shrink-0" />
+                <span>Operating in {city}, {district} District</span>
+              </p>
+              <div className="flex flex-wrap items-center gap-3 text-xs font-medium pt-0.5">
+                <span className="flex items-center gap-1 text-[#FACC15] font-bold">
+                  <Star className="h-4 w-4 fill-current" />
+                  {(driver.ratingAverage || 4.9).toFixed(1)} ({driver.ratingCount || 0} reviews)
+                </span>
+                <span className="text-slate-500" aria-hidden="true">•</span>
+                <span className="text-slate-200">{driver.experienceYears || 5}+ Years Experience</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Pricing & Booking Trigger */}
+          <div className="flex flex-col sm:items-end justify-center border-t md:border-t-0 md:border-l border-white/15 pt-4 md:pt-0 md:pl-6 shrink-0 space-y-2.5">
+            <div>
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                Agreed Monthly Fee
               </span>
-              <span>•</span>
-              <span>{driver.experienceYears} Years Experience</span>
+              <span className="text-xl sm:text-2xl font-black text-white font-mono">
+                {primaryArea?.monthlyRateMinorUnits
+                  ? formatLKR(primaryArea.monthlyRateMinorUnits, true)
+                  : 'Rs. 18,000'}
+                <span className="text-xs font-normal text-slate-400"> / child</span>
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleOpenBookingModal}
+              className="btn-glass-yellow-3d px-6 py-3 text-xs sm:text-sm font-black w-full sm:w-auto justify-center shadow-lg"
+            >
+              <Bus className="h-4 w-4" />
+              <span>Book Van Transport</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Grid: Vehicle Details & School Coverage */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Vehicles */}
+          <div className="glass-card-white rounded-[28px] p-6 space-y-4">
+            <h2 className="text-base font-black text-[#0B1528] flex items-center gap-2">
+              <Bus className="h-5 w-5 text-[#CA8A04]" />
+              <span>Approved Fleet Vehicles</span>
+            </h2>
+            <div className="space-y-3">
+              {driver.vehicles?.map((vehicle: any, idx: number) => (
+                <div key={vehicle.id || idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-extrabold text-sm text-[#0B1528]">
+                      {vehicle.make} {vehicle.model} ({vehicle.year || 2019})
+                    </span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-white border border-slate-200 text-[11px] font-bold text-[#0B1528]">
+                      {vehicle.vehicleType || 'VAN'}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 font-medium">
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                      <span>{vehicle.capacity} Passenger Capacity</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                      <span>{(vehicle.isAirConditioned ?? vehicle.hasAirConditioning) !== false ? 'Dual A/C Equipped' : 'Standard Airflow'}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                      <span>Emergency Exit Door</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 shrink-0" />
+                      <span>First Aid &amp; Extinguisher</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
 
-        {/* Pricing & Booking Trigger */}
-        <div className="flex flex-col sm:items-end justify-center border-t md:border-t-0 md:border-l border-border/60 pt-4 md:pt-0 md:pl-6 shrink-0 space-y-2">
-          <div>
-            <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">
-              Agreed Monthly Fee
-            </span>
-            <span className="text-xl sm:text-2xl font-extrabold text-foreground font-mono">
-              {primaryArea?.monthlyRateMinorUnits
-                ? formatLKR(primaryArea.monthlyRateMinorUnits, true)
-                : 'Rs. 18,000'}
-              <span className="text-xs font-normal text-muted-foreground"> / child</span>
-            </span>
-          </div>
-
-          <Button onClick={handleOpenBookingModal} variant="primary" size="lg" className="w-full sm:w-auto font-bold shadow-elevated">
-            <Bus className="h-4 w-4" /> Book Van Transport
-          </Button>
-        </div>
-      </div>
-
-      {/* Grid: Vehicle Details & School Coverage */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Vehicles */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Bus className="h-5 w-5 text-primary" /> Approved Fleet Vehicles
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {driver.vehicles?.map((vehicle: any) => (
-              <div key={vehicle.id} className="p-4 rounded-xl bg-muted/40 border border-border space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-sm text-foreground">
-                    {vehicle.make} {vehicle.model} ({vehicle.year})
+          {/* Schools Served */}
+          <div className="glass-card-white rounded-[28px] p-6 space-y-4">
+            <h2 className="text-base font-black text-[#0B1528] flex items-center gap-2">
+              <GraduationCap className="h-5 w-5 text-[#CA8A04]" />
+              <span>Schools Covered ({driver.schools?.length || 0})</span>
+            </h2>
+            <div className="space-y-3">
+              {driver.schools?.map((school: any) => (
+                <div key={school.id || school.name} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-xs font-extrabold text-[#0B1528]">{school.name}</h3>
+                    <p className="text-[11px] text-slate-600 flex items-center gap-1 mt-0.5">
+                      <MapPin className="h-3 w-3 text-[#CA8A04] shrink-0" />
+                      <span>{school.address || school.city}</span>
+                    </p>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-bold shrink-0">
+                    Daily Route
                   </span>
-                  <Badge variant="outline">{vehicle.vehicleType}</Badge>
                 </div>
-                <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>{vehicle.capacity} Passenger Capacity</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>{vehicle.isAirConditioned ? 'Air Conditioned' : 'Non-A/C'}</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>Emergency Exit Door</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                    <span>First Aid & Extinguisher</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Schools Served */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <GraduationCap className="h-5 w-5 text-primary" /> Schools Covered ({driver.schools?.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {driver.schools?.map((school: any) => (
-              <div key={school.id} className="p-3 rounded-xl bg-card border border-border flex items-start justify-between gap-3">
-                <div>
-                  <h4 className="text-xs font-bold text-foreground">{school.name}</h4>
-                  <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
-                    <MapPin className="h-3 w-3 text-primary shrink-0" />
-                    {school.address}
-                  </p>
-                </div>
-                <Badge variant="success" className="text-[10px] shrink-0">
-                  Daily Route
-                </Badge>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Driver Bio & Service Description */}
-      {driver.bio && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">About the Van Operator</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-              {driver.bio}
-            </p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Parent Reviews */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Star className="h-5 w-5 text-amber-500 fill-current" />
-              Parent Reviews ({driver.reviews?.length || 0})
-            </CardTitle>
-            <div className="text-xs font-bold text-foreground">
-              Average: {driver.ratingAverage.toFixed(1)} / 5.0
+              ))}
             </div>
           </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {(!driver.reviews || driver.reviews.length === 0) ? (
-            <p className="text-xs text-muted-foreground py-4 text-center">
+        </div>
+
+        {/* Driver Bio & Corridor */}
+        {(driver.bio || driver.corridor) && (
+          <div className="glass-card-white rounded-[28px] p-6 space-y-3">
+            <h2 className="text-base font-black text-[#0B1528] flex items-center gap-2">
+              <Compass className="h-5 w-5 text-[#CA8A04]" />
+              <span>About the Van Operator &amp; Route</span>
+            </h2>
+            {driver.corridor && (
+              <p className="text-xs font-bold text-[#0B1528] bg-amber-50 border border-amber-200 rounded-xl px-3.5 py-2 inline-block">
+                Corridor: {driver.corridor}
+              </p>
+            )}
+            {driver.bio && (
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+                {driver.bio}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Parent Reviews */}
+        <div className="glass-card-white rounded-[28px] p-6 space-y-4">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-base font-black text-[#0B1528] flex items-center gap-2">
+              <Star className="h-5 w-5 text-[#CA8A04] fill-[#CA8A04]" />
+              <span>Parent Reviews ({driver.reviews?.length || 0})</span>
+            </h2>
+            <div className="text-xs font-extrabold text-[#0B1528]">
+              Average: {(driver.ratingAverage || 4.9).toFixed(1)} / 5.0
+            </div>
+          </div>
+
+          {!driver.reviews || driver.reviews.length === 0 ? (
+            <p className="text-xs text-slate-500 py-4 text-center">
               No written reviews submitted yet.
             </p>
           ) : (
-            driver.reviews.map((review: any) => (
-              <div key={review.id} className="p-4 rounded-xl border border-border/80 bg-muted/20 space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-foreground">{review.parentName}</span>
-                  <div className="flex items-center gap-1 text-amber-500">
-                    {Array.from({ length: review.rating }).map((_, i) => (
-                      <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                    ))}
+            <div className="space-y-3">
+              {driver.reviews.map((review: any) => (
+                <div key={review.id} className="p-4 rounded-2xl border border-slate-200/80 bg-slate-50 space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-[#0B1528]">{review.parentName}</span>
+                    <div className="flex items-center gap-1 text-amber-500" aria-label={`${review.rating} out of 5 stars`}>
+                      {Array.from({ length: review.rating }).map((_, i) => (
+                        <Star key={i} className="h-3.5 w-3.5 fill-current" />
+                      ))}
+                    </div>
                   </div>
+                  <p className="text-xs text-slate-600 leading-relaxed">&ldquo;{review.comment}&rdquo;</p>
+                  <span className="text-[10px] text-slate-500 block font-mono">
+                    {formatSriLankanDateTime(review.createdAt)}
+                  </span>
                 </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">"{review.comment}"</p>
-                <span className="text-[10px] text-muted-foreground/70 block">
-                  {formatSriLankanDateTime(review.createdAt)}
-                </span>
-              </div>
-            ))
+              ))}
+            </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* BOOKING REQUEST MODAL */}
       <Dialog open={bookingModalOpen} onOpenChange={setBookingModalOpen}>
         <form onSubmit={handleSubmitBooking}>
           <DialogHeader>
-            <DialogTitle>Request School Van Transport</DialogTitle>
-            <DialogDescription>
-              Submit transportation request to {driver.fullName}. The driver will confirm schedule and seat availability.
+            <DialogTitle className="font-black text-[#0B1528]">Request School Van Transport</DialogTitle>
+            <DialogDescription className="text-slate-600">
+              Submit a transportation request to {fullName}. The driver will confirm schedule and seat availability.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 text-left">
-            {/* Child Selector */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground uppercase">Select Child</label>
+              <label htmlFor="booking-child-select" className="text-xs font-bold text-[#0B1528] uppercase tracking-wider block">
+                Select Child
+              </label>
               <select
+                id="booking-child-select"
                 value={selectedChildId}
                 onChange={(e) => {
                   setSelectedChildId(e.target.value);
@@ -371,7 +423,7 @@ export default function DriverPublicProfilePage() {
                     setDropoffAddress(found.dropoffAddress);
                   }
                 }}
-                className="flex h-10 w-full rounded-lg border border-input bg-card px-3 text-xs text-foreground shadow-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+                className="flex h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs text-[#0B1528] focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                 required
               >
                 {childrenList.map((child) => (
@@ -382,24 +434,25 @@ export default function DriverPublicProfilePage() {
               </select>
             </div>
 
-            {/* Vehicle Selector */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-muted-foreground uppercase">Designated Van</label>
+              <label htmlFor="booking-vehicle-select" className="text-xs font-bold text-[#0B1528] uppercase tracking-wider block">
+                Designated Van
+              </label>
               <select
+                id="booking-vehicle-select"
                 value={selectedVehicleId}
                 onChange={(e) => setSelectedVehicleId(e.target.value)}
-                className="flex h-10 w-full rounded-lg border border-input bg-card px-3 text-xs text-foreground shadow-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
+                className="flex h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs text-[#0B1528] focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
                 required
               >
-                {driver.vehicles?.map((v: any) => (
-                  <option key={v.id} value={v.id}>
+                {driver.vehicles?.map((v: any, idx: number) => (
+                  <option key={v.id || idx} value={v.id || ''}>
                     {v.make} {v.model} ({v.capacity} passenger seats)
                   </option>
                 ))}
               </select>
             </div>
 
-            {/* Pickup & Dropoff Address */}
             <Input
               label="Home Pickup Address"
               value={pickupAddress}
@@ -413,7 +466,7 @@ export default function DriverPublicProfilePage() {
               required
             />
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input
                 label="Morning Pickup Time"
                 type="time"
@@ -447,17 +500,21 @@ export default function DriverPublicProfilePage() {
           </div>
 
           <DialogFooter>
-            <Button
+            <button
               type="button"
-              variant="outline"
               onClick={() => setBookingModalOpen(false)}
               disabled={isSubmittingBooking}
+              className="px-4 py-2 rounded-full border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 cursor-pointer"
             >
               Cancel
-            </Button>
-            <Button type="submit" variant="primary" isLoading={isSubmittingBooking}>
-              Confirm & Submit Request
-            </Button>
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmittingBooking}
+              className="btn-glass-yellow-3d px-5 py-2 text-xs font-black"
+            >
+              {isSubmittingBooking ? 'Submitting...' : 'Confirm & Submit Request'}
+            </button>
           </DialogFooter>
         </form>
       </Dialog>

@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -33,6 +34,7 @@ export default function AdminComplaintsPage() {
   const [statusFilter, setStatusFilter] = React.useState<'ALL' | 'OPEN' | 'RESOLVED'>('OPEN');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
   // Moderation modal
   const [resolvingComplaint, setResolvingComplaint] = React.useState<any>(null);
@@ -42,11 +44,13 @@ export default function AdminComplaintsPage() {
 
   const loadComplaints = React.useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const data = await api.get('/complaints');
-      setComplaints(data || []);
+      setComplaints(Array.isArray(data) ? data : data?.data || []);
     } catch (err: any) {
       console.error('Failed to load complaints:', err);
+      setError(err?.message || 'Unable to load platform complaints.');
     } finally {
       setIsLoading(false);
     }
@@ -164,6 +168,8 @@ export default function AdminComplaintsPage() {
         </div>
       </div>
 
+      {error && <ErrorBanner message={error} onRetry={loadComplaints} />}
+
       {/* Complaints List: Glass Cards with Dark Navy Blue Headers & Footers */}
       {isLoading ? (
         <div className="space-y-4">
@@ -259,8 +265,9 @@ export default function AdminComplaintsPage() {
           </DialogHeader>
           <form onSubmit={handleResolveSubmit} className="space-y-4 pt-2">
             <div>
-              <label className="block text-xs font-bold text-[#0B2345] mb-1">Resolution Outcome</label>
+              <label htmlFor="resolve-outcome" className="block text-xs font-bold text-[#0B2345] mb-1">Resolution Outcome</label>
               <select
+                id="resolve-outcome"
                 value={resolutionStatus}
                 onChange={(e) => setResolutionStatus(e.target.value as ComplaintStatus)}
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-[#0B2345] focus:ring-2 focus:ring-[#FFC928]"
@@ -270,8 +277,9 @@ export default function AdminComplaintsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-bold text-[#0B2345] mb-1">Investigation Notes &amp; Findings</label>
+              <label htmlFor="resolve-notes" className="block text-xs font-bold text-[#0B2345] mb-1">Investigation Notes &amp; Findings</label>
               <Textarea
+                id="resolve-notes"
                 placeholder="Document contact with driver/parent and final administrative decision..."
                 value={resolutionNotes}
                 onChange={(e) => setResolutionNotes(e.target.value)}

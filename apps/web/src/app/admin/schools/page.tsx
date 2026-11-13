@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import {
   School,
   Plus,
@@ -31,6 +32,7 @@ export default function AdminSchoolsPage() {
   const [districtFilter, setDistrictFilter] = React.useState('');
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
 
   // Dialog state
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
@@ -48,11 +50,13 @@ export default function AdminSchoolsPage() {
 
   const loadSchools = React.useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const data = await api.get('/schools');
-      setSchools(data || []);
+      setSchools(Array.isArray(data) ? data : data?.data || []);
     } catch (err: any) {
       console.error('Failed to load schools:', err);
+      setError(err?.message || 'Unable to load school registry.');
     } finally {
       setIsLoading(false);
     }
@@ -159,6 +163,8 @@ export default function AdminSchoolsPage() {
         </div>
       </div>
 
+      {error && <ErrorBanner message={error} onRetry={loadSchools} />}
+
       {/* Search & Filter Toolbar: White Gray Glass Effect Background */}
       <div className="glass-search-bar p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-3 gap-3 items-center relative overflow-hidden">
         <div className="sm:col-span-2 relative">
@@ -220,6 +226,8 @@ export default function AdminSchoolsPage() {
                     </div>
                   </div>
                   <button
+                    type="button"
+                    aria-label={`Edit ${school.name}`}
                     onClick={() => handleOpenEdit(school)}
                     className="p-1.5 rounded-lg text-slate-400 hover:text-[#0B2345] hover:bg-slate-100 transition-colors"
                   >
@@ -255,8 +263,9 @@ export default function AdminSchoolsPage() {
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4 pt-2">
             <div>
-              <label className="block text-xs font-bold text-[#0B2345] mb-1">School Name</label>
+              <label htmlFor="school-name" className="block text-xs font-bold text-[#0B2345] mb-1">School Name</label>
               <Input
+                id="school-name"
                 placeholder="e.g. Royal College"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -266,8 +275,9 @@ export default function AdminSchoolsPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-[#0B2345] mb-1">District</label>
+                <label htmlFor="school-district" className="block text-xs font-bold text-[#0B2345] mb-1">District</label>
                 <select
+                  id="school-district"
                   value={formData.district}
                   onChange={(e) => setFormData({ ...formData, district: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-[#0B2345] focus:ring-2 focus:ring-[#FFC928]"
@@ -280,8 +290,9 @@ export default function AdminSchoolsPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#0B2345] mb-1">City / Town</label>
+                <label htmlFor="school-city" className="block text-xs font-bold text-[#0B2345] mb-1">City / Town</label>
                 <Input
+                  id="school-city"
                   placeholder="e.g. Colombo 07"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
@@ -291,8 +302,9 @@ export default function AdminSchoolsPage() {
               </div>
             </div>
             <div>
-              <label className="block text-xs font-bold text-[#0B2345] mb-1">Street Address</label>
+              <label htmlFor="school-address" className="block text-xs font-bold text-[#0B2345] mb-1">Street Address</label>
               <Input
+                id="school-address"
                 placeholder="e.g. Reid Avenue, Colombo 00700"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
@@ -302,8 +314,9 @@ export default function AdminSchoolsPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-[#0B2345] mb-1">Gate Latitude</label>
+                <label htmlFor="school-lat" className="block text-xs font-bold text-[#0B2345] mb-1">Gate Latitude</label>
                 <Input
+                  id="school-lat"
                   type="number"
                   step="any"
                   value={formData.latitude}
@@ -313,8 +326,9 @@ export default function AdminSchoolsPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-[#0B2345] mb-1">Gate Longitude</label>
+                <label htmlFor="school-lng" className="block text-xs font-bold text-[#0B2345] mb-1">Gate Longitude</label>
                 <Input
+                  id="school-lng"
                   type="number"
                   step="any"
                   value={formData.longitude}
