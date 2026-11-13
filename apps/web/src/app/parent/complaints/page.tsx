@@ -25,7 +25,10 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { ComplaintCategory, formatSriLankanDateTime } from '@schoolride/shared';
+import { ComplaintCategory, formatSriLankanDateTime, UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // High-fidelity fallback demonstration complaints matching other Parent pages
@@ -60,13 +63,14 @@ const DEMO_COMPLAINTS = [
   },
 ];
 
-export default function ParentComplaintsPage() {
+function ParentComplaintsContent() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [complaints, setComplaints] = React.useState<any[]>(DEMO_COMPLAINTS);
+  const [complaints, setComplaints] = React.useState<any[]>([]);
   const [bookings, setBookings] = React.useState<any[]>([]);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [filterTab, setFilterTab] = React.useState<'ALL' | 'OPEN' | 'RESOLVED'>('ALL');
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
@@ -82,21 +86,18 @@ export default function ParentComplaintsPage() {
 
   const loadData = React.useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const [compRes, bookRes] = await Promise.all([
-        api.get('/complaints/my').catch(() => []),
+        api.get('/complaints/my'),
         api.get('/bookings').catch(() => []),
       ]);
-      if (Array.isArray(compRes) && compRes.length > 0) {
-        setComplaints(compRes);
-      } else {
-        setComplaints(DEMO_COMPLAINTS);
-      }
-      if (Array.isArray(bookRes) && bookRes.length > 0) {
-        setBookings(bookRes);
-      }
+      setComplaints(Array.isArray(compRes) ? compRes : compRes?.data || []);
+      setBookings(Array.isArray(bookRes) ? bookRes : bookRes?.data || []);
     } catch (err: any) {
       console.error('Failed to load complaints:', err);
+      setError(err?.message || 'Unable to load your submitted inquiries.');
+      setComplaints([]);
     } finally {
       setIsLoading(false);
     }
@@ -122,27 +123,17 @@ export default function ParentComplaintsPage() {
         targetUserId = linkedBooking?.driverProfile?.userId;
       }
 
-      await api.post('/complaints', {
+      const created = await api.post('/complaints', {
         bookingId: formData.bookingId || undefined,
         targetUserId: targetUserId || undefined,
         category: formData.category,
         title: formData.title.trim(),
         description: formData.description.trim(),
-      }).catch(() => null);
+      });
 
       const newComplaint = {
-        id: `comp-${Math.floor(1000 + Math.random() * 9000)}`,
-        category: formData.category,
-        title: formData.title.trim(),
-        description: formData.description.trim(),
-        status: 'OPEN',
-        resolutionNotes: null,
-        resolvedAt: null,
-        createdAt: new Date().toISOString(),
-        booking: linkedBooking || {
-          child: { firstName: 'Dineth', lastName: 'Silva' },
-          driverProfile: { user: { fullName: 'Sunil Wickramasinghe' } },
-        },
+        ...created,
+        booking: created?.booking || linkedBooking,
       };
 
       setComplaints((prev) => [newComplaint, ...prev]);
@@ -177,42 +168,11 @@ export default function ParentComplaintsPage() {
   });
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         {/* Parent Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/parent/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Overview
-            </button>
-          </Link>
-          <Link href="/parent/children">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              My Children
-            </button>
-          </Link>
-          <Link href="/parent/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Van Bookings
-            </button>
-          </Link>
-          <Link href="/parent/rides/live">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>Live Ride Map</span>
-            </button>
-          </Link>
-          <Link href="/parent/complaints">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
-              Inquiries &amp; Support ({complaints.length})
-            </button>
-          </Link>
-          <Link href="/parent/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.PARENT} />
+        {error && <ErrorBanner message={error} onRetry={loadData} />}
 
         {/* Hero Welcome Showcase Card - Dark Navy Blue */}
         <motion.div
@@ -573,10 +533,11 @@ export default function ParentComplaintsPage() {
           <form onSubmit={handleSubmit} className="space-y-4 py-2">
             {/* Category */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+              <label htmlFor="complaint-category" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                 Incident Category <span className="text-red-500">*</span>
               </label>
               <select
+                id="complaint-category"
                 className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FFC928]"
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
@@ -592,10 +553,11 @@ export default function ParentComplaintsPage() {
 
             {/* Linked Booking */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+              <label htmlFor="complaint-booking" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                 Related Transport Booking (Optional)
               </label>
               <select
+                id="complaint-booking"
                 className="w-full h-10 px-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#FFC928]"
                 value={formData.bookingId}
                 onChange={(e) => setFormData({ ...formData, bookingId: e.target.value })}
@@ -611,10 +573,11 @@ export default function ParentComplaintsPage() {
 
             {/* Title */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+              <label htmlFor="complaint-title" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                 Incident Subject <span className="text-red-500">*</span>
               </label>
               <input
+                id="complaint-title"
                 type="text"
                 placeholder="e.g. Overcrowding on morning route, driver using mobile phone"
                 value={formData.title}
@@ -626,10 +589,11 @@ export default function ParentComplaintsPage() {
 
             {/* Description */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+              <label htmlFor="complaint-description" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                 Detailed Description &amp; Date/Time <span className="text-red-500">*</span>
               </label>
               <textarea
+                id="complaint-description"
                 rows={4}
                 placeholder="Provide specific details including time of day, location, and nature of the occurrence..."
                 value={formData.description}
@@ -659,5 +623,13 @@ export default function ParentComplaintsPage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+export default function ParentComplaintsPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.PARENT]}>
+      <ParentComplaintsContent />
+    </RoleGuard>
   );
 }

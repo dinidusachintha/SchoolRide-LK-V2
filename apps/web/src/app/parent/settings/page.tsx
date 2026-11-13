@@ -31,16 +31,20 @@ import {
   FileText
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { SRI_LANKAN_DISTRICTS } from '@schoolride/shared';
+import { SRI_LANKAN_DISTRICTS, UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function ParentSettingsPage() {
+function ParentSettingsContent() {
   const { user, isLoading: authLoading, refreshUser } = useAuth();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = React.useState<'PROFILE' | 'EMERGENCY' | 'NOTIFICATIONS' | 'SECURITY'>('PROFILE');
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = React.useState({
@@ -88,8 +92,8 @@ export default function ParentSettingsPage() {
             emergencyContactPhone: data.emergencyContactPhone || prev.emergencyContactPhone,
           }));
         }
-      } catch {
-        // Fallback default demonstration data maintained
+      } catch (err: any) {
+        setError(err?.message || 'Unable to load saved profile settings.');
       }
     }
 
@@ -113,9 +117,8 @@ export default function ParentSettingsPage() {
       });
       toast.success('Your parent settings have been updated successfully.');
       if (refreshUser) await refreshUser();
-    } catch {
-      // Local state update for smooth preview
-      toast.success('Parent settings updated successfully.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to update parent settings.');
     } finally {
       setIsSaving(false);
     }
@@ -130,14 +133,14 @@ export default function ParentSettingsPage() {
     }, 400);
   };
 
-  const handleUpdatePassword = (e: React.FormEvent) => {
+  const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentPassword) {
       toast.error('Please enter your current password.');
       return;
     }
-    if (newPassword.length < 6) {
-      toast.error('New password must be at least 6 characters.');
+    if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      toast.error('New password must be at least 8 characters and include 1 uppercase letter and 1 number.');
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -146,13 +149,21 @@ export default function ParentSettingsPage() {
     }
 
     setIsChangingPass(true);
-    setTimeout(() => {
-      setIsChangingPass(false);
+    try {
+      await api.post('/auth/change-password', {
+        currentPassword,
+        newPassword,
+        confirmNewPassword: confirmPassword,
+      });
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       toast.success('Account password updated securely.');
-    }, 600);
+    } catch (err: any) {
+      toast.error(err?.message || 'Unable to update password right now.');
+    } finally {
+      setIsChangingPass(false);
+    }
   };
 
   if (authLoading || isLoading) {
@@ -160,44 +171,13 @@ export default function ParentSettingsPage() {
   }
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-20">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Parent Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/parent/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Overview
-            </button>
-          </Link>
-          <Link href="/parent/children">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              My Children
-            </button>
-          </Link>
-          <Link href="/parent/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Van Bookings
-            </button>
-          </Link>
-          <Link href="/parent/rides/live">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>Live Ride Map</span>
-            </button>
-          </Link>
-          <Link href="/parent/complaints">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Inquiries &amp; Support
-            </button>
-          </Link>
-          <Link href="/parent/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
-              Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.PARENT} />
+        {error && <ErrorBanner message={error} onRetry={() => window.location.reload()} />}
 
         {/* Hero Welcome Showcase Card - Dark Navy Blue */}
         <motion.div
@@ -601,7 +581,7 @@ export default function ParentSettingsPage() {
                         onChange={(e) => setNotifications({ ...notifications, vanArrival500m: e.target.checked })}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#14532D]" />
+                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B1528]" />
                     </label>
                   </div>
 
@@ -625,7 +605,7 @@ export default function ParentSettingsPage() {
                         onChange={(e) => setNotifications({ ...notifications, schoolGateArrival: e.target.checked })}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#14532D]" />
+                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B1528]" />
                     </label>
                   </div>
 
@@ -649,7 +629,7 @@ export default function ParentSettingsPage() {
                         onChange={(e) => setNotifications({ ...notifications, speedAlert: e.target.checked })}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#14532D]" />
+                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B1528]" />
                     </label>
                   </div>
 
@@ -673,7 +653,7 @@ export default function ParentSettingsPage() {
                         onChange={(e) => setNotifications({ ...notifications, afternoonDeparture: e.target.checked })}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#14532D]" />
+                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B1528]" />
                     </label>
                   </div>
 
@@ -697,7 +677,7 @@ export default function ParentSettingsPage() {
                         onChange={(e) => setNotifications({ ...notifications, monthlyReceipts: e.target.checked })}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#14532D]" />
+                      <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#0B1528]" />
                     </label>
                   </div>
                 </div>
@@ -759,6 +739,7 @@ export default function ParentSettingsPage() {
                       />
                       <button
                         type="button"
+                        aria-label={showCurrentPass ? 'Hide current password' : 'Show current password'}
                         onClick={() => setShowCurrentPass(!showCurrentPass)}
                         className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                       >
@@ -770,7 +751,7 @@ export default function ParentSettingsPage() {
                   {/* New Password */}
                   <div className="space-y-1.5">
                     <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
-                      New Password (Minimum 6 characters) <span className="text-red-500">*</span>
+                      New Password (Minimum 8 characters, 1 uppercase &amp; 1 number) <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -784,6 +765,7 @@ export default function ParentSettingsPage() {
                       />
                       <button
                         type="button"
+                        aria-label={showNewPass ? 'Hide new password' : 'Show new password'}
                         onClick={() => setShowNewPass(!showNewPass)}
                         className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
                       >
@@ -894,5 +876,13 @@ export default function ParentSettingsPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function ParentSettingsPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.PARENT]}>
+      <ParentSettingsContent />
+    </RoleGuard>
   );
 }

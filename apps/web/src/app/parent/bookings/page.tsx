@@ -30,7 +30,11 @@ import {
   ChevronRight,
   GraduationCap
 } from 'lucide-react';
-import { formatLKR, formatSriLankanDateTime } from '@schoolride/shared';
+import { formatLKR, formatSriLankanDateTime, UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -218,12 +222,15 @@ const DEMO_BOOKINGS = [
   },
 ];
 
-export default function ParentBookingsPage() {
+function ParentBookingsContent() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [bookings, setBookings] = React.useState<any[]>(DEMO_BOOKINGS);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [bookings, setBookings] = React.useState<any[]>([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [cancelTargetId, setCancelTargetId] = React.useState<string | null>(null);
+  const [isCancelling, setIsCancelling] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [filterTab, setFilterTab] = React.useState<'ALL' | 'ACTIVE' | 'PENDING' | 'COMPLETED'>('ALL');
 
@@ -238,13 +245,16 @@ export default function ParentBookingsPage() {
   const [selectedBooking, setSelectedBooking] = React.useState<any | null>(null);
 
   const fetchBookings = React.useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     try {
       const res = await api.get('/bookings');
-      if (Array.isArray(res) && res.length > 0) {
-        setBookings(res);
-      }
-    } catch {
-      // Retain DEMO_BOOKINGS for seamless demonstration
+      setBookings(Array.isArray(res) ? res : res?.data || []);
+    } catch (err: any) {
+      setError(err?.message || 'Unable to load your school van bookings.');
+      setBookings([]);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -252,26 +262,27 @@ export default function ParentBookingsPage() {
     fetchBookings();
   }, [fetchBookings]);
 
-  const handleCancelBooking = async (bookingId: string) => {
-    if (!confirm('Are you sure you want to cancel this booking request?')) {
-      return;
-    }
+  const handleCancelBooking = (bookingId: string) => {
+    setCancelTargetId(bookingId);
+  };
 
+  const confirmCancelBooking = async () => {
+    if (!cancelTargetId) return;
+    setIsCancelling(true);
     try {
-      await api.patch(`/bookings/${bookingId}/status`, {
+      await api.patch(`/bookings/${cancelTargetId}/status`, {
         targetStatus: 'CANCELLED',
         reason: 'Cancelled by parent',
       });
       toast.success('Booking cancelled successfully.');
+      setCancelTargetId(null);
+      if (selectedBooking) setSelectedBooking(null);
       fetchBookings();
-    } catch {
-      // Local state update for preview
-      setBookings((prev) =>
-        prev.map((b) => (b.id === bookingId ? { ...b, status: 'CANCELLED' } : b))
-      );
-      toast.success('Booking request cancelled.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to cancel booking request.');
+    } finally {
+      setIsCancelling(false);
     }
-    if (selectedBooking) setSelectedBooking(null);
   };
 
   const handleOpenReviewModal = (booking: any) => {
@@ -298,16 +309,8 @@ export default function ParentBookingsPage() {
       toast.success('Thank you! Your verified review has been submitted.');
       setReviewModalOpen(false);
       fetchBookings();
-    } catch {
-      toast.success('Thank you! Your verified driver review has been submitted.');
-      setBookings((prev) =>
-        prev.map((b) =>
-          b.id === reviewBookingId
-            ? { ...b, review: { rating, comment: comment.trim() } }
-            : b
-        )
-      );
-      setReviewModalOpen(false);
+    } catch (err: any) {
+      toast.error(err?.message || 'Unable to submit review right now.');
     } finally {
       setIsSubmittingReview(false);
     }
@@ -340,44 +343,13 @@ export default function ParentBookingsPage() {
   });
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-20">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Parent Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/parent/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Overview
-            </button>
-          </Link>
-          <Link href="/parent/children">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              My Children
-            </button>
-          </Link>
-          <Link href="/parent/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
-              Van Bookings ({bookings.length})
-            </button>
-          </Link>
-          <Link href="/parent/rides/live">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>Live Ride Map</span>
-            </button>
-          </Link>
-          <Link href="/parent/complaints">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Inquiries &amp; Support
-            </button>
-          </Link>
-          <Link href="/parent/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.PARENT} />
+        {error && <ErrorBanner message={error} onRetry={fetchBookings} />}
 
         {/* Hero Welcome Showcase Card - Dark Navy Blue */}
         <motion.div
@@ -931,10 +903,11 @@ export default function ParentBookingsPage() {
 
             {/* Feedback Comment */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+              <label htmlFor="review-comment" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                 Your Written Review
               </label>
               <textarea
+                id="review-comment"
                 placeholder="e.g. Always punctual, very cautious in school traffic, child feels very safe and happy."
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
@@ -964,6 +937,25 @@ export default function ParentBookingsPage() {
           </DialogFooter>
         </form>
       </Dialog>
+
+      <ConfirmDialog
+        open={!!cancelTargetId}
+        onOpenChange={(open) => !open && setCancelTargetId(null)}
+        title="Cancel Booking Request"
+        description="Are you sure you want to cancel this school van booking request?"
+        confirmLabel="Yes, Cancel Booking"
+        variant="danger"
+        isLoading={isCancelling}
+        onConfirm={confirmCancelBooking}
+      />
     </div>
+  );
+}
+
+export default function ParentBookingsPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.PARENT]}>
+      <ParentBookingsContent />
+    </RoleGuard>
   );
 }

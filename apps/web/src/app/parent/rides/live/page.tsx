@@ -30,6 +30,10 @@ import {
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import { Skeleton, LiveTrackingSkeleton } from '@/components/ui/skeleton';
+import { UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
 
 // Dynamically import Leaflet map with SSR disabled
 const LiveRideMap = dynamic(() => import('@/components/map/live-ride-map'), {
@@ -95,7 +99,7 @@ const DEMO_ACTIVE_RIDE = {
   ],
 };
 
-export default function ParentLiveTrackingPage() {
+function ParentLiveTrackingContent() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
@@ -108,12 +112,14 @@ export default function ParentLiveTrackingPage() {
   const [passengers, setPassengers] = React.useState<any[]>(DEMO_ACTIVE_RIDE.passengers);
   const [trail, setTrail] = React.useState<[number, number][]>(DEMO_ACTIVE_RIDE.trail);
   const [isDemoMode, setIsDemoMode] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   // 1. Initial Load of Active Ride from API
   const loadActiveRide = React.useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
-      const data = await api.get('/rides/active').catch(() => null);
+      const data = await api.get('/rides/active');
       if (data && data.status === 'IN_PROGRESS') {
         setActiveRide(data);
         setIsDemoMode(false);
@@ -142,6 +148,7 @@ export default function ParentLiveTrackingPage() {
       }
     } catch (err: any) {
       console.error('Failed to load active ride:', err);
+      setError(err?.message || 'Unable to connect to live ride telemetry server.');
       setActiveRide(DEMO_ACTIVE_RIDE);
       setIsDemoMode(true);
       setCurrentCoords({ lat: DEMO_ACTIVE_RIDE.currentLatitude, lng: DEMO_ACTIVE_RIDE.currentLongitude });
@@ -165,7 +172,7 @@ export default function ParentLiveTrackingPage() {
   React.useEffect(() => {
     if (!activeRide?.id || isDemoMode) return;
 
-    const token = typeof window !== 'undefined' ? localStorage.getItem('sr_token') : null;
+    const token = api.getToken();
     const socketUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
     const socket: Socket = io(socketUrl, {
@@ -256,44 +263,13 @@ export default function ParentLiveTrackingPage() {
   }
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-16">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-16">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Parent Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/parent/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Overview
-            </button>
-          </Link>
-          <Link href="/parent/children">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              My Children
-            </button>
-          </Link>
-          <Link href="/parent/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Van Bookings
-            </button>
-          </Link>
-          <Link href="/parent/rides/live">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-700 animate-ping" />
-              <span>Live Ride Map</span>
-            </button>
-          </Link>
-          <Link href="/parent/complaints">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Inquiries &amp; Support
-            </button>
-          </Link>
-          <Link href="/parent/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.PARENT} />
+        {error && <ErrorBanner message={error} onRetry={loadActiveRide} />}
 
         {/* Hero Welcome Showcase Card - Dark Navy Blue */}
         <motion.div
@@ -647,5 +623,13 @@ export default function ParentLiveTrackingPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function ParentLiveTrackingPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.PARENT]}>
+      <ParentLiveTrackingContent />
+    </RoleGuard>
   );
 }

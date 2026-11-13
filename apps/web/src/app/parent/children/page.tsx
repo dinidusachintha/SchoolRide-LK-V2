@@ -32,6 +32,11 @@ import {
   Calendar
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { INITIAL_SCHOOLS } from '@schoolride/shared';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -109,13 +114,16 @@ const DEMO_CHILDREN = [
   },
 ];
 
-export default function ParentChildrenPage() {
+function ParentChildrenContent() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
-  const [childrenList, setChildrenList] = React.useState<any[]>(DEMO_CHILDREN);
+  const [childrenList, setChildrenList] = React.useState<any[]>([]);
   const [schools, setSchools] = React.useState<any[]>(INITIAL_SCHOOLS);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+  const [pendingDeleteChild, setPendingDeleteChild] = React.useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
   const [filterTab, setFilterTab] = React.useState<'ALL' | 'ENROLLED' | 'UNENROLLED'>('ALL');
 
@@ -135,9 +143,10 @@ export default function ParentChildrenPage() {
 
   const fetchChildren = React.useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const [res, schoolsRes] = await Promise.all([
-        api.get('/parents/me/children').catch(() => []),
+        api.get('/parents/me/children'),
         api.get('/schools').catch(() => INITIAL_SCHOOLS),
       ]);
 
@@ -145,14 +154,10 @@ export default function ParentChildrenPage() {
         setSchools(schoolsRes);
       }
 
-      if (Array.isArray(res) && res.length > 0) {
-        setChildrenList(res);
-      } else {
-        // Fallback to demonstration children profiles for a complete visual experience
-        setChildrenList(DEMO_CHILDREN);
-      }
-    } catch {
-      setChildrenList(DEMO_CHILDREN);
+      setChildrenList(Array.isArray(res) ? res : res?.data || []);
+    } catch (err: any) {
+      setError(err?.message || 'Unable to load enrolled student profiles.');
+      setChildrenList([]);
     } finally {
       setIsLoading(false);
     }
@@ -219,35 +224,25 @@ export default function ParentChildrenPage() {
       };
 
       if (editingChildId) {
-        try {
-          await api.patch(`/parents/me/children/${editingChildId}`, payload);
-        } catch {
-          // Local state update for demonstration mode
-        }
+        const updated = await api.patch(`/parents/me/children/${editingChildId}`, payload);
         setChildrenList((prev) =>
           prev.map((c) =>
             c.id === editingChildId
               ? {
                   ...c,
-                  ...payload,
-                  school: selectedSchool,
+                  ...(updated || payload),
+                  school: updated?.school || selectedSchool,
                 }
               : c
           )
         );
         toast.success(`${firstName}'s profile updated successfully.`);
       } else {
-        let createdChild: any = null;
-        try {
-          createdChild = await api.post('/parents/me/children', payload);
-        } catch {
-          // Local fallback creation
-        }
-        const newChildEntry = createdChild || {
-          id: `child-${Date.now()}`,
-          ...payload,
-          school: selectedSchool,
-          bookings: [],
+        const createdChild = await api.post('/parents/me/children', payload);
+        const newChildEntry = {
+          ...createdChild,
+          school: createdChild?.school || selectedSchool,
+          bookings: createdChild?.bookings || [],
         };
         setChildrenList((prev) => [newChildEntry, ...prev]);
         toast.success(`Registered ${firstName} ${lastName} successfully!`);
@@ -261,18 +256,23 @@ export default function ParentChildrenPage() {
     }
   };
 
-  const handleDeleteChild = async (childId: string, name: string) => {
-    if (!confirm(`Are you sure you want to remove the profile for ${name}?`)) {
-      return;
-    }
+  const handleDeleteChild = (childId: string, name: string) => {
+    setPendingDeleteChild({ id: childId, name });
+  };
 
+  const confirmDeleteChild = async () => {
+    if (!pendingDeleteChild) return;
+    setIsDeleting(true);
     try {
-      await api.delete(`/parents/me/children/${childId}`).catch(() => null);
-    } catch {
-      // Allow local removal
+      await api.delete(`/parents/me/children/${pendingDeleteChild.id}`);
+      setChildrenList((prev) => prev.filter((c) => c.id !== pendingDeleteChild.id));
+      toast.success(`${pendingDeleteChild.name}'s profile has been removed.`);
+      setPendingDeleteChild(null);
+    } catch (err: any) {
+      toast.error(err?.message || 'Unable to remove student profile.');
+    } finally {
+      setIsDeleting(false);
     }
-    setChildrenList((prev) => prev.filter((c) => c.id !== childId));
-    toast.success(`${name}'s profile has been removed.`);
   };
 
   // Filter and search
@@ -293,44 +293,13 @@ export default function ParentChildrenPage() {
   const uniqueSchools = Array.from(new Set(childrenList.map((c) => c.school?.name || c.schoolId))).length;
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-20">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-20">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Parent Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/parent/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Overview
-            </button>
-          </Link>
-          <Link href="/parent/children">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
-              My Children ({childrenList.length})
-            </button>
-          </Link>
-          <Link href="/parent/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Van Bookings
-            </button>
-          </Link>
-          <Link href="/parent/rides/live">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>Live Ride Map</span>
-            </button>
-          </Link>
-          <Link href="/parent/complaints">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Inquiries &amp; Support
-            </button>
-          </Link>
-          <Link href="/parent/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.PARENT} />
+        {error && <ErrorBanner message={error} onRetry={fetchChildren} />}
 
         {/* Hero Welcome Showcase Card - Dark Navy Blue */}
         <motion.div
@@ -768,6 +737,17 @@ export default function ParentChildrenPage() {
 
       </div>
 
+      <ConfirmDialog
+        open={!!pendingDeleteChild}
+        onOpenChange={(open) => !open && setPendingDeleteChild(null)}
+        title="Remove Student Profile"
+        description={`Are you sure you want to remove the profile for ${pendingDeleteChild?.name || 'this student'}? This action cannot be undone.`}
+        confirmLabel="Remove Profile"
+        variant="danger"
+        isLoading={isDeleting}
+        onConfirm={confirmDeleteChild}
+      />
+
       {/* Add / Edit Child Modal Dialog */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <form onSubmit={handleSubmitChild} className="text-left space-y-4">
@@ -784,10 +764,11 @@ export default function ParentChildrenPage() {
             {/* First & Last Name */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                <label htmlFor="child-first-name" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   First Name <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="child-first-name"
                   type="text"
                   placeholder="e.g. Dineth"
                   value={firstName}
@@ -798,10 +779,11 @@ export default function ParentChildrenPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                <label htmlFor="child-last-name" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   Last Name <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="child-last-name"
                   type="text"
                   placeholder="e.g. Silva"
                   value={lastName}
@@ -815,10 +797,11 @@ export default function ParentChildrenPage() {
             {/* Date of Birth, Gender, Grade */}
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                <label htmlFor="child-dob" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   Date of Birth <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="child-dob"
                   type="date"
                   value={dateOfBirth}
                   onChange={(e) => setDateOfBirth(e.target.value)}
@@ -828,10 +811,11 @@ export default function ParentChildrenPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                <label htmlFor="child-gender" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   Gender <span className="text-red-500">*</span>
                 </label>
                 <select
+                  id="child-gender"
                   value={gender}
                   onChange={(e) => setGender(e.target.value)}
                   className="flex h-10 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-xs text-slate-900 dark:text-white shadow-xs focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
@@ -843,10 +827,11 @@ export default function ParentChildrenPage() {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                <label htmlFor="child-grade" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                   Grade / Class <span className="text-red-500">*</span>
                 </label>
                 <input
+                  id="child-grade"
                   type="text"
                   placeholder="e.g. Grade 7-B"
                   value={grade}
@@ -859,10 +844,11 @@ export default function ParentChildrenPage() {
 
             {/* School Selection */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+              <label htmlFor="child-school" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                 Enrolled School Destination <span className="text-red-500">*</span>
               </label>
               <select
+                id="child-school"
                 value={schoolId}
                 onChange={(e) => setSchoolId(e.target.value)}
                 className="flex h-10 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-xs text-slate-900 dark:text-white shadow-xs focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
@@ -878,10 +864,11 @@ export default function ParentChildrenPage() {
 
             {/* Pickup Address */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+              <label htmlFor="child-pickup" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                 Home Pickup Address <span className="text-red-500">*</span>
               </label>
               <input
+                id="child-pickup"
                 type="text"
                 placeholder="e.g. No 45, Chapel Road, Nugegoda"
                 value={pickupAddress}
@@ -893,10 +880,11 @@ export default function ParentChildrenPage() {
 
             {/* Special Notes / Health Instructions */}
             <div className="space-y-1">
-              <label className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+              <label htmlFor="child-notes" className="text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
                 Special Medical Notes / Driver Instructions (Optional)
               </label>
               <input
+                id="child-notes"
                 type="text"
                 placeholder="e.g. Inhaler in bag, front seat required, motion sickness"
                 value={specialNotes}
@@ -926,5 +914,13 @@ export default function ParentChildrenPage() {
         </form>
       </Dialog>
     </div>
+  );
+}
+
+export default function ParentChildrenPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.PARENT]}>
+      <ParentChildrenContent />
+    </RoleGuard>
   );
 }

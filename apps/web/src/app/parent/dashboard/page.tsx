@@ -29,10 +29,13 @@ import {
   Car,
   Navigation
 } from 'lucide-react';
-import { formatLKR } from '@schoolride/shared';
+import { formatLKR, UserRole } from '@schoolride/shared';
+import { RoleGuard } from '@/components/role-guard';
+import { PortalSubNav } from '@/components/portal-subnav';
+import { ErrorBanner } from '@/components/ui/error-banner';
 import { motion } from 'framer-motion';
 
-export default function ParentDashboardPage() {
+function ParentDashboardContent() {
   const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
 
@@ -40,34 +43,32 @@ export default function ParentDashboardPage() {
   const [bookings, setBookings] = React.useState<any[]>([]);
   const [activeRide, setActiveRide] = React.useState<any>(null);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const loadParentData = React.useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const [childrenRes, bookingsRes, activeRideRes] = await Promise.all([
+        api.get('/parents/me/children'),
+        api.get('/bookings'),
+        api.get('/rides/active').catch(() => null),
+      ]);
+      setChildrenList(Array.isArray(childrenRes) ? childrenRes : childrenRes?.data || []);
+      setBookings(Array.isArray(bookingsRes) ? bookingsRes : bookingsRes?.data || []);
+      setActiveRide(activeRideRes);
+    } catch (err: any) {
+      setError(err?.message || 'Unable to load your parent dashboard data.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   React.useEffect(() => {
-    if (!authLoading && (!user || user.role !== 'PARENT')) {
-      router.push('/login');
-      return;
-    }
-
-    async function loadParentData() {
-      if (!user) return;
-      setIsLoading(true);
-      try {
-        const [childrenRes, bookingsRes, activeRideRes] = await Promise.all([
-          api.get('/parents/me/children').catch(() => []),
-          api.get('/bookings').catch(() => []),
-          api.get('/rides/active').catch(() => null),
-        ]);
-        setChildrenList(childrenRes || []);
-        setBookings(bookingsRes || []);
-        setActiveRide(activeRideRes);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
     if (user) {
       loadParentData();
     }
-  }, [user, authLoading, router]);
+  }, [user, loadParentData]);
 
   if (isLoading || authLoading) {
     return (
@@ -103,44 +104,13 @@ export default function ParentDashboardPage() {
   const activeBookings = bookings.filter((b) => b.status === 'ACTIVE' || b.status === 'ACCEPTED');
 
   return (
-    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden select-none pb-16">
+    <div className="min-h-screen dashboard-navy-yellow-bg text-slate-900 dark:text-white relative overflow-hidden pb-16">
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8 relative z-10 text-left">
         
         {/* Parent Portal Navigation Sub-Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-white/15">
-          <Link href="/parent/dashboard">
-            <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
-              Overview
-            </button>
-          </Link>
-          <Link href="/parent/children">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              My Children ({childrenList.length})
-            </button>
-          </Link>
-          <Link href="/parent/bookings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Van Bookings ({bookings.length})
-            </button>
-          </Link>
-          <Link href="/parent/rides/live">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
-              <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>Live Ride Map</span>
-            </button>
-          </Link>
-          <Link href="/parent/complaints">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Inquiries &amp; Support
-            </button>
-          </Link>
-          <Link href="/parent/settings">
-            <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              Settings
-            </button>
-          </Link>
-        </div>
+        <PortalSubNav role={UserRole.PARENT} />
+        {error && <ErrorBanner message={error} onRetry={loadParentData} />}
 
         {/* Hero Welcome Showcase Card matching Home Page styling */}
         <motion.div
@@ -552,5 +522,13 @@ export default function ParentDashboardPage() {
       </div>
 
     </div>
+  );
+}
+
+export default function ParentDashboardPage() {
+  return (
+    <RoleGuard allowedRoles={[UserRole.PARENT]}>
+      <ParentDashboardContent />
+    </RoleGuard>
   );
 }
