@@ -450,8 +450,11 @@ export default function DriversDirectoryPage() {
           </div>
         </motion.div>
 
-        {/* 4 Summary KPIs with Clean White Glass Translucency */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+        {/* Master White Background Enclosure Card with Soft Shadow */}
+        <div className="rounded-[32px] sm:rounded-[40px] bg-white border border-slate-200/90 shadow-[0_20px_60px_-15px_rgba(11,21,40,0.06)] p-6 sm:p-8 lg:p-10 space-y-8 relative z-10 text-left">
+
+          {/* 4 Summary KPIs with Clean White Glass Translucency */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
           <div className="p-5 sm:p-6 rounded-[24px] bg-white dark:bg-slate-900 text-slate-900 dark:text-white border border-slate-200/80 dark:border-slate-800 shadow-[0_14px_35px_rgba(15,23,42,0.08),0_2px_8px_rgba(15,23,42,0.04)] hover:shadow-[0_22px_45px_rgba(15,23,42,0.13)] hover:-translate-y-1 transition-all duration-300 space-y-2 relative overflow-hidden group">
             <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
             <div className="flex items-center justify-between relative z-10">
@@ -525,62 +528,62 @@ export default function DriversDirectoryPage() {
           </div>
         </div>
 
-        {/* Quick Filter Pill Chips */}
-        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-          <button
-            onClick={() => handleQuickFilter('ALL')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              activeQuickFilter === 'ALL'
-                ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80'
-                : 'bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-semibold border border-white/90 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300 backdrop-blur-xl shadow-2xs'
-            }`}
-          >
-            All Sri Lanka ({drivers.length})
-          </button>
-
-          <button
-            onClick={() => handleQuickFilter('COLOMBO')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              activeQuickFilter === 'COLOMBO'
-                ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80'
-                : 'bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-semibold border border-white/90 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300 backdrop-blur-xl shadow-2xs'
-            }`}
-          >
-            📍 Colombo Corridors
-          </button>
-
-          <button
-            onClick={() => handleQuickFilter('KANDY')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              activeQuickFilter === 'KANDY'
-                ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80'
-                : 'bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-semibold border border-white/90 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300 backdrop-blur-xl shadow-2xs'
-            }`}
-          >
-            ⛰️ Kandy Hill Country
-          </button>
-
-          <button
-            onClick={() => handleQuickFilter('AC')}
-            className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
-              activeQuickFilter === 'AC'
-                ? 'bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black shadow-[0_3px_0_#B45309,0_6px_12px_rgba(250,204,21,0.35)] border border-yellow-200/80'
-                : 'bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-semibold border border-white/90 dark:border-slate-700 hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300 backdrop-blur-xl shadow-2xs'
-            }`}
-          >
-            ❄️ Dual A/C Vans Only
-          </button>
-
-          {(district || schoolId || query || vehicleType) && (
+          {/* Quick Filter Pill Chips */}
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
             <button
-              onClick={handleResetFilters}
-              className="px-3.5 py-2 rounded-full text-xs font-bold bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/60 hover:bg-red-100 dark:hover:bg-red-900/50 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap backdrop-blur-md shadow-2xs"
+              onClick={() => handleQuickFilter('ALL')}
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                activeQuickFilter === 'ALL'
+                  ? 'btn-glass-yellow-3d font-black shadow-sm'
+                  : 'bg-slate-100 hover:bg-slate-200/70 text-[#0B1528] font-bold border border-slate-200'
+              }`}
             >
-              <RotateCcw className="h-3 w-3" />
-              <span>Reset Filters</span>
+              All Sri Lanka ({drivers.length})
             </button>
-          )}
-        </div>
+
+            <button
+              onClick={() => handleQuickFilter('COLOMBO')}
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                activeQuickFilter === 'COLOMBO'
+                  ? 'btn-glass-yellow-3d font-black shadow-sm'
+                  : 'bg-slate-100 hover:bg-slate-200/70 text-[#0B1528] font-bold border border-slate-200'
+              }`}
+            >
+              Colombo Corridors
+            </button>
+
+            <button
+              onClick={() => handleQuickFilter('KANDY')}
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                activeQuickFilter === 'KANDY'
+                  ? 'btn-glass-yellow-3d font-black shadow-sm'
+                  : 'bg-slate-100 hover:bg-slate-200/70 text-[#0B1528] font-bold border border-slate-200'
+              }`}
+            >
+              Kandy Hill Country
+            </button>
+
+            <button
+              onClick={() => handleQuickFilter('AC')}
+              className={`px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+                activeQuickFilter === 'AC'
+                  ? 'btn-glass-yellow-3d font-black shadow-sm'
+                  : 'bg-slate-100 hover:bg-slate-200/70 text-[#0B1528] font-bold border border-slate-200'
+              }`}
+            >
+              Dual A/C Vans Only
+            </button>
+
+            {(district || schoolId || query || vehicleType) && (
+              <button
+                onClick={handleResetFilters}
+                className="px-3.5 py-2 rounded-full text-xs font-bold bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap shadow-2xs"
+              >
+                <RotateCcw className="h-3 w-3" />
+                <span>Reset Filters</span>
+              </button>
+            )}
+          </div>
 
         {/* Search & Filter Bar (White Glass Effect) */}
         <div className="p-6 sm:p-7 rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 shadow-2xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 relative overflow-hidden text-left">
@@ -689,18 +692,15 @@ export default function DriversDirectoryPage() {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.3 }}
-                  className="rounded-[28px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/90 dark:border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.04)] hover:shadow-[0_20px_50px_rgba(250,204,21,0.18)] hover:border-yellow-400/60 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden relative group text-slate-900 dark:text-white"
+                  className="rounded-[28px] bg-white border border-slate-200/90 shadow-[0_10px_30px_rgba(11,21,40,0.06)] hover:shadow-[0_20px_50px_rgba(11,21,40,0.12)] hover:border-[#FFC928] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden relative group text-[#0B1528]"
                 >
-                  {/* Subtle Inner Sheen */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-white/70 via-transparent to-transparent pointer-events-none" />
-
-                  <div className="p-6 space-y-4 relative z-10">
+                  <div className="p-6 space-y-4 relative z-10 text-left">
                     
                     {/* Driver Top Row */}
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <div className="relative">
-                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#FACC15] via-amber-400 to-yellow-600 text-slate-950 font-black text-base flex items-center justify-center shrink-0 shadow-md border border-yellow-200/50">
+                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#FFD240] to-[#F59E0B] text-[#0B1528] font-black text-base flex items-center justify-center shrink-0 shadow-md border border-yellow-200">
                             {driver.fullName
                               .split(' ')
                               .map((n: string) => n[0])
@@ -709,46 +709,46 @@ export default function DriversDirectoryPage() {
                           </div>
                           <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400 ring-2 ring-white dark:ring-[#0B1528]" />
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-400 ring-2 ring-white" />
                           </span>
                         </div>
 
                         <div>
                           <div className="flex items-center gap-1.5">
-                            <h3 className="font-extrabold text-base text-slate-900 dark:text-white group-hover:text-yellow-600 dark:group-hover:text-yellow-300 transition-colors truncate">
+                            <h3 className="font-extrabold text-base text-[#0B1528] group-hover:text-amber-600 transition-colors truncate">
                               {driver.fullName}
                             </h3>
-                            <ShieldCheck className="h-4 w-4 text-[#CA8A04] dark:text-[#FACC15] shrink-0" />
+                            <ShieldCheck className="h-4 w-4 text-[#CA8A04] shrink-0" />
                           </div>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5 font-medium">
-                            <MapPin className="h-3 w-3 text-[#CA8A04] dark:text-yellow-400 shrink-0" />
+                          <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5 font-medium">
+                            <MapPin className="h-3 w-3 text-[#CA8A04] shrink-0" />
                             <span>{driver.city || driver.district}, {driver.district}</span>
                           </p>
                         </div>
                       </div>
 
-                      {/* Glass Star Rating Pill */}
-                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEFCE8] dark:bg-yellow-950/40 border border-[#FEF08A] dark:border-yellow-700/50 text-[#854D0E] dark:text-[#FACC15] text-xs font-black shrink-0 backdrop-blur-md shadow-2xs">
-                        <Star className="h-3.5 w-3.5 fill-[#CA8A04] text-[#CA8A04] dark:fill-[#FACC15] dark:text-[#FACC15]" />
-                        <span className="text-slate-900 dark:text-white font-bold">{driver.ratingAverage.toFixed(1)}</span>
-                        <span className="text-[10px] text-slate-500 dark:text-yellow-200/70 font-medium">({driver.ratingCount})</span>
+                      {/* Gold Star Rating Pill */}
+                      <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FEFCE8] border border-[#FEF08A] text-[#854D0E] text-xs font-black shrink-0 shadow-2xs">
+                        <Star className="h-3.5 w-3.5 fill-[#CA8A04] text-[#CA8A04]" />
+                        <span className="text-[#0B1528] font-bold">{driver.ratingAverage.toFixed(1)}</span>
+                        <span className="text-[10px] text-slate-500 font-medium">({driver.ratingCount})</span>
                       </div>
                     </div>
 
-                    {/* Vehicle Spec Box with Clean Glass Effect */}
-                    <div className="p-3.5 rounded-2xl bg-slate-50/90 dark:bg-white/[0.04] border border-slate-200/80 dark:border-white/[0.08] backdrop-blur-md space-y-1.5 text-xs relative overflow-hidden">
-                      <div className="flex items-center justify-between font-bold text-slate-900 dark:text-white">
+                    {/* Vehicle Spec Box with Clean White Background */}
+                    <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1.5 text-xs relative overflow-hidden">
+                      <div className="flex items-center justify-between font-bold text-[#0B1528]">
                         <span className="flex items-center gap-1.5">
-                          <Bus className="h-3.5 w-3.5 text-[#CA8A04] dark:text-[#FACC15]" />
+                          <Bus className="h-3.5 w-3.5 text-[#CA8A04]" />
                           <span className="truncate">{vehicle.make} {vehicle.model} ({vehicle.year || 2018})</span>
                         </span>
-                        <span className="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300 font-bold shrink-0">
+                        <span className="font-mono text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold shrink-0">
                           {vehicle.availableSeats || 2} Seats Open
                         </span>
                       </div>
                       
-                      <div className="flex items-center gap-3 text-[11px] text-slate-500 dark:text-blue-100/70 font-medium pt-0.5 flex-wrap">
-                        <span className="font-mono text-[#854D0E] dark:text-[#FACC15] font-bold">
+                      <div className="flex items-center gap-3 text-[11px] text-slate-500 font-medium pt-0.5 flex-wrap">
+                        <span className="font-mono text-[#854D0E] font-bold">
                           {vehicle.licensePlate || 'WP NA-4521'}
                         </span>
                         {vehicle.isAirConditioned && <span>• Dual A/C</span>}
@@ -759,30 +759,30 @@ export default function DriversDirectoryPage() {
 
                     {/* Route Corridor Path */}
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                        <Compass className="h-3 w-3 text-[#CA8A04] dark:text-[#FACC15]" /> Pickup Suburbs
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                        <Compass className="h-3 w-3 text-[#CA8A04]" /> Pickup Suburbs
                       </span>
-                      <p className="text-xs text-slate-700 dark:text-slate-300 font-medium leading-relaxed">
+                      <p className="text-xs text-[#0B1528] font-medium leading-relaxed">
                         {driver.corridor}
                       </p>
                     </div>
 
                     {/* Schools Covered */}
                     <div className="space-y-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                        <GraduationCap className="h-3 w-3 text-[#CA8A04] dark:text-[#FACC15]" /> Served Schools ({schoolsList.length})
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1">
+                        <GraduationCap className="h-3 w-3 text-[#CA8A04]" /> Served Schools ({schoolsList.length})
                       </span>
                       <div className="flex flex-wrap gap-1.5">
                         {schoolsList.slice(0, 3).map((school: any) => (
                           <span
                             key={school.id || school.name}
-                            className="px-2.5 py-1 rounded-lg bg-blue-50/80 dark:bg-blue-900/30 border border-blue-200/80 dark:border-blue-700/40 text-blue-900 dark:text-blue-100 text-[11px] font-semibold backdrop-blur-md hover:border-yellow-400/60 hover:text-yellow-700 dark:hover:text-yellow-300 transition-colors truncate max-w-[210px]"
+                            className="px-2.5 py-1 rounded-lg bg-blue-50/70 border border-blue-200/70 text-[#0B1528] text-[11px] font-semibold truncate max-w-[210px]"
                           >
                             {school.name}
                           </span>
                         ))}
                         {schoolsList.length > 3 && (
-                          <span className="px-2 py-1 rounded-lg bg-slate-100 dark:bg-white/[0.05] border border-slate-200 dark:border-white/10 text-[10px] text-slate-600 dark:text-blue-200 font-bold">
+                          <span className="px-2 py-1 rounded-lg bg-slate-100 border border-slate-200 text-[10px] text-slate-600 font-bold">
                             +{schoolsList.length - 3} more
                           </span>
                         )}
@@ -791,35 +791,33 @@ export default function DriversDirectoryPage() {
 
                     {/* Bio Snippet */}
                     {driver.bio && (
-                      <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                         {driver.bio}
                       </p>
                     )}
                   </div>
 
                   {/* Card Footer: Monthly Fee & Glass 3D Action Buttons */}
-                  <div className="px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-900/90 backdrop-blur-xl flex items-center justify-between gap-3 relative z-10">
+                  <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/80 flex items-center justify-between gap-3 relative z-10">
                     <div>
-                      <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block">
+                      <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">
                         Monthly Seat Fee
                       </span>
-                      <span className="text-sm font-black text-slate-900 dark:text-white font-mono">
+                      <span className="text-sm font-black text-[#0B1528] font-mono">
                         Rs. {driver.monthlyRateLKR.toLocaleString()}{' '}
-                        <span className="text-[10px] font-normal text-slate-500 dark:text-slate-400">/ child</span>
+                        <span className="text-[10px] font-normal text-slate-500">/ child</span>
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => openInquiryModal(driver)}
-                        className="relative group/btn overflow-hidden px-4 py-2 rounded-full bg-gradient-to-b from-[#FDE047] via-[#FACC15] to-[#EAB308] text-slate-950 font-black text-xs border border-yellow-200/80 shadow-[0_3px_0_#B45309,0_8px_16px_rgba(250,204,21,0.3)] hover:shadow-[0_4px_0_#B45309,0_10px_20px_rgba(250,204,21,0.4)] hover:-translate-y-0.5 active:translate-y-0.5 active:shadow-[0_1px_0_#B45309] transition-all cursor-pointer whitespace-nowrap"
+                        className="btn-glass-yellow-3d px-5 py-2 text-xs font-black shadow-xs cursor-pointer whitespace-nowrap"
                       >
-                        {/* Top Glass Specular Sheen */}
-                        <div className="absolute inset-x-1 top-0.5 h-[44%] rounded-full bg-gradient-to-b from-white/70 to-transparent pointer-events-none" />
-                        <span className="relative z-10">Inquire</span>
+                        <span>Inquire</span>
                       </button>
                       <Link href={`/drivers/${driver.id}`}>
-                        <button className="relative group/pbtn overflow-hidden px-4 py-2 rounded-full bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs border border-slate-200/90 dark:border-slate-700 shadow-2xs hover:border-yellow-400 hover:text-yellow-600 dark:hover:text-yellow-400 transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap">
+                        <button className="px-4 py-2 rounded-full bg-white hover:bg-slate-50 text-[#0B1528] font-bold text-xs border border-slate-200/90 shadow-2xs transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap">
                           <span>Profile</span>
                           <ArrowRight className="h-3 w-3" />
                         </button>
@@ -831,6 +829,8 @@ export default function DriversDirectoryPage() {
             })}
           </div>
         )}
+
+        </div>
 
         {/* Seat Inquiry Modal (Clean White Glass) */}
         <AnimatePresence>

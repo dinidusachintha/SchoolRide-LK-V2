@@ -191,28 +191,28 @@ export default function DriverDashboardPage() {
         <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar border-b border-slate-200/80 dark:border-slate-800">
           <Link href="/driver/dashboard">
             <button className="px-4 py-2 rounded-full text-xs font-black bg-[#FACC15] text-slate-950 shadow-sm cursor-pointer whitespace-nowrap">
-              📌 Overview
+              Overview
             </button>
           </Link>
           <Link href="/driver/console">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-[#14532D] dark:text-emerald-400 border border-emerald-200 dark:border-slate-800 hover:bg-emerald-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer flex items-center gap-1.5">
               <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-              <span>📡 Active GPS Console</span>
+              <span>Active GPS Console</span>
             </button>
           </Link>
           <Link href="/driver/bookings">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              📋 Bookings &amp; Manifest
+              Bookings &amp; Manifest
             </button>
           </Link>
           <Link href="/driver/vehicles">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              🚐 Fleet Vehicles
+              Fleet Vehicles
             </button>
           </Link>
           <Link href="/driver/settings">
             <button className="px-4 py-2 rounded-full text-xs font-bold bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors whitespace-nowrap cursor-pointer">
-              ⚙️ Operator Settings
+              Operator Settings
             </button>
           </Link>
         </div>
@@ -222,29 +222,29 @@ export default function DriverDashboardPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="rounded-[28px] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-[0_4px_24px_rgba(0,0,0,0.04)] p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden"
+          className="rounded-[28px] bg-[#0B1528] text-white border border-blue-900/40 shadow-xl p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative overflow-hidden"
         >
           {/* Decorative glow matching home page */}
           <div className="absolute right-0 top-0 w-80 h-80 bg-gradient-to-br from-yellow-100/40 via-emerald-100/20 to-transparent blur-3xl pointer-events-none rounded-full" />
 
           <div className="space-y-3 max-w-2xl relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FEF08A] text-[#713F12] border border-yellow-300 text-xs font-bold shadow-xs">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#78350F]/50 text-[#FFC928] border border-[#F59E0B]/40 text-xs font-bold shadow-xs">
               <ShieldCheck className="h-3.5 w-3.5 text-[#CA8A04]" />
               <span>5-Tier Police &amp; NTCA Verified Van Operator</span>
             </div>
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-950 dark:text-white tracking-tight">
-              Welcome back, <span className="text-[#CA8A04] dark:text-[#FACC15] underline decoration-[#FACC15]/40 underline-offset-8">{user?.fullName || 'Driver Sunil'}</span> 👋
+              Welcome back, <span className="text-[#FFC928]">{user?.fullName || 'Driver Sunil'}</span>
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed font-normal">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal">
               Manage your daily passenger manifest, broadcast high-precision live GPS telemetry to parents, review pending seat requests, and inspect monthly subscription payouts.
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 relative z-10 shrink-0">
             <Link href="/driver/console">
-              <button className="px-5 sm:px-6 py-3 rounded-full bg-[#FACC15] hover:bg-[#EAB308] text-slate-950 font-black text-xs sm:text-sm shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer group">
+              <button className="btn-glass-yellow-3d px-5 sm:px-6 py-3 text-xs sm:text-sm font-black justify-center shadow-md">
                 <Radio className="h-4 w-4 text-[#14532D] animate-pulse" />
                 <span>Launch GPS Console</span>
                 <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -252,7 +252,7 @@ export default function DriverDashboardPage() {
             </Link>
 
             <Link href="/driver/vehicles">
-              <button className="px-5 py-3 rounded-full border border-slate-300 dark:border-slate-700 hover:border-slate-400 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold text-xs sm:text-sm shadow-xs hover:bg-slate-50 dark:hover:bg-slate-700 transition-all flex items-center gap-2 cursor-pointer">
+              <button className="px-5 py-3 rounded-full border border-white/20 hover:border-white/40 bg-white/10 hover:bg-white/20 text-white font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center gap-2 cursor-pointer">
                 <Car className="h-4 w-4 text-[#16A34A]" />
                 <span>Fleet Vehicles</span>
               </button>
@@ -400,7 +400,7 @@ export default function DriverDashboardPage() {
                   </div>
                 </div>
 
-                <Link href="/driver/bookings" className="text-xs font-bold text-[#14532D] dark:text-[#FACC15] hover:underline flex items-center gap-1">
+                <Link href="/driver/bookings" className="text-xs font-bold text-[#14532D] dark:text-[#FACC15] hover:text-[#CA8A04] flex items-center gap-1">
                   <span>Full Manifest</span>
                   <ArrowRight className="h-3 w-3" />
                 </Link>
@@ -544,7 +544,7 @@ export default function DriverDashboardPage() {
 
             <div className="pt-3 border-t border-slate-200/80 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500">
               <span>Standard 24-hr Parent Response SLA</span>
-              <Link href="/driver/settings" className="font-bold text-slate-700 dark:text-slate-300 hover:underline">
+              <Link href="/driver/settings" className="font-bold text-slate-700 dark:text-slate-300 hover:text-[#CA8A04]">
                 Adjust Seat Rate
               </Link>
             </div>

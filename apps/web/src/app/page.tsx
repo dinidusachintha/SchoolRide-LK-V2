@@ -2437,32 +2437,32 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Cards Grid: Left Featured Card + Right 2 Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+          {/* Cards Grid: Left Featured Card + Right 3 Cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
             
-            {/* Left Column (Featured Driver - Sunil Wickramasinghe) */}
+            {/* Left Column (Featured Fleet Showcase) */}
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: '-40px' }}
               variants={sectionFadeUp}
-              className="lg:col-span-6 rounded-3xl bg-[#0B1528] border border-blue-900/40 p-5 sm:p-6 shadow-2xl space-y-4 text-left"
+              className="lg:col-span-6 rounded-3xl bg-[#0B1528] border border-blue-900/40 p-5 sm:p-6 shadow-2xl flex flex-col justify-between space-y-4 text-left"
             >
               {/* Photo Showcase Container */}
-              <div className="relative w-full h-72 sm:h-84 rounded-2xl overflow-hidden bg-slate-900 border border-white/10">
+              <div className="relative w-full h-72 sm:h-80 md:h-96 rounded-2xl overflow-hidden bg-white border border-white/10 flex items-center justify-center">
                 <Image
-                  src="/images/driver-sunil-van.jpg"
-                  alt="Sunil Wickramasinghe - SchoolRide LK Verified Driver"
+                  src="/images/verified-fleet-team.jpg"
+                  alt="SchoolRide LK Verified Fleet Team"
                   fill
                   priority
                   className="object-cover object-center"
                 />
                 
-                {/* Top-Left Top Rated Driver Badge */}
+                {/* Top-Left Top Rated Driver Badge (Yellow theme) */}
                 <div className="absolute top-3.5 left-3.5 z-10">
-                  <div className="backdrop-blur-md bg-emerald-950/80 border border-emerald-500/40 px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 text-emerald-300 text-xs font-bold">
-                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>Top Rated Driver</span>
+                  <div className="backdrop-blur-md bg-[#0B1528]/90 border border-[#F59E0B]/50 px-3 py-1.5 rounded-full shadow-md flex items-center gap-1.5 text-[#FFC928] text-xs font-bold">
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#FFC928]" />
+                    <span>Top Rated Fleet</span>
                   </div>
                 </div>
               </div>
@@ -2497,15 +2497,15 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* 3 Verification Badges */}
+              {/* 3 Verification Badges (Yellow themed, no green) */}
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <span className="px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold flex items-center gap-1">
+                <span className="px-2.5 py-1 rounded-md bg-[#78350F]/40 border border-[#F59E0B]/30 text-[#FFC928] text-[11px] font-semibold flex items-center gap-1">
                   <Check className="w-3 h-3 stroke-[3]" /> Police Clearance
                 </span>
-                <span className="px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold flex items-center gap-1">
+                <span className="px-2.5 py-1 rounded-md bg-[#78350F]/40 border border-[#F59E0B]/30 text-[#FFC928] text-[11px] font-semibold flex items-center gap-1">
                   <Check className="w-3 h-3 stroke-[3]" /> Revenue License 2026
                 </span>
-                <span className="px-2.5 py-1 rounded-md bg-emerald-950/60 border border-emerald-500/30 text-emerald-400 text-[11px] font-semibold flex items-center gap-1">
+                <span className="px-2.5 py-1 rounded-md bg-[#78350F]/40 border border-[#F59E0B]/30 text-[#FFC928] text-[11px] font-semibold flex items-center gap-1">
                   <Check className="w-3 h-3 stroke-[3]" /> GPS Live Telemetry
                 </span>
               </div>
@@ -2520,25 +2520,25 @@ export default function HomePage() {
               </div>
             </motion.div>
 
-            {/* Right Column (2 Horizontal Stacked Driver Cards) */}
+            {/* Right Column (3 Stacked Driver Cards) */}
             <motion.div
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, margin: '-40px' }}
               variants={sectionFadeUp}
-              className="lg:col-span-6 flex flex-col gap-5 sm:gap-6 text-left"
+              className="lg:col-span-6 flex flex-col justify-between gap-4 sm:gap-5 text-left"
             >
               {/* Driver 1: Gamini Fernando */}
-              <div className="rounded-2xl bg-[#0B1528] border border-blue-900/40 p-5 sm:p-6 space-y-4 shadow-xl hover:border-blue-700/50 transition-all">
+              <div className="rounded-2xl bg-[#0B1528] border border-blue-900/40 p-4 sm:p-5 space-y-3 shadow-xl hover:border-blue-700/50 transition-all">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="text-base sm:text-lg font-bold text-white">Gamini Fernando</h4>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
+                      <h4 className="text-base font-bold text-white">Gamini Fernando</h4>
+                      <span className="px-2 py-0.5 rounded-full bg-[#78350F]/60 border border-[#F59E0B]/40 text-[#FFC928] text-[10px] font-bold">
                         Verified
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">9 Years Safe Driving · Kandy City &amp; Peradeniya</p>
+                    <p className="text-xs text-slate-400 mt-0.5">9 Years Safe Driving · Kandy City &amp; Peradeniya</p>
                   </div>
 
                   <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#78350F]/50 border border-[#F59E0B]/40 text-[#FBBF24] text-xs font-bold shrink-0">
@@ -2547,7 +2547,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 pt-1">
+                <div className="grid grid-cols-2 gap-4 pt-0.5">
                   <div>
                     <span className="text-[11px] text-slate-400 block font-medium">Vehicle:</span>
                     <span className="text-xs sm:text-sm font-semibold text-white">Nissan Caravan High-Roof</span>
@@ -2558,7 +2558,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                <div className="flex items-center justify-between pt-2.5 border-t border-white/10">
                   <span className="text-sm sm:text-base font-extrabold text-[#FFC928]">
                     LKR 7,800 / month
                   </span>
@@ -2571,16 +2571,16 @@ export default function HomePage() {
               </div>
 
               {/* Driver 2: Pradeep Kumara */}
-              <div className="rounded-2xl bg-[#0B1528] border border-blue-900/40 p-5 sm:p-6 space-y-4 shadow-xl hover:border-blue-700/50 transition-all">
+              <div className="rounded-2xl bg-[#0B1528] border border-blue-900/40 p-4 sm:p-5 space-y-3 shadow-xl hover:border-blue-700/50 transition-all">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h4 className="text-base sm:text-lg font-bold text-white">Pradeep Kumara</h4>
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-[10px] font-bold">
+                      <h4 className="text-base font-bold text-white">Pradeep Kumara</h4>
+                      <span className="px-2 py-0.5 rounded-full bg-[#78350F]/60 border border-[#F59E0B]/40 text-[#FFC928] text-[10px] font-bold">
                         Verified
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">11 Years Safe Driving · Gampaha &amp; Colombo North</p>
+                    <p className="text-xs text-slate-400 mt-0.5">11 Years Safe Driving · Gampaha &amp; Colombo North</p>
                   </div>
 
                   <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#78350F]/50 border border-[#F59E0B]/40 text-[#FBBF24] text-xs font-bold shrink-0">
@@ -2589,7 +2589,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 pt-1">
+                <div className="grid grid-cols-2 gap-4 pt-0.5">
                   <div>
                     <span className="text-[11px] text-slate-400 block font-medium">Vehicle:</span>
                     <span className="text-xs sm:text-sm font-semibold text-white">Toyota Commuter Bus</span>
@@ -2600,9 +2600,51 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                <div className="flex items-center justify-between pt-2.5 border-t border-white/10">
                   <span className="text-sm sm:text-base font-extrabold text-[#FFC928]">
                     LKR 9,200 / month
+                  </span>
+                  <Link href="/drivers">
+                    <button className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold transition-all cursor-pointer">
+                      Check Availability
+                    </button>
+                  </Link>
+                </div>
+              </div>
+
+              {/* Driver 3: Nalin Jayasinghe */}
+              <div className="rounded-2xl bg-[#0B1528] border border-blue-900/40 p-4 sm:p-5 space-y-3 shadow-xl hover:border-blue-700/50 transition-all">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="text-base font-bold text-white">Nalin Jayasinghe</h4>
+                      <span className="px-2 py-0.5 rounded-full bg-[#78350F]/60 border border-[#F59E0B]/40 text-[#FFC928] text-[10px] font-bold">
+                        Verified
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-400 mt-0.5">8 Years Safe Driving · Dehiwala &amp; Mount Lavinia</p>
+                  </div>
+
+                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#78350F]/50 border border-[#F59E0B]/40 text-[#FBBF24] text-xs font-bold shrink-0">
+                    <Star className="w-3.5 h-3.5 fill-[#FBBF24]" />
+                    <span>4.97</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 pt-0.5">
+                  <div>
+                    <span className="text-[11px] text-slate-400 block font-medium">Vehicle:</span>
+                    <span className="text-xs sm:text-sm font-semibold text-white">Toyota HiAce Super GL</span>
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-slate-400 block font-medium">Plate:</span>
+                    <span className="text-xs sm:text-sm font-mono font-semibold text-white">WP NA-5820</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-2.5 border-t border-white/10">
+                  <span className="text-sm sm:text-base font-extrabold text-[#FFC928]">
+                    LKR 8,000 / month
                   </span>
                   <Link href="/drivers">
                     <button className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-bold transition-all cursor-pointer">
